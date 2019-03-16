@@ -301,9 +301,9 @@ Print_Style "RandRead: $IO4kRandRead - RandWrite: $IO4kRandWrite - Read: $IO4kRe
 
 # Get brand information
 Print_Style "Enter your storage brand marketing name -- Example: SanDisk Pro, Samsung Evo+, Corsair MX100, etc."
-read -p 'Brand Name: ' Brand
+read -p 'Brand Name: ' Brand < dev/tty
 Print_Style "(Optional) Enter alias to use on benchmark results.  Leave blank for completely anonymous."
-read -p 'Alias (leave blank for Anonymous): ' UserAlias
+read -p 'Alias (leave blank for Anonymous): ' UserAlias < dev/tty
 if [[ ! "$UserAlias" ]]; then UserAlias="Anonymous"; fi
 
 # Submit results
