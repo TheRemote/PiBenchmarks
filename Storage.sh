@@ -59,9 +59,21 @@ if [[ "$(whoami)" != "root" ]]; then
   exit 1
 fi
 
+# Get host board information
+HostModel=$(tr -d '\0' </proc/device-tree/model)
+HostArchitecture=$(uname -m)
+HostOSInfo=$(cat /etc/os-release)
+HostOS=$(echo "$HostOSInfo" | grep "PRETTY_NAME" | cut -d= -f2 | xargs)
+
 # Install required components from apt
 Print_Style "Fetching required components ..." $YELLOW
-apt-get install hdparm build-essential wget curl fio libraspberrypi-bin bc -y
+if [[ $HostOS == *"Ubuntu"* ]]; then
+  add-apt-repository ppa:ubuntu-raspi2/ppa -y
+fi
+
+apt-get update 
+apt-get install hdparm build-essential wget curl fio bc -y
+apt-get install libraspberrypi-bin -y
 
 # Retrieve and build iozone
 if [ ! -f iozone/src/current/iozone ]; then
@@ -231,12 +243,6 @@ else
   Firmware=$(echo "$BootDriveInfo" | grep -m 1 "Firmware Revision:" | awk 'NR==1{ print $3 $4 $5 }')
   Print_Style  "Drive information: Manufacturer: $Manufacturer - Model: $Model - Vendor: $Vendor - Product: $Product - HW Version: $Version - FW Version: $Firmware - Date Manufactured: $DateManufactured" $YELLOW
 fi
-
-# Get host board information
-HostModel=$(tr -d '\0' </proc/device-tree/model)
-HostArchitecture=$(uname -m)
-HostOSInfo=$(cat /etc/os-release)
-HostOS=$(echo "$HostOSInfo" | grep "PRETTY_NAME" | cut -d= -f2 | xargs)
 
 # Check for vcgencmd
 if [ -n "`which vcgencmd`" ]; then

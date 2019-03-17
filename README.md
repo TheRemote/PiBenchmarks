@@ -6,3 +6,10 @@ View current benchmarks at: https://www.jamesachambers.com/raspberry-pi-storage-
 To run the benchmark type/paste:<br>
 curl https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh | sudo bash<br>
 <br>
+<b>Update History</b><br>
+<br>
+March 17th 2019<br>
+-Added Ubuntu support<br>
+<br>
+March 16th 2019<br>
+-Initial release<br>
