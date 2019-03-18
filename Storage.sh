@@ -69,7 +69,7 @@ HostOS=$(echo "$HostOSInfo" | grep "PRETTY_NAME" | cut -d= -f2 | xargs)
 Print_Style "Fetching required components ..." $YELLOW
 
 # Test for apt first (all Debian based distros)
-if [ ! -n "`which apt`" ]; then
+if [[ -n "`which apt`" ]]; then
   if [[ $HostOS == *"Ubuntu"* ]]; then
     if [ -n "`which vcgencmd`" ]; then
       add-apt-repository ppa:ubuntu-raspi2/ppa -y
@@ -80,8 +80,8 @@ if [ ! -n "`which apt`" ]; then
   apt-get install hdparm build-essential wget curl fio bc -y
   apt-get install libraspberrypi-bin -y
 # Next test for Pac-Man (Arch Linux)
-elif [ ! -n "`which pac-man`" ]; then
-
+elif [ -n "`which pac-man`" ]; then
+  echo "In Progress"
 else
   Print_Style "No package manager found!" $RED
 fi
@@ -107,8 +107,8 @@ sync
 
 # Get system boot drive information
 BootDrive=$(fdisk -l | grep '^/dev/[a-z]*[0-9]' | awk '$2 == "*" { print $1 }')
-if [ -n "$BootDrive" ]; then 
-  BootDrive=$(df -H | grep root | awk 'NR==1{ print $1 }')
+if [ ! -n "$BootDrive" ]; then
+  BootDrive=$(df -H | grep boot | awk 'NR==1{ print $1 }')
 fi
 Print_Style "System drive has been detected as $BootDrive" $YELLOW
 BootDriveInfo=$(udevadm info -a -n $BootDrive | sed '/^[[:space:]]*$/d')
