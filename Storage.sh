@@ -68,10 +68,12 @@ HostOS=$(echo "$HostOSInfo" | grep "PRETTY_NAME" | cut -d= -f2 | xargs)
 # Install required components from apt
 Print_Style "Fetching required components ..." $YELLOW
 if [[ $HostOS == *"Ubuntu"* ]]; then
-  add-apt-repository ppa:ubuntu-raspi2/ppa -y
+  if [ -n "`which vcgencmd`" ]; then
+    add-apt-repository ppa:ubuntu-raspi2/ppa -y
+    apt-get update
+  fi
 fi
 
-apt-get update 
 apt-get install hdparm build-essential wget curl fio bc -y
 apt-get install libraspberrypi-bin -y
 
@@ -91,7 +93,7 @@ if [ ! -f iozone/src/current/iozone ]; then
 fi
 
 # Get system boot drive information
-BootDrive=$(df | grep boot | awk 'NR==1{ print $1 }')
+BootDrive=$(lsblk -l | grep disk -m 1 | awk 'NR==1{ print $4 }')
 Print_Style "System drive has been detected as $BootDrive" $YELLOW
 BootDriveInfo=$(udevadm info -a -n $BootDrive | sed '/^[[:space:]]*$/d')
 Capacity=$(df -H | grep "/dev/root" | awk 'NR==1{ print $2 }')
@@ -250,8 +252,6 @@ if [ -n "`which vcgencmd`" ]; then
   HostCPUClock=$(echo "$HostConfig" | grep arm_freq | cut -d= -f2)
   HostCoreClock=$(echo "$HostConfig" | grep core_freq | cut -d= -f2)
   HostRAMClock=$(echo "$HostConfig" | grep sdram_freq | cut -d= -f2)
-else
-  HostConfig=$(vcgencmd get_config int)
 fi
 Print_Style "Board information: Model: $HostModel - Architecture: $HostArchitecture - OS: $HostOS" $YELLOW
 Print_Style "Clock speeds: CPU: $HostCPUClock - Core: $HostCoreClock - RAM: $HostRAMClock - SD: $HostSDClock" $YELLOW
@@ -267,7 +267,7 @@ Print_Style "HDParm: $HDParmDisk MB/s - HDParmCached: $HDParmCached MB/s" $YELLO
 # Run DD tests
 Print_Style "Running dd tests ..." $YELLOW
 DDWrite=$(dd if=/dev/zero of=test bs=4k count=80k conv=fsync 2>&1 | sed '/^[[:space:]]*$/d')
-DDWriteResult=$(echo "$DDWrite" | tail -n 1 |  awk 'NR==1{ print $10 }')
+DDWriteResult=$(echo "$DDWrite" | tail -n 1 |  awk 'NR==1{ print $10 }' | sed 's/,/./g')
 echo "$DDWrite"
 Print_Style "DD Write Speed: $DDWriteResult MB/s" $YELLOW
 rm -f test
