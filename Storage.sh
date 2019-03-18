@@ -273,15 +273,15 @@ Print_Style "DD Write Speed: $DDWriteResult MB/s" $YELLOW
 rm -f test
 
 # Run fio tests
-Print_Style "Running fio read test ..." $YELLOW
+Print_Style "Running fio write test ..." $YELLOW
 fio4kRandWrite=$(fio --minimal --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --name=test --filename=test --bs=4k --iodepth=64 --size=100M --readwrite=randwrite)
 fio4kRandWriteIOPS=$(echo "$fio4kRandWrite" | awk -F ';' '{print $49}')
 fio4kRandWriteSpeed=$(echo "$fio4kRandWrite" | awk -F ';' '{print $48}')
 rm -f test
-echo "Running fio write test... "
+Print_Style "Running fio read test ..." $YELLOW
 fio4kRandRead=$(fio --minimal --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --name=test --filename=test --bs=4k --iodepth=64 --size=200M --readwrite=randread)
-fio4kRandReadIOPS=$(echo "$fio4kRandRead" | awk -F ';' '{print $49}')
-fio4kRandReadSpeed=$(echo "$fio4kRandRead" | awk -F ';' '{print $48}')
+fio4kRandReadIOPS=$(echo "$fio4kRandRead" | awk -F ';' '{print $8}')
+fio4kRandReadSpeed=$(echo "$fio4kRandRead" | awk -F ';' '{print $7}')
 Print_Style "FIO results - 4k RandWrite: $fio4kRandWriteIOPS IOPS ($fio4kRandWriteSpeed KB/s) - 4k RandRead: $fio4kRandReadIOPS IOPS ($fio4kRandReadSpeed KB/s)" $YELLOW
 rm -f test
 
