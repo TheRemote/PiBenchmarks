@@ -82,7 +82,7 @@ if [[ -n "`which apt`" ]]; then
 # Next test for Pac-Man (Arch Linux)
 elif [ -n "`which pacman`" ]; then
   pacman --needed --noconfirm -S vim hdparm wget base-devel fio bc
-  if [ -n "`which vcgencmd`" ]; then
+  if [ ! -n "`which vcgencmd`" ]; then
     ln -s /opt/vc/bin/vcgencmd /usr/local/bin
   fi
 else
