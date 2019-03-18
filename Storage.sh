@@ -62,7 +62,7 @@ fi
 # Get host board information
 HostModel=$(tr -d '\0' </proc/device-tree/model)
 HostArchitecture=$(uname -m)
-HostOSInfo=$(cat /etc/os-release)
+HostOSInfo=$(cat /etc/os-release | sed 's/;/!/g')
 HostOS=$(echo "$HostOSInfo" | grep "PRETTY_NAME" | cut -d= -f2 | xargs)
 
 # Install required components
@@ -114,7 +114,7 @@ if [ ! -n "$BootDrive" ]; then
   BootDrive=$(df -H | grep boot | awk 'NR==1{ print $1 }')
 fi
 Print_Style "System drive has been detected as $BootDrive" $YELLOW
-BootDriveInfo=$(udevadm info -a -n $BootDrive | sed '/^[[:space:]]*$/d')
+BootDriveInfo=$(udevadm info -a -n $BootDrive | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
 Capacity=$(lsblk -l | grep disk -m 1 | awk 'NR==1{ print $4 }')
 
 # Check for MicroSD card

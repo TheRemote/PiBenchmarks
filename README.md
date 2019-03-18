@@ -8,6 +8,9 @@ curl https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh 
 <br>
 <b>Update History</b><br>
 <br>
+March 18th 2019<br>
+-Added Arch Linux support<br>
+<br>
 March 17th 2019<br>
 -Added Ubuntu support<br>
 <br>
