@@ -273,25 +273,16 @@ Print_Style "DD Write Speed: $DDWriteResult MB/s" $YELLOW
 rm -f test
 
 # Run fio tests
-Print_Style "Running fio tests ..." $YELLOW
-fio4kRandWrite=$(fio --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --name=test --filename=test --bs=4k --iodepth=64 --size=100M --readwrite=randwrite | sed '/^[[:space:]]*$/d')
-fio4kRandWriteIOPS=$(echo "$fio4kRandWrite" | grep "iops" | awk 'NR==1{ print $4 }' | cut -d= -f2 | cut -d, -f1)
-fio4kRandWriteSpeed=$(echo "$fio4kRandWrite" | grep "iops" | awk 'NR==1{ print $3 }' | cut -d= -f2 | cut -d, -f1 | cut -dK -f1)
-echo "$fio4kRandWrite"
+Print_Style "Running fio read test ..." $YELLOW
+fio4kRandWrite=$(fio --minimal --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --name=test --filename=test --bs=4k --iodepth=64 --size=100M --readwrite=randwrite)
+fio4kRandWriteIOPS=$(echo "$fio4kRandWrite" | awk -F ';' '{print $49}')
+fio4kRandWriteSpeed=$(echo "$fio4kRandWrite" | awk -F ';' '{print $48}')
 rm -f test
-fio4kRandRead=$(fio --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --name=test --filename=test --bs=4k --iodepth=64 --size=200M --readwrite=randread | sed '/^[[:space:]]*$/d')
-fio4kRandReadIOPS=$(echo "$fio4kRandRead" | grep "iops" | awk 'NR==1{ print $5 }' | cut -d= -f2 | cut -d, -f1)
-fio4kRandReadSpeed=$(echo "$fio4kRandRead" | grep "iops" | awk 'NR==1{ print $4 }' | cut -d= -f2 | cut -d, -f1 | cut -dK -f1)
-if [[ $fio4kRandReadSpeed == *"B/s"* ]]; then
-  fio4kRandReadSpeed=$(echo "$fio4kRandReadSpeed" | cut -dB -f1 )
-  fio4kRandReadSpeed=$(echo "scale=2; $fio4kRandReadSpeed/1024" | bc)
-fi
-if [[ $fio4kRandWriteSpeed == *"B/s"* ]]; then
-  fio4kRandWriteSpeed=$(echo "$fio4kRandWriteSpeed" | cut -dB -f1 )
-  fio4kRandWriteSpeed=$(echo "scale=2; $fio4kRandWriteSpeed/1024" | bc)
-fi
-echo "$fio4kRandRead"
-Print_Style "4k RandWrite: $fio4kRandWriteIOPS IOPS ($fio4kRandWriteSpeed KB/s) - 4k RandRead: $fio4kRandReadIOPS IOPS ($fio4kRandReadSpeed KB/s)" $YELLOW
+echo "Running fio write test... "
+fio4kRandRead=$(fio --minimal --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --name=test --filename=test --bs=4k --iodepth=64 --size=200M --readwrite=randread)
+fio4kRandReadIOPS=$(echo "$fio4kRandRead" | awk -F ';' '{print $49}')
+fio4kRandReadSpeed=$(echo "$fio4kRandRead" | awk -F ';' '{print $48}')
+Print_Style "FIO results - 4k RandWrite: $fio4kRandWriteIOPS IOPS ($fio4kRandWriteSpeed KB/s) - 4k RandRead: $fio4kRandReadIOPS IOPS ($fio4kRandReadSpeed KB/s)" $YELLOW
 rm -f test
 
 # Run iozone tests
