@@ -93,10 +93,10 @@ if [ ! -f iozone/src/current/iozone ]; then
 fi
 
 # Get system boot drive information
-BootDrive=$(lsblk -l | grep disk -m 1 | awk 'NR==1{ print $4 }')
+BootDrive=$(fdisk -l | grep '^/dev/[a-z]*[0-9]' | awk '$2 == "*" { print $1 }')
 Print_Style "System drive has been detected as $BootDrive" $YELLOW
 BootDriveInfo=$(udevadm info -a -n $BootDrive | sed '/^[[:space:]]*$/d')
-Capacity=$(df -H | grep "/dev/root" | awk 'NR==1{ print $2 }')
+Capacity=$(lsblk -l | grep disk -m 1 | awk 'NR==1{ print $4 }')
 
 # Check for MicroSD card
 if [[ "$BootDrive" == *"mmcblk"* ]]; then
