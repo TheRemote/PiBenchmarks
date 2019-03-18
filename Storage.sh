@@ -80,8 +80,11 @@ if [[ -n "`which apt`" ]]; then
   apt-get install hdparm build-essential wget curl fio bc -y
   apt-get install libraspberrypi-bin -y
 # Next test for Pac-Man (Arch Linux)
-elif [ -n "`which pac-man`" ]; then
-  echo "In Progress"
+elif [ -n "`which pacman`" ]; then
+  pacman --needed --noconfirm -S vim hdparm wget base-devel fio bc
+  if [ -n "`which vcgencmd`" ]; then
+    ln -s /opt/vc/bin/vcgencmd /usr/local/bin
+  fi
 else
   Print_Style "No package manager found!" $RED
 fi
