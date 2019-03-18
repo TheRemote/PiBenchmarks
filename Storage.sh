@@ -71,7 +71,7 @@ Print_Style "Fetching required components ..." $YELLOW
 # Test for apt first (all Debian based distros)
 if [[ -n "`which apt`" ]]; then
   if [[ $HostOS == *"Ubuntu"* ]]; then
-    if [ -n "`which vcgencmd`" ]; then
+    if [ ! -n "`which vcgencmd`" ]; then
       add-apt-repository ppa:ubuntu-raspi2/ppa -y
       apt-get update
     fi
