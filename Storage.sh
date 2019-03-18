@@ -65,17 +65,27 @@ HostArchitecture=$(uname -m)
 HostOSInfo=$(cat /etc/os-release)
 HostOS=$(echo "$HostOSInfo" | grep "PRETTY_NAME" | cut -d= -f2 | xargs)
 
-# Install required components from apt
+# Install required components
 Print_Style "Fetching required components ..." $YELLOW
-if [[ $HostOS == *"Ubuntu"* ]]; then
-  if [ -n "`which vcgencmd`" ]; then
-    add-apt-repository ppa:ubuntu-raspi2/ppa -y
-    apt-get update
+
+# Test for apt first (all Debian based distros)
+if [ ! -n "`which apt`" ]; then
+  if [[ $HostOS == *"Ubuntu"* ]]; then
+    if [ -n "`which vcgencmd`" ]; then
+      add-apt-repository ppa:ubuntu-raspi2/ppa -y
+      apt-get update
+    fi
   fi
+
+  apt-get install hdparm build-essential wget curl fio bc -y
+  apt-get install libraspberrypi-bin -y
+# Next test for Pac-Man (Arch Linux)
+elif [ ! -n "`which pac-man`" ]; then
+
+else
+  Print_Style "No package manager found!" $RED
 fi
 
-apt-get install hdparm build-essential wget curl fio bc -y
-apt-get install libraspberrypi-bin -y
 
 # Retrieve and build iozone
 if [ ! -f iozone/src/current/iozone ]; then
@@ -92,8 +102,14 @@ if [ ! -f iozone/src/current/iozone ]; then
   cd ../../..
 fi
 
+# Run sync to make sure all changes have been written to disk
+sync
+
 # Get system boot drive information
 BootDrive=$(fdisk -l | grep '^/dev/[a-z]*[0-9]' | awk '$2 == "*" { print $1 }')
+if [ -n "$BootDrive" ]; then 
+  BootDrive=$(df -H | grep root | awk 'NR==1{ print $1 }')
+fi
 Print_Style "System drive has been detected as $BootDrive" $YELLOW
 BootDriveInfo=$(udevadm info -a -n $BootDrive | sed '/^[[:space:]]*$/d')
 Capacity=$(lsblk -l | grep disk -m 1 | awk 'NR==1{ print $4 }')
