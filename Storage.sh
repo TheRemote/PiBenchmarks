@@ -73,15 +73,21 @@ if [[ -n "`which apt`" ]]; then
   if [[ $HostOS == *"Ubuntu"* ]]; then
     if [ ! -n "`which vcgencmd`" ]; then
       add-apt-repository ppa:ubuntu-raspi2/ppa -y
-      apt-get update
     fi
   fi
 
-  apt-get install hdparm build-essential wget curl fio bc -y
+  apt-get update
+  apt-get install hdparm curl fio bc -y
+  apt-get install iozone3 -y
   apt-get install libraspberrypi-bin -y
+
+  # Test if we were able to install iozone3 from a package and don't install build-essential if we were
+  if [ ! -n "`which iozone`" ]; then
+    apt-get install build-essential
+  fi
 # Next test for Pac-Man (Arch Linux)
 elif [ -n "`which pacman`" ]; then
-  pacman --needed --noconfirm -S vim hdparm wget base-devel fio bc
+  pacman --needed --noconfirm -S vim hdparm base-devel fio bc
   if [ ! -n "`which vcgencmd`" ]; then
     ln -s /opt/vc/bin/vcgencmd /usr/local/bin
   fi
@@ -89,20 +95,19 @@ else
   Print_Style "No package manager found!" $RED
 fi
 
-
 # Retrieve and build iozone
-if [ ! -f iozone/src/current/iozone ]; then
-  Print_Style "Building iozone ..." $YELLOW
-  wget -O iozone.html "http://www.iozone.org"
-  DownloadURL=$(grep -m 1 -o 'src/current/iozone3_[^"]*' iozone.html)
-  rm iozone.html
-  wget -O iozone.tar "http://www.iozone.org/$DownloadURL"
-  tar -xf iozone.tar
-  rm iozone.tar
-  mv iozone3_* iozone
-  cd iozone/src/current
-  make --quiet linux-arm
-  cd ../../..
+if [ ! -n "`which iozone`" ]; then
+  if [ ! -f iozone/src/current/iozone ]; then
+    Print_Style "Building iozone ..." $YELLOW
+    DownloadURL=$(curl -N iozone.org | grep -m 1 -o 'src/current/iozone3_[^"]*')
+    curl -o iozone.tar "http://www.iozone.org/$DownloadURL"
+    tar -xf iozone.tar
+    rm iozone.tar
+    mv iozone3_* iozone
+    cd iozone/src/current
+    make --quiet linux-arm
+    cd ../../..
+  fi
 fi
 
 # Run sync to make sure all changes have been written to disk
@@ -317,7 +322,11 @@ rm -f test
 
 # Run iozone tests
 Print_Style "Running iozone test ..." $YELLOW
-IOZone=$(iozone/src/current/./iozone -a -e -I -i 0 -i 1 -i 2 -s 100M -r 4k)
+if [ ! -n "`which iozone`" ]; then
+  IOZone=$(iozone/src/current/./iozone -a -e -I -i 0 -i 1 -i 2 -s 100M -r 4k)
+else
+  IOZone=$(iozone -a -e -I -i 0 -i 1 -i 2 -s 100M -r 4k)
+fi
 IO4kRandRead=$(echo "$IOZone" | tail -n 3 | awk 'NR==1{ print $7 }')
 IO4kRandWrite=$(echo "$IOZone" | tail -n 3 | awk 'NR==1{ print $8 }')
 IO4kRead=$(echo "$IOZone" | tail -n 3 | awk 'NR==1{ print $5 }')

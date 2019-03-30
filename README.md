@@ -7,6 +7,10 @@ To run the benchmark type/paste:<br>
 curl https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh | sudo bash<br>
 <br>
 <b>Update History</b><br>
+March 29th 2019<br>
+-Added Transcend to known vendors<br>
+-Eliminated wget dependency (uses pure curl for everything)<br>
+-Attempt to use native iozone package if available, otherwise build<br>
 <br>
 March 18th 2019<br>
 -Added Arch Linux support<br>
