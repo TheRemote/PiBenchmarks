@@ -72,14 +72,31 @@ Print_Style "Fetching required components ..." $YELLOW
 if [[ -n "`which apt`" ]]; then
   if [[ $HostOS == *"Ubuntu"* ]]; then
     if [ ! -n "`which vcgencmd`" ]; then
+      # Add Raspberry Pi repository to Ubuntu sources
       add-apt-repository ppa:ubuntu-raspi2/ppa -y
+      apt-get update
     fi
+  else
+    apt-get update
   fi
 
-  apt-get update
+  # Check for vcgencmd (measures clock speeds)
+  if [ ! -n "`which vcgencmd`" ]; then
+    apt-get install libraspberrypi-bin -y
+  fi
+
   apt-get install hdparm curl fio bc -y
-  apt-get install iozone3 -y
-  apt-get install libraspberrypi-bin -y
+  
+  # Attempt to install iozone from package
+  if [[ "$HostArchitecture" == *"armv7"* || "$HostArchitecture" == *"armhf"* ]]; then
+    curl -o iozone3_429-3+b1_armhf.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_armhf.deb
+    dpkg --install iozone3_429-3+b1_armhf.deb
+    rm iozone3_429-3+b1_armhf.deb
+  elif [[ "$HostArchitecture" == *"aarch64"* || "$HostArchitecture" == *"arm64"* ]]; then
+    curl -o iozone3_429-3+b1_arm64.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_arm64.deb
+    dpkg --install iozone3_429-3+b1_arm64.deb
+    rm iozone3_429-3+b1_arm64.deb
+  fi
 
   # Test if we were able to install iozone3 from a package and don't install build-essential if we were
   if [ ! -n "`which iozone`" ]; then
@@ -89,6 +106,7 @@ if [[ -n "`which apt`" ]]; then
 elif [ -n "`which pacman`" ]; then
   pacman --needed --noconfirm -S vim hdparm base-devel fio bc
   if [ ! -n "`which vcgencmd`" ]; then
+     # Create soft link for vcgencmd
     ln -s /opt/vc/bin/vcgencmd /usr/local/bin
   fi
 else
