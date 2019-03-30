@@ -115,7 +115,7 @@ if [ ! -n "$BootDrive" ]; then
 fi
 Print_Style "System drive has been detected as $BootDrive" $YELLOW
 BootDriveInfo=$(udevadm info -a -n $BootDrive | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
-Capacity=$(lsblk -l | grep disk -m 1 | awk 'NR==1{ print $4 }')
+Capacity=$(lsblk -l | grep disk -m 1 | awk 'NR==1{ print $4 }' | sed 's/,/./g')
 
 # Check for MicroSD card
 if [[ "$BootDrive" == *"mmcblk"* ]]; then
@@ -161,8 +161,13 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
     0x000082)
       Manufacturer="Sony"
       ;;
+    0x000092)
+      Manufacturer="Sony"
+      ;;
+    0x00009f)
+      Manufacturer="Netac"
+      ;;
     *)
-      Manufacturer="Unknown"
       ;;
   esac
 
@@ -198,6 +203,12 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
       ;;
     JT)
       Vendor="Sony"
+      ;;
+    J\`)
+      Vendor="Transcend"
+      ;;
+    JE)
+      Vendor="Transcend"
       ;;
     *)
       ;;
