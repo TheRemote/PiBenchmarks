@@ -59,11 +59,13 @@ if [[ "$(whoami)" != "root" ]]; then
   exit 1
 fi
 
-# Get host board information
-HostModel=$(tr -d '\0' </proc/device-tree/model)
+# Get host board architecture
 HostArchitecture=$(uname -m)
 HostOSInfo=$(cat /etc/os-release | sed 's/;/!/g')
 HostOS=$(echo "$HostOSInfo" | grep "PRETTY_NAME" | cut -d= -f2 | xargs)
+if [[ "$HostArchitecture" == *"x86_64"* || "$HostArchitecture" == *"amd64"* ]]; then
+  
+fi
 
 # Install required components
 Print_Style "Fetching required components ..." $YELLOW
@@ -112,6 +114,30 @@ elif [ -n "`which pacman`" ]; then
 else
   Print_Style "No package manager found!" $RED
 fi
+
+# Get host hardware model information
+if [[ "$HostArchitecture" == *"x86"* || "$HostArchitecture" == *"amd64"* ]]; then
+  # X86 or X86_64 system -- use dmidecode
+  HostConfig=$(dmidecode)
+  HostModel=$(dmidecode -t1 | grep 'Product Name' -m 1 | cut -d: -f2 | xargs)
+  HostManufacturer=$(dmidecode -t1 | grep 'Manufacturer' -m 1 | cut -d: -f2 | xargs)
+  HostCPUClock=$(dmidecode -t4 | grep -m 1 'Max Speed' | cut -d: -f2 | cut -d' ' -f2 | xargs)
+  HostCoreClock="N/A"
+  HostRAMClock=$(dmidecode -t17 | grep -m 1 "Speed: " | cut -d' ' -f2 | xargs)
+else
+  # ARM system -- use vcgencmd
+  HostModel=$(tr -d '\0' </proc/device-tree/model)
+  HostManufacturer="Raspberry Pi Foundation"
+  # Check for vcgencmd
+  if [ -n "`which vcgencmd`" ]; then
+    HostConfig=$(vcgencmd get_config int)
+    HostCPUClock=$(echo "$HostConfig" | grep arm_freq | cut -d= -f2)
+    HostCoreClock=$(echo "$HostConfig" | grep core_freq | cut -d= -f2)
+    HostRAMClock=$(echo "$HostConfig" | grep sdram_freq | cut -d= -f2)
+  fi
+fi
+Print_Style "Board information: Model: $HostModel - Architecture: $HostArchitecture - OS: $HostOS" $YELLOW
+Print_Style "Clock speeds: CPU: $HostCPUClock - Core: $HostCoreClock - RAM: $HostRAMClock - SD: $HostSDClock" $YELLOW
 
 # Retrieve and build iozone
 if [ ! -n "`which iozone`" ]; then
@@ -237,7 +263,7 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
       ;;
   esac
 
-  Product="Micro SD"
+  Product=$(echo "$BootDriveInfo" | grep -m 1 "{type}" | cut -d= -f3 | cut -d\" -f2 | xargs)
   Firmware=$(echo "$BootDriveInfo" | grep -m 1 "{fwrev}" | cut -d= -f3 | cut -d\" -f2 | xargs)
   DateManufactured=$(echo "$BootDriveInfo" | grep -m 1 "date" | cut -d= -f3 | cut -d\" -f2 | xargs)
   Model=$(echo "$BootDriveInfo" | grep -m 1 "{name}" | cut -d= -f3 | cut -d\" -f2 | xargs)
@@ -299,16 +325,6 @@ else
   Print_Style  "Drive information: Manufacturer: $Manufacturer - Model: $Model - Vendor: $Vendor - Product: $Product - HW Version: $Version - FW Version: $Firmware - Date Manufactured: $DateManufactured" $YELLOW
 fi
 
-# Check for vcgencmd
-if [ -n "`which vcgencmd`" ]; then
-  HostConfig=$(vcgencmd get_config int)
-  HostCPUClock=$(echo "$HostConfig" | grep arm_freq | cut -d= -f2)
-  HostCoreClock=$(echo "$HostConfig" | grep core_freq | cut -d= -f2)
-  HostRAMClock=$(echo "$HostConfig" | grep sdram_freq | cut -d= -f2)
-fi
-Print_Style "Board information: Model: $HostModel - Architecture: $HostArchitecture - OS: $HostOS" $YELLOW
-Print_Style "Clock speeds: CPU: $HostCPUClock - Core: $HostCoreClock - RAM: $HostRAMClock - SD: $HostSDClock" $YELLOW
-
 # Run HDParm tests
 Print_Style "Running HDParm tests ..." $YELLOW
 HDParm=$(hdparm -Tt --direct $BootDrive | sed '/^[[:space:]]*$/d')
@@ -341,9 +357,9 @@ rm -f test
 # Run iozone tests
 Print_Style "Running iozone test ..." $YELLOW
 if [ ! -n "`which iozone`" ]; then
-  IOZone=$(iozone/src/current/./iozone -a -e -I -i 0 -i 1 -i 2 -s 100M -r 4k)
+  IOZone=$(iozone/src/current/./iozone -a -e -I -i 0 -i 1 -i 2 -s 80M -r 4k)
 else
-  IOZone=$(iozone -a -e -I -i 0 -i 1 -i 2 -s 100M -r 4k)
+  IOZone=$(iozone -a -e -I -i 0 -i 1 -i 2 -s 80M -r 4k)
 fi
 IO4kRandRead=$(echo "$IOZone" | tail -n 3 | awk 'NR==1{ print $7 }')
 IO4kRandWrite=$(echo "$IOZone" | tail -n 3 | awk 'NR==1{ print $8 }')
@@ -361,7 +377,7 @@ read -p 'Alias (leave blank for Anonymous): ' UserAlias < /dev/tty
 if [[ ! "$UserAlias" ]]; then UserAlias="Anonymous"; fi
 
 # Submit results
-curl --form "form_tools_form_id=1" --form "DDTest=$DDWrite" --form "DDWriteSpeed=$DDWriteResult" --form "HDParmDisk=$HDParmDisk" --form "HDParmCached=$HDParmCached" --form "HDParm=$HDParm" --form "fio4kRandRead=$fio4kRandRead" --form "fio4kRandWrite=$fio4kRandWrite" --form "fio4kRandWriteIOPS=$fio4kRandWriteIOPS" --form "fio4kRandReadIOPS=$fio4kRandReadIOPS" --form "fio4kRandWriteSpeed=$fio4kRandWriteSpeed" --form "fio4kRandReadSpeed=$fio4kRandReadSpeed" --form "IOZone=$IOZone" --form "IO4kRandRead=$IO4kRandRead" --form "IO4kRandWrite=$IO4kRandWrite" --form "IO4kRead=$IO4kRead" --form "IO4kWrite=$IO4kWrite" --form "Drive=$BootDrive" --form "DriveInfo=$BootDriveInfo" --form "Model=$Model" --form "Vendor=$Vendor" --form "Capacity=$Capacity" --form "Manufacturer=$Manufacturer" --form "Product=$Product" --form "Version=$Version" --form "Firmware=$Firmware" --form "DateManufactured=$DateManufactured" --form "Brand=$Brand" --form "Class=$Class" --form "OCR=$OCR" --form "SSR=$SSR" --form "SCR=$SCR" --form "CID=$CID" --form "CSD=$CSD" --form "UserAlias=$UserAlias" --form "HostModel=$HostModel" --form "HostSDClock=$HostSDClock" --form "HostConfig=$HostConfig" --form "HostCPUClock=$HostCPUClock" --form "HostCoreClock=$HostCoreClock" --form "HostRAMClock=$HostRAMClock" --form "HostArchitecture=$HostArchitecture" --form "HostOS=$HostOS" --form "HostOSInfo=$HostOSInfo" https://www.jamesachambers.com/formtools/process.php
+curl --form "form_tools_form_id=1" --form "DDTest=$DDWrite" --form "DDWriteSpeed=$DDWriteResult" --form "HDParmDisk=$HDParmDisk" --form "HDParmCached=$HDParmCached" --form "HDParm=$HDParm" --form "fio4kRandRead=$fio4kRandRead" --form "fio4kRandWrite=$fio4kRandWrite" --form "fio4kRandWriteIOPS=$fio4kRandWriteIOPS" --form "fio4kRandReadIOPS=$fio4kRandReadIOPS" --form "fio4kRandWriteSpeed=$fio4kRandWriteSpeed" --form "fio4kRandReadSpeed=$fio4kRandReadSpeed" --form "IOZone=$IOZone" --form "IO4kRandRead=$IO4kRandRead" --form "IO4kRandWrite=$IO4kRandWrite" --form "IO4kRead=$IO4kRead" --form "IO4kWrite=$IO4kWrite" --form "Drive=$BootDrive" --form "DriveInfo=$BootDriveInfo" --form "Model=$Model" --form "Vendor=$Vendor" --form "Capacity=$Capacity" --form "Manufacturer=$Manufacturer" --form "Product=$Product" --form "Version=$Version" --form "Firmware=$Firmware" --form "DateManufactured=$DateManufactured" --form "Brand=$Brand" --form "Class=$Class" --form "OCR=$OCR" --form "SSR=$SSR" --form "SCR=$SCR" --form "CID=$CID" --form "CSD=$CSD" --form "UserAlias=$UserAlias" --form "HostModel=$HostModel" --form "HostSDClock=$HostSDClock" --form "HostConfig=$HostConfig" --form "HostCPUClock=$HostCPUClock" --form "HostCoreClock=$HostCoreClock" --form "HostRAMClock=$HostRAMClock" --form "HostArchitecture=$HostArchitecture" --form "HostOS=$HostOS" --form "HostOSInfo=$HostOSInfo" --form "HostManufacturer=$HostManufacturer" https://www.jamesachambers.com/formtools/process.php
 
 # Calculate score
 Score=$(echo "scale=2; $DDWriteResult * 1024" | bc)
