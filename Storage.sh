@@ -63,9 +63,6 @@ fi
 HostArchitecture=$(uname -m)
 HostOSInfo=$(cat /etc/os-release | sed 's/;/!/g')
 HostOS=$(echo "$HostOSInfo" | grep "PRETTY_NAME" | cut -d= -f2 | xargs)
-if [[ "$HostArchitecture" == *"x86_64"* || "$HostArchitecture" == *"amd64"* ]]; then
-  
-fi
 
 # Install required components
 Print_Style "Fetching required components ..." $YELLOW
