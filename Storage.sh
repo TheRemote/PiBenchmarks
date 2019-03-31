@@ -124,7 +124,7 @@ if [[ -n "`which apt`" ]]; then
     curl -o iozone3_429-3+b1_amd64.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_amd64.deb
     dpkg --install iozone3_429-3+b1_amd64.deb
     rm iozone3_429-3+b1_amd64.deb
-  elif [[ "$HostArchitecture" == *"i386"*]]; then
+  elif [[ "$HostArchitecture" == *"i386"* ]]; then
     curl -o iozone3_429-3+b1_i386.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_i386.deb
     dpkg --install iozone3_429-3+b1_i386.deb
     rm iozone3_429-3+b1_i386.deb
