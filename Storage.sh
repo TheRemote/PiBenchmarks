@@ -113,21 +113,21 @@ if [[ -n "`which apt`" ]]; then
   
   # Attempt to install iozone from package
   if [[ "$HostArchitecture" == *"armv7"* || "$HostArchitecture" == *"armhf"* ]]; then
-    curl -o iozone3_429-3+b1_armhf.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_armhf.deb
-    dpkg --install iozone3_429-3+b1_armhf.deb
-    rm iozone3_429-3+b1_armhf.deb
+    curl -o iozone3.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_armhf.deb
+    dpkg --install iozone3.deb
+    rm iozone3.deb
   elif [[ "$HostArchitecture" == *"aarch64"* || "$HostArchitecture" == *"arm64"* ]]; then
-    curl -o iozone3_429-3+b1_arm64.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_arm64.deb
-    dpkg --install iozone3_429-3+b1_arm64.deb
-    rm iozone3_429-3+b1_arm64.deb
+    curl -o iozone3.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_arm64.deb
+    dpkg --install iozone3.deb
+    rm iozone3.deb
   elif [[ "$HostArchitecture" == *"x86_64"* || "$HostArchitecture" == *"amd64"* ]]; then
-    curl -o iozone3_429-3+b1_amd64.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_amd64.deb
-    dpkg --install iozone3_429-3+b1_amd64.deb
-    rm iozone3_429-3+b1_amd64.deb
+    curl -o iozone3.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_amd64.deb
+    dpkg --install iozone3.deb
+    rm iozone3.deb
   elif [[ "$HostArchitecture" == *"i386"* ]]; then
-    curl -o iozone3_429-3+b1_i386.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_i386.deb
-    dpkg --install iozone3_429-3+b1_i386.deb
-    rm iozone3_429-3+b1_i386.deb
+    curl -o iozone3.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_i386.deb
+    dpkg --install iozone3.deb
+    rm iozone3.deb
   fi
 
   # Test if we were able to install iozone3 from a package and don't install build-essential if we were
