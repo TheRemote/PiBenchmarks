@@ -59,60 +59,10 @@ if [[ "$(whoami)" != "root" ]]; then
   exit 1
 fi
 
-# Get host board architecture
+# Get host board information
 HostArchitecture=$(uname -m)
 HostOSInfo=$(cat /etc/os-release | sed 's/;/!/g')
 HostOS=$(echo "$HostOSInfo" | grep "PRETTY_NAME" | cut -d= -f2 | xargs)
-
-# Install required components
-Print_Style "Fetching required components ..." $YELLOW
-
-# Test for apt first (all Debian based distros)
-if [[ -n "`which apt`" ]]; then
-  if [[ $HostOS == *"Ubuntu"* ]]; then
-    if [ ! -n "`which vcgencmd`" ]; then
-      # Add Raspberry Pi repository to Ubuntu sources
-      add-apt-repository ppa:ubuntu-raspi2/ppa -y
-      apt-get update
-    fi
-  else
-    apt-get update
-  fi
-
-  # Check for vcgencmd (measures clock speeds)
-  if [ ! -n "`which vcgencmd`" ]; then
-    apt-get install libraspberrypi-bin -y
-  fi
-
-  apt-get install hdparm curl fio bc -y
-  
-  # Attempt to install iozone from package
-  if [[ "$HostArchitecture" == *"armv7"* || "$HostArchitecture" == *"armhf"* ]]; then
-    curl -o iozone3_429-3+b1_armhf.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_armhf.deb
-    dpkg --install iozone3_429-3+b1_armhf.deb
-    rm iozone3_429-3+b1_armhf.deb
-  elif [[ "$HostArchitecture" == *"aarch64"* || "$HostArchitecture" == *"arm64"* ]]; then
-    curl -o iozone3_429-3+b1_arm64.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_arm64.deb
-    dpkg --install iozone3_429-3+b1_arm64.deb
-    rm iozone3_429-3+b1_arm64.deb
-  fi
-
-  # Test if we were able to install iozone3 from a package and don't install build-essential if we were
-  if [ ! -n "`which iozone`" ]; then
-    apt-get install build-essential
-  fi
-# Next test for Pac-Man (Arch Linux)
-elif [ -n "`which pacman`" ]; then
-  pacman --needed --noconfirm -S vim hdparm base-devel fio bc
-  if [ ! -n "`which vcgencmd`" ]; then
-     # Create soft link for vcgencmd
-    ln -s /opt/vc/bin/vcgencmd /usr/local/bin
-  fi
-else
-  Print_Style "No package manager found!" $RED
-fi
-
-# Get host hardware model information
 if [[ "$HostArchitecture" == *"x86"* || "$HostArchitecture" == *"amd64"* ]]; then
   # X86 or X86_64 system -- use dmidecode
   HostConfig=$(dmidecode)
@@ -133,8 +83,71 @@ else
     HostRAMClock=$(echo "$HostConfig" | grep sdram_freq | cut -d= -f2)
   fi
 fi
-Print_Style "Board information: Model: $HostModel - Architecture: $HostArchitecture - OS: $HostOS" $YELLOW
+Print_Style "Board information: Manufacturer: $HostManufacturer - Model: $HostModel - Architecture: $HostArchitecture - OS: $HostOS" $YELLOW
 Print_Style "Clock speeds: CPU: $HostCPUClock - Core: $HostCoreClock - RAM: $HostRAMClock - SD: $HostSDClock" $YELLOW
+
+# Install required components
+Print_Style "Fetching required components ..." $YELLOW
+
+# Test for apt first (all Debian based distros)
+if [[ -n "`which apt`" ]]; then
+  # Check if we are on a Raspberry Pi
+  if [[ $HostModel == *"Raspberry Pi"* ]]; then
+    # Check if we are running Ubuntu
+    if [[ $HostOS == *"Ubuntu"* ]]; then
+      if [ ! -n "`which vcgencmd`" ]; then
+        # Add Raspberry Pi repository to Ubuntu sources
+        add-apt-repository ppa:ubuntu-raspi2/ppa -y
+      fi
+    fi
+    apt-get update
+    # Check for vcgencmd (measures clock speeds)
+    if [ ! -n "`which vcgencmd`" ]; then
+      apt-get install libraspberrypi-bin -y
+    fi
+  else
+    apt-get update
+  fi
+  
+  apt-get install hdparm curl fio bc -y
+  
+  # Attempt to install iozone from package
+  if [[ "$HostArchitecture" == *"armv7"* || "$HostArchitecture" == *"armhf"* ]]; then
+    curl -o iozone3_429-3+b1_armhf.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_armhf.deb
+    dpkg --install iozone3_429-3+b1_armhf.deb
+    rm iozone3_429-3+b1_armhf.deb
+  elif [[ "$HostArchitecture" == *"aarch64"* || "$HostArchitecture" == *"arm64"* ]]; then
+    curl -o iozone3_429-3+b1_arm64.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_arm64.deb
+    dpkg --install iozone3_429-3+b1_arm64.deb
+    rm iozone3_429-3+b1_arm64.deb
+  elif [[ "$HostArchitecture" == *"x86_64"* || "$HostArchitecture" == *"amd64"* ]]; then
+    curl -o iozone3_429-3+b1_amd64.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_amd64.deb
+    dpkg --install iozone3_429-3+b1_amd64.deb
+    rm iozone3_429-3+b1_amd64.deb
+  elif [[ "$HostArchitecture" == *"i386"*]]; then
+    curl -o iozone3_429-3+b1_i386.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_i386.deb
+    dpkg --install iozone3_429-3+b1_i386.deb
+    rm iozone3_429-3+b1_i386.deb
+  fi
+
+  # Test if we were able to install iozone3 from a package and don't install build-essential if we were
+  if [ ! -n "`which iozone`" ]; then
+    apt-get install build-essential
+  fi
+# Next test for Pac-Man (Arch Linux)
+elif [ -n "`which pacman`" ]; then
+  pacman --needed --noconfirm -S vim hdparm base-devel fio bc
+
+  # Check if running on a Raspberry Pi
+  if [[ $HostModel == *"Raspberry Pi"* ]]; then
+    if [ ! -n "`which vcgencmd`" ]; then
+      # Create soft link for vcgencmd
+      ln -s /opt/vc/bin/vcgencmd /usr/local/bin
+    fi
+  fi
+else
+  Print_Style "No package manager found!" $RED
+fi
 
 # Retrieve and build iozone
 if [ ! -n "`which iozone`" ]; then
