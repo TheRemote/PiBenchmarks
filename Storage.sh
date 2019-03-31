@@ -59,6 +59,9 @@ if [[ "$(whoami)" != "root" ]]; then
   exit 1
 fi
 
+# Change directory to home directory
+cd ~
+
 # Get host board information
 HostArchitecture=$(uname -m)
 HostOSInfo=$(cat /etc/os-release | sed 's/;/!/g')
