@@ -66,28 +66,17 @@ cd ~
 HostArchitecture=$(uname -m)
 HostOSInfo=$(cat /etc/os-release | sed 's/;/!/g')
 HostOS=$(echo "$HostOSInfo" | grep "PRETTY_NAME" | cut -d= -f2 | xargs)
+
 if [[ "$HostArchitecture" == *"x86"* || "$HostArchitecture" == *"amd64"* ]]; then
   # X86 or X86_64 system -- use dmidecode
-  HostConfig=$(dmidecode)
   HostModel=$(dmidecode -t1 | grep 'Product Name' -m 1 | cut -d: -f2 | xargs)
   HostManufacturer=$(dmidecode -t1 | grep 'Manufacturer' -m 1 | cut -d: -f2 | xargs)
-  HostCPUClock=$(dmidecode -t4 | grep -m 1 'Max Speed' | cut -d: -f2 | cut -d' ' -f2 | xargs)
-  HostCoreClock="N/A"
-  HostRAMClock=$(dmidecode -t17 | grep -m 1 "Speed: " | cut -d' ' -f2 | xargs)
 else
-  # ARM system -- use vcgencmd
+  # ARM system
   HostModel=$(tr -d '\0' </proc/device-tree/model)
   HostManufacturer="Raspberry Pi Foundation"
-  # Check for vcgencmd
-  if [ -n "`which vcgencmd`" ]; then
-    HostConfig=$(vcgencmd get_config int)
-    HostCPUClock=$(echo "$HostConfig" | grep arm_freq | cut -d= -f2)
-    HostCoreClock=$(echo "$HostConfig" | grep core_freq | cut -d= -f2)
-    HostRAMClock=$(echo "$HostConfig" | grep sdram_freq | cut -d= -f2)
-  fi
 fi
 Print_Style "Board information: Manufacturer: $HostManufacturer - Model: $HostModel - Architecture: $HostArchitecture - OS: $HostOS" $YELLOW
-Print_Style "Clock speeds: CPU: $HostCPUClock - Core: $HostCoreClock - RAM: $HostRAMClock - SD: $HostSDClock" $YELLOW
 
 # Install required components
 Print_Style "Fetching required components ..." $YELLOW
@@ -151,6 +140,24 @@ elif [ -n "`which pacman`" ]; then
 else
   Print_Style "No package manager found!" $RED
 fi
+
+# Get clock speeds
+if [[ "$HostArchitecture" == *"x86"* || "$HostArchitecture" == *"amd64"* ]]; then
+  # X86 or X86_64 system -- use dmidecode
+  HostConfig=$(dmidecode)
+  HostCPUClock=$(dmidecode -t4 | grep -m 1 'Max Speed' | cut -d: -f2 | cut -d' ' -f2 | xargs)
+  HostCoreClock="N/A"
+  HostRAMClock=$(dmidecode -t17 | grep -m 1 "Speed: " | cut -d' ' -f2 | xargs)
+else
+  # Check for vcgencmd
+  if [ -n "`which vcgencmd`" ]; then
+    HostConfig=$(vcgencmd get_config int)
+    HostCPUClock=$(echo "$HostConfig" | grep arm_freq | cut -d= -f2)
+    HostCoreClock=$(echo "$HostConfig" | grep core_freq | cut -d= -f2)
+    HostRAMClock=$(echo "$HostConfig" | grep sdram_freq | cut -d= -f2)
+  fi
+fi
+Print_Style "Clock speeds: CPU: $HostCPUClock - Core: $HostCoreClock - RAM: $HostRAMClock - SD: $HostSDClock" $YELLOW
 
 # Retrieve and build iozone
 if [ ! -n "`which iozone`" ]; then
@@ -332,10 +339,10 @@ else
   Manufacturer=$(echo "$BootDriveInfo" | grep -m 1 "manufacturer" | cut -d= -f3 | cut -d\" -f2 | xargs)
   Vendor=$(echo "$BootDriveInfo" | grep -m 1 "vendor" | cut -d= -f3 | cut -d\" -f2 | xargs)
   Product=$(echo "$BootDriveInfo" | grep -m 1 "product" | cut -d= -f3 | cut -d\" -f2 | xargs)
-  Model=$(echo "$BootDriveInfo" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3 $4 $5 }')
+  Model=$(echo "$BootDriveInfo" | grep -m 1 "Model Number:" | awk 'NR==1{ print $4 $5 }')
   Version=$(echo "$BootDriveInfo" | grep -m 1 "version" | cut -d= -f3 | cut -d\" -f2 | xargs)
   Firmware=$(echo "$BootDriveInfo" | grep -m 1 "Firmware Revision:" | awk 'NR==1{ print $3 $4 $5 }')
-  Print_Style  "Drive information: Manufacturer: $Manufacturer - Model: $Model - Vendor: $Vendor - Product: $Product - HW Version: $Version - FW Version: $Firmware - Date Manufactured: $DateManufactured" $YELLOW
+  Print_Style "Drive information: Manufacturer: $Manufacturer - Model: $Model - Vendor: $Vendor - Product: $Product - HW Version: $Version - FW Version: $Firmware - Date Manufactured: $DateManufactured" $YELLOW
 fi
 
 # Run HDParm tests
