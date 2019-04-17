@@ -8,6 +8,11 @@ curl https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh 
 <br>
 <b>Update History</b><br>
 <br>
+April 16th 2019<br>
+-Added "Team Group" MicroSD vendor (code -B, 0x000045)<br>
+-Added Maxell MicroSD vendor (code TI)<br>
+-Added fix to get gpu_freqw on older Raspberry Pis that don't have core_freq
+<br>
 March 30th 2019<br>
 -Added x86_64 and x86 support<br>
 <br>

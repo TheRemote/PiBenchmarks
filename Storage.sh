@@ -154,10 +154,13 @@ else
     HostConfig=$(vcgencmd get_config int)
     HostCPUClock=$(echo "$HostConfig" | grep arm_freq | cut -d= -f2)
     HostCoreClock=$(echo "$HostConfig" | grep core_freq | cut -d= -f2)
+    if [ ! -n "$HostCoreClock" ]; then
+      HostCoreClock=$(echo "$HostConfig" | grep gpu_freq | cut -d= -f2)
+    fi
     HostRAMClock=$(echo "$HostConfig" | grep sdram_freq | cut -d= -f2)
   fi
 fi
-Print_Style "Clock speeds: CPU: $HostCPUClock - Core: $HostCoreClock - RAM: $HostRAMClock - SD: $HostSDClock" $YELLOW
+Print_Style "Clock speeds: CPU: $HostCPUClock - Core: $HostCoreClock - RAM: $HostRAMClock" $YELLOW
 
 # Retrieve and build iozone
 if [ ! -n "`which iozone`" ]; then
@@ -221,6 +224,9 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
     0x000041)
       Manufacturer="Kingston"
       ;;
+    0x000045)
+      Manufacturer="Team Group"
+      ;;
     0x000074)
       Manufacturer="Transcend"
       ;;
@@ -244,6 +250,9 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
   Vendor=$(echo "$BootDriveInfo" | grep -m 1 "oemid" | cut -d= -f3 | cut -d\" -f2 | xargs | xxd -r)
   case "$Vendor" in
     SD)
+      Vendor="SanDisk"
+      ;;
+    4V)
       Vendor="SanDisk"
       ;;
     PA)
@@ -278,6 +287,12 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
       ;;
     JE)
       Vendor="Transcend"
+      ;;
+    -B)
+      Vendor="Team Group"
+      ;;
+    TI)
+      Vendor="Maxell"
       ;;
     *)
       ;;
@@ -329,14 +344,17 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
     Class="$Class U$SSRUHSClass"
   fi
   Class=$(echo "$Class" | xargs)
-  Print_Style "MicroSD information: Manufacturer: $Manufacturer - Model: $Model - Vendor: $Vendor - Product: $Product - HW Version: $Version - FW Version: $Firmware - Date Manufactured: $DateManufactured" $YELLOW
+  Print_Style "MicroSD information: Clock Speed: $HostSDClock - Manufacturer: $Manufacturer - Model: $Model - Vendor: $Vendor - Product: $Product - HW Version: $Version - FW Version: $Firmware - Date Manufactured: $DateManufactured" $YELLOW
   Print_Style "Class: $Class" $YELLOW
 else
   # Not a MicroSD card
   BootDriveInfo+=$(hdparm -I $BootDrive)
   HostSDClock="N/A"
   # Attempt to identify drive
-  Manufacturer=$(echo "$BootDriveInfo" | grep -m 1 "manufacturer" | cut -d= -f3 | cut -d\" -f2 | xargs)
+  Manufacturer=$(echo "$BootDriveInfo" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3 }')
+  if [ ! -n "$Manufacturer" ]; then
+    Manufacturer=$(echo "$BootDriveInfo" | grep -m 1 "manufacturer" | cut -d= -f3 | cut -d\" -f2 | xargs)
+  fi
   Vendor=$(echo "$BootDriveInfo" | grep -m 1 "vendor" | cut -d= -f3 | cut -d\" -f2 | xargs)
   Product=$(echo "$BootDriveInfo" | grep -m 1 "product" | cut -d= -f3 | cut -d\" -f2 | xargs)
   Model=$(echo "$BootDriveInfo" | grep -m 1 "Model Number:" | awk 'NR==1{ print $4 $5 }')
