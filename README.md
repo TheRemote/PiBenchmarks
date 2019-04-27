@@ -11,6 +11,7 @@ curl https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh 
 <br>
 April 27th 2019<br>
 -Added cross platform CPU frequency detection to use if vcgencmd is not present<br>
+-Improved boot drive detection<br>
 <br>
 April 16th 2019<br>
 -Added "Team Group" MicroSD vendor (code -B, 0x000045)<br>

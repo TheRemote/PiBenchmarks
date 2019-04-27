@@ -193,6 +193,9 @@ BootDrive=$(fdisk -l | grep '^/dev/[a-z]*[0-9]' | awk '$2 == "*" { print $1 }')
 if [ ! -n "$BootDrive" ]; then
   BootDrive=$(df -H | grep boot | awk 'NR==1{ print $1 }')
 fi
+if [ ! -n "$BootDrive" ]; then
+  BootDrive=$(fdisk -l | grep -m 1 '^/dev/[a-z]*[0-9]')
+fi
 Print_Style "System drive has been detected as $BootDrive" $YELLOW
 BootDriveInfo=$(udevadm info -a -n $BootDrive | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
 Capacity=$(lsblk -l | grep disk -m 1 | awk 'NR==1{ print $4 }' | sed 's/,/./g')
