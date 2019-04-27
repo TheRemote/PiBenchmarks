@@ -1,8 +1,10 @@
 #!/bin/bash
 # Storage benchmark by James A. Chambers (https://www.jamesachambers.com/)
 # Benchmarks your storage and anonymously submits result to jamesachambers.com
-# I'm hoping to build a good dataset for us to figure out the best options for Pi storage
-# This is especially true for MicroSD cards which are shrouded in an industry of NDAs / mystery / shenanigans
+# Results and discussion available at https://jamesachambers.com/2019/03/raspberry-pi-storage-benchmarks-2019-benchmarking-script/
+#
+# To run the benchmark use the following command:
+# curl https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh | sudo bash
 
 # Terminal colors
 BLACK=$(tput setaf 0)
@@ -101,7 +103,7 @@ if [[ -n "`which apt`" ]]; then
     apt-get update
   fi
   
-  apt-get install hdparm curl fio bc -y
+  apt-get install hdparm curl fio bc lshw -y
   
   # Attempt to install iozone from package
   if [[ "$HostArchitecture" == *"armv7"* || "$HostArchitecture" == *"armhf"* ]]; then
@@ -158,6 +160,12 @@ else
       HostCoreClock=$(echo "$HostConfig" | grep gpu_freq | cut -d= -f2)
     fi
     HostRAMClock=$(echo "$HostConfig" | grep sdram_freq | cut -d= -f2)
+  else
+    HostConfig=$(lshw)
+    HostCPUClock=$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq)
+    HostCPUClock=$(echo "scale=0; $HostCPUClock / 1000" | bc)
+    HostCoreClock="N/A"
+    HostRAMClock="N/A"
   fi
 fi
 Print_Style "Clock speeds: CPU: $HostCPUClock - Core: $HostCoreClock - RAM: $HostRAMClock" $YELLOW
@@ -445,4 +453,4 @@ printf "%-25s %-25s %-25s\n" "IOZone" "4k random write" "$IO4kRandWrite KB/s"
 printf "\n$BRIGHT$MAGENTA$UNDERLINE%-25s %-25s %-25s\n" " " "Score: $Score" " "
 echo ""
 echo "Compare with previous benchmark results at:"
-echo "https://www.jamesachambers.com/raspberry-pi-storage-benchmarks/$NORMAL"
+echo "https://www.jamesachambers.com/raspberry-pi-storage-benchmarks/ $NORMAL"
