@@ -76,7 +76,13 @@ if [[ "$HostArchitecture" == *"x86"* || "$HostArchitecture" == *"amd64"* ]]; the
 else
   # ARM system
   HostModel=$(tr -d '\0' </proc/device-tree/model)
-  HostManufacturer="Raspberry Pi Foundation"
+  if [[ "$HostModel" == *"Raspberry Pi"* ]]; then
+    HostManufacturer="Raspberry Pi Foundation"
+  elif [[ "$HostModel" == *"Tinker Board"* ]]; then
+    HostManufacturer="ASUSTeK"
+  else
+    HostManufacturer="N/A"
+  fi
 fi
 Print_Style "Board information: Manufacturer: $HostManufacturer - Model: $HostModel - Architecture: $HostArchitecture - OS: $HostOS" $YELLOW
 
