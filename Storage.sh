@@ -304,6 +304,9 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
     0x000092)
       Manufacturer="Sony"
       ;;
+    0x00009C)
+      Manufacturer="Sony"
+      ;;
     0x00009f)
       Manufacturer="Netac"
       ;;
@@ -344,6 +347,9 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
       Vendor="Kingston"
       ;;
     JT)
+      Vendor="Sony"
+      ;;
+    SO)
       Vendor="Sony"
       ;;
     J\`)
