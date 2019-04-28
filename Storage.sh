@@ -221,6 +221,39 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
   
   # Get Manufacturer and check against known ones
   Manufacturer=$(echo "$BootDriveInfo" | grep -m 1 "manfid" | cut -d= -f3 | cut -d\" -f2 | xargs)
+  if [ ! -n "$Manufacturer" ]; then
+    RootDrive=$(echo "$BootDrive" | cut -dp -f1 | cut -d/ -f3)
+    Manufacturer=$(cat /sys/block/$RootDrive/device/manfid)
+    Product=$(cat /sys/block/$RootDrive/device/type)
+    Firmware=$(cat /sys/block/$RootDrive/device/fwrev)
+    DateManufactured=$(cat /sys/block/$RootDrive/device/date)
+    Model=$(cat /sys/block/$RootDrive/device/name)
+    Version=$(cat /sys/block/$RootDrive/device/hwrev)
+    SSR=$(cat /sys/block/$RootDrive/device/ssr)
+    SCR=$(cat /sys/block/$RootDrive/device/scr)
+    CID=$(cat /sys/block/$RootDrive/device/cid)
+    CSD=$(cat /sys/block/$RootDrive/device/csd)
+    OCR=$(cat /sys/block/$RootDrive/device/ocr)
+  else
+    Product=$(echo "$BootDriveInfo" | grep -m 1 "{type}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+    Firmware=$(echo "$BootDriveInfo" | grep -m 1 "{fwrev}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+    DateManufactured=$(echo "$BootDriveInfo" | grep -m 1 "date" | cut -d= -f3 | cut -d\" -f2 | xargs)
+    Model=$(echo "$BootDriveInfo" | grep -m 1 "{name}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+    Version=$(echo "$BootDriveInfo" | grep -m 1 "{hwrev}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+    SSR=$(echo "$BootDriveInfo" | grep -m 1 "{ssr}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+    SCR=$(echo "$BootDriveInfo" | grep -m 1 "{scr}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+    CID=$(echo "$BootDriveInfo" | grep -m 1 "{cid}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+    CSD=$(echo "$BootDriveInfo" | grep -m 1 "{csd}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+    OCR=$(echo "$BootDriveInfo" | grep -m 1 "{ocr}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+  fi
+
+  # Parse binary to get card attributes
+  SSRBinary=$(Get_Binary $SSR)
+  SSRAppClass=$(Get_Decimal $(Get_Bits $SSRBinary 336 4 512))
+  SSRVideoClass=$(Get_Decimal $(Get_Bits $SSRBinary 384 8 512))
+  SSRUHSClass=$(Get_Decimal $(Get_Bits $SSRBinary 396 4 512))
+  SSRSpeedClass=$(Get_Decimal $(Get_Bits $SSRBinary 440 8 512))
+
   case "$Manufacturer" in
     0x000001)
       Manufacturer="Panasonic"
@@ -323,21 +356,6 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
       ;;
   esac
 
-  Product=$(echo "$BootDriveInfo" | grep -m 1 "{type}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-  Firmware=$(echo "$BootDriveInfo" | grep -m 1 "{fwrev}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-  DateManufactured=$(echo "$BootDriveInfo" | grep -m 1 "date" | cut -d= -f3 | cut -d\" -f2 | xargs)
-  Model=$(echo "$BootDriveInfo" | grep -m 1 "{name}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-  Version=$(echo "$BootDriveInfo" | grep -m 1 "{hwrev}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-  SSR=$(echo "$BootDriveInfo" | grep -m 1 "{ssr}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-  SCR=$(echo "$BootDriveInfo" | grep -m 1 "{scr}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-  CID=$(echo "$BootDriveInfo" | grep -m 1 "{cid}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-  CSD=$(echo "$BootDriveInfo" | grep -m 1 "{csd}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-  OCR=$(echo "$BootDriveInfo" | grep -m 1 "{ocr}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-  SSRBinary=$(Get_Binary $SSR)
-  SSRAppClass=$(Get_Decimal $(Get_Bits $SSRBinary 336 4 512))
-  SSRVideoClass=$(Get_Decimal $(Get_Bits $SSRBinary 384 8 512))
-  SSRUHSClass=$(Get_Decimal $(Get_Bits $SSRBinary 396 4 512))
-  SSRSpeedClass=$(Get_Decimal $(Get_Bits $SSRBinary 440 8 512))
   Class=""
   if [[ $SSRAppClass > 0 ]]; then
     Class="A$SSRAppClass"
