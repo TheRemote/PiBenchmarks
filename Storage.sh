@@ -155,23 +155,23 @@ fi
 if [[ "$HostArchitecture" == *"x86"* || "$HostArchitecture" == *"amd64"* ]]; then
   # X86 or X86_64 system -- use dmidecode
   HostConfig=$(dmidecode)
-  HostConfig+=$(echo " ")
-  HostConfig+=$(lshw)
   HostCPUClock=$(dmidecode -t4 | grep -m 1 'Max Speed' | cut -d: -f2 | cut -d' ' -f2 | xargs)
   HostCoreClock="N/A"
   HostRAMClock=$(dmidecode -t17 | grep -m 1 "Speed: " | cut -d' ' -f2 | xargs)
+  HostConfig+=$(echo "/n")
+  HostConfig+=$(lshw)
 else
   # Check for vcgencmd
   if [ -n "`which vcgencmd`" ]; then
     HostConfig=$(vcgencmd get_config int)
-    HostConfig+=$(echo " ")
-    HostConfig+=$(lshw)
     HostCPUClock=$(echo "$HostConfig" | grep arm_freq | cut -d= -f2)
     HostCoreClock=$(echo "$HostConfig" | grep core_freq | cut -d= -f2)
     if [ ! -n "$HostCoreClock" ]; then
       HostCoreClock=$(echo "$HostConfig" | grep gpu_freq | cut -d= -f2)
     fi
     HostRAMClock=$(echo "$HostConfig" | grep sdram_freq | cut -d= -f2)
+    HostConfig+=$(echo "/n")
+    HostConfig+=$(lshw)
   else
     HostConfig=$(lshw)
     HostCPUClock=$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq)
