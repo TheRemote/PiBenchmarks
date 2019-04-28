@@ -155,6 +155,7 @@ fi
 if [[ "$HostArchitecture" == *"x86"* || "$HostArchitecture" == *"amd64"* ]]; then
   # X86 or X86_64 system -- use dmidecode
   HostConfig=$(dmidecode)
+  HostConfig+=$(echo " ")
   HostConfig+=$(lshw)
   HostCPUClock=$(dmidecode -t4 | grep -m 1 'Max Speed' | cut -d: -f2 | cut -d' ' -f2 | xargs)
   HostCoreClock="N/A"
@@ -163,6 +164,7 @@ else
   # Check for vcgencmd
   if [ -n "`which vcgencmd`" ]; then
     HostConfig=$(vcgencmd get_config int)
+    HostConfig+=$(echo " ")
     HostConfig+=$(lshw)
     HostCPUClock=$(echo "$HostConfig" | grep arm_freq | cut -d= -f2)
     HostCoreClock=$(echo "$HostConfig" | grep core_freq | cut -d= -f2)
