@@ -111,23 +111,25 @@ if [[ -n "`which apt`" ]]; then
   
   apt-get install hdparm curl fio bc lshw -y
   
-  # Attempt to install iozone from package
-  if [[ "$HostArchitecture" == *"armv7"* || "$HostArchitecture" == *"armhf"* ]]; then
-    curl -o iozone3.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_armhf.deb
-    dpkg --install iozone3.deb
-    rm iozone3.deb
-  elif [[ "$HostArchitecture" == *"aarch64"* || "$HostArchitecture" == *"arm64"* ]]; then
-    curl -o iozone3.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_arm64.deb
-    dpkg --install iozone3.deb
-    rm iozone3.deb
-  elif [[ "$HostArchitecture" == *"x86_64"* || "$HostArchitecture" == *"amd64"* ]]; then
-    curl -o iozone3.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_amd64.deb
-    dpkg --install iozone3.deb
-    rm iozone3.deb
-  elif [[ "$HostArchitecture" == *"i386"* ]]; then
-    curl -o iozone3.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_i386.deb
-    dpkg --install iozone3.deb
-    rm iozone3.deb
+  if [ ! -n "`which iozone`" ]; then
+    # Attempt to install iozone from package
+    if [[ "$HostArchitecture" == *"armv7"* || "$HostArchitecture" == *"armhf"* ]]; then
+      curl -o iozone3.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_armhf.deb
+      dpkg --install iozone3.deb
+      rm iozone3.deb
+    elif [[ "$HostArchitecture" == *"aarch64"* || "$HostArchitecture" == *"arm64"* ]]; then
+      curl -o iozone3.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_arm64.deb
+      dpkg --install iozone3.deb
+      rm iozone3.deb
+    elif [[ "$HostArchitecture" == *"x86_64"* || "$HostArchitecture" == *"amd64"* ]]; then
+      curl -o iozone3.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_amd64.deb
+      dpkg --install iozone3.deb
+      rm iozone3.deb
+    elif [[ "$HostArchitecture" == *"i386"* ]]; then
+      curl -o iozone3.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_i386.deb
+      dpkg --install iozone3.deb
+      rm iozone3.deb
+    fi
   fi
 
   # Test if we were able to install iozone3 from a package and don't install build-essential if we were
@@ -219,7 +221,7 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
   # Attempt MicroSD hardware identification
   HostSDClock=$(grep "actual clock" /sys/kernel/debug/mmc0/ios 2>/dev/null | awk '{printf("%0.1f", $3/1000000)}')
   
-  # Get Manufacturer and check against known ones
+  # Get card information
   Manufacturer=$(echo "$BootDriveInfo" | grep -m 1 "manfid" | cut -d= -f3 | cut -d\" -f2 | xargs)
   if [ ! -n "$Manufacturer" ]; then
     RootDrive=$(echo "$BootDrive" | cut -dp -f1 | cut -d/ -f3)
@@ -229,6 +231,7 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
     DateManufactured=$(cat /sys/block/$RootDrive/device/date)
     Model=$(cat /sys/block/$RootDrive/device/name)
     Version=$(cat /sys/block/$RootDrive/device/hwrev)
+    Vendor=$(cat /sys/block/$RootDrive/device/oemid)
     SSR=$(cat /sys/block/$RootDrive/device/ssr)
     SCR=$(cat /sys/block/$RootDrive/device/scr)
     CID=$(cat /sys/block/$RootDrive/device/cid)
@@ -240,6 +243,7 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
     DateManufactured=$(echo "$BootDriveInfo" | grep -m 1 "date" | cut -d= -f3 | cut -d\" -f2 | xargs)
     Model=$(echo "$BootDriveInfo" | grep -m 1 "{name}" | cut -d= -f3 | cut -d\" -f2 | xargs)
     Version=$(echo "$BootDriveInfo" | grep -m 1 "{hwrev}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+    Vendor=$(echo "$BootDriveInfo" | grep -m 1 "oemid" | cut -d= -f3 | cut -d\" -f2 | xargs | xxd -r)
     SSR=$(echo "$BootDriveInfo" | grep -m 1 "{ssr}" | cut -d= -f3 | cut -d\" -f2 | xargs)
     SCR=$(echo "$BootDriveInfo" | grep -m 1 "{scr}" | cut -d= -f3 | cut -d\" -f2 | xargs)
     CID=$(echo "$BootDriveInfo" | grep -m 1 "{cid}" | cut -d= -f3 | cut -d\" -f2 | xargs)
@@ -254,6 +258,7 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
   SSRUHSClass=$(Get_Decimal $(Get_Bits $SSRBinary 396 4 512))
   SSRSpeedClass=$(Get_Decimal $(Get_Bits $SSRBinary 440 8 512))
 
+  # Check for known manufacturers
   case "$Manufacturer" in
     0x000001)
       Manufacturer="Panasonic"
@@ -305,7 +310,6 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
   esac
 
   # Identify vendor
-  Vendor=$(echo "$BootDriveInfo" | grep -m 1 "oemid" | cut -d= -f3 | cut -d\" -f2 | xargs | xxd -r)
   case "$Vendor" in
     SD)
       Vendor="SanDisk"
@@ -356,6 +360,7 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
       ;;
   esac
 
+  # Identify card classifications
   Class=""
   if [[ $SSRAppClass > 0 ]]; then
     Class="A$SSRAppClass"
