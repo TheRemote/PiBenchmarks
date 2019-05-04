@@ -9,6 +9,9 @@ curl https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh 
 <br>
 <b>Update History</b><br>
 <br>
+May 4th 2019<br>
+-Added Sony as manufacturer 0x00009c
+<br>
 April 27th 2019<br>
 -Added cross platform CPU frequency detection to use if vcgencmd is not present<br>
 -Improved boot drive detection<br>

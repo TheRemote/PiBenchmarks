@@ -304,7 +304,7 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
     0x000092)
       Manufacturer="Sony"
       ;;
-    0x00009C)
+    0x00009c)
       Manufacturer="Sony"
       ;;
     0x00009f)
