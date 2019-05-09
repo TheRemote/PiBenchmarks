@@ -2,7 +2,7 @@
 Raspberry Pi benchmarking scripts featuring a storage benchmark with a score<br>
 Anonymously uploads your score to jamesachambers.com to help others make good decisions on Pi storage<br>
 View current benchmarks at: https://www.jamesachambers.com/raspberry-pi-storage-benchmarks/<br>
-Discussion and analysis at: https://jamesachambers.com/2019/03/raspberry-pi-storage-benchmarks-2019-benchmarking-script/<br>
+Discussion and analysis at: https://jamesachambers.com/raspberry-pi-storage-benchmarks-2019-benchmarking-script/<br>
 <br>
 To run the benchmark type/paste:<br>
 curl https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh | sudo bash<br>
