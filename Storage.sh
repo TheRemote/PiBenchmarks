@@ -1,7 +1,7 @@
 #!/bin/bash
-# Storage benchmark by James A. Chambers (https://www.jamesachambers.com/)
+# Storage benchmark by James A. Chambers (https://jamesachambers.com/)
 # Benchmarks your storage and anonymously submits result to jamesachambers.com
-# Results and discussion available at https://jamesachambers.com/2019/03/raspberry-pi-storage-benchmarks-2019-benchmarking-script/
+# Results and discussion available at https://jamesachambers.com/raspberry-pi-storage-benchmarks-2019-benchmarking-script/
 #
 # To run the benchmark use the following command:
 # curl https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh | sudo bash
@@ -216,6 +216,7 @@ if [ ! -n "$BootDrive" ]; then
 fi
 Print_Style "System drive has been detected as $BootDrive" $YELLOW
 BootDriveInfo=$(udevadm info -a -n $BootDrive | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
+BootDriveInfo+=$(lsblk -l)
 Capacity=$(lsblk -l | grep disk -m 1 | awk 'NR==1{ print $4 }' | sed 's/,/./g')
 
 # Check for MicroSD card
@@ -306,6 +307,9 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
       ;;
     0x00009c)
       Manufacturer="Sony"
+      ;;
+    0x00009e)
+      Manufacturer="Lexar"
       ;;
     0x00009f)
       Manufacturer="Netac"
@@ -406,17 +410,47 @@ else
   # Not a MicroSD card
   BootDriveInfo+=$(hdparm -I $BootDrive)
   HostSDClock="N/A"
-  # Attempt to identify drive
+  DateManufactured="N/A"
+
+  # Attempt to identify drive manufacturer and model
   Manufacturer=$(echo "$BootDriveInfo" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3 }')
   if [ ! -n "$Manufacturer" ]; then
     Manufacturer=$(echo "$BootDriveInfo" | grep -m 1 "manufacturer" | cut -d= -f3 | cut -d\" -f2 | xargs)
   fi
-  Vendor=$(echo "$BootDriveInfo" | grep -m 1 "vendor" | cut -d= -f3 | cut -d\" -f2 | xargs)
-  Product=$(echo "$BootDriveInfo" | grep -m 1 "product" | cut -d= -f3 | cut -d\" -f2 | xargs)
-  Model=$(echo "$BootDriveInfo" | grep -m 1 "Model Number:" | awk 'NR==1{ print $4 $5 }')
+  Vendor="$Manufacturer"
+  Model=$(echo "$BootDriveInfo" | grep -m 1 "Model Number:" | awk 'NR==1{ print $4$5$6$7$8$9 }')
+
+  # Identify drive type, form factor, capacity
+  FormFactor=$(echo "$BootDriveInfo" | grep -m 1 "Form Factor:" | cut -d: -f2 | cut -d' ' -f1 | xargs)
+  if [ ! -n "$FormFactor" ]; then
+    FormFactor="2.5"
+  fi
+  DriveCapacity=$(echo "$BootDriveInfo" | grep -m 1 "device size with M = 1000*" | cut -d\( -f2 | cut -d' ' -f1 | xargs)
+  if [ -n "$DriveCapacity" ]; then
+    if [[ "$DriveCapacity" > 0 ]]; then
+      Capacity=$DriveCapacity"G"
+    fi
+  fi
+  DriveType=$(echo "$BootDriveInfo" | grep -m 1 "Nominal Media Rotation Rate:" | cut -d: -f2 | xargs)
+  case "$DriveType" in
+    5400 | 7200 | 10000)
+      Product="HDD"
+      Class="HDD ($FormFactor\" SATA)"
+      ;;
+    "Solid State Device")
+      Product="SSD"
+      Class="SSD ($FormFactor\" SATA)"
+      ;;
+    *)
+      Product="N/A"
+      ;;
+  esac
+
+  # Identify hardware and firmware versions of drive
   Version=$(echo "$BootDriveInfo" | grep -m 1 "version" | cut -d= -f3 | cut -d\" -f2 | xargs)
   Firmware=$(echo "$BootDriveInfo" | grep -m 1 "Firmware Revision:" | awk 'NR==1{ print $3 $4 $5 }')
-  Print_Style "Drive information: Manufacturer: $Manufacturer - Model: $Model - Vendor: $Vendor - Product: $Product - HW Version: $Version - FW Version: $Firmware - Date Manufactured: $DateManufactured" $YELLOW
+
+  Print_Style "Drive information: Manufacturer: $Manufacturer - Model: $Model - Vendor: $Vendor - Product: $Product - HW Version: $Version - FW Version: $Firmware" $YELLOW
 fi
 
 # Run HDParm tests

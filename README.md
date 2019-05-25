@@ -1,7 +1,7 @@
 # PiBenchmarks
 Raspberry Pi benchmarking scripts featuring a storage benchmark with a score<br>
 Anonymously uploads your score to jamesachambers.com to help others make good decisions on Pi storage<br>
-View current benchmarks at: https://www.jamesachambers.com/raspberry-pi-storage-benchmarks/<br>
+View current benchmarks at: https://jamesachambers.com/raspberry-pi-storage-benchmarks/<br>
 Discussion and analysis at: https://jamesachambers.com/raspberry-pi-storage-benchmarks-2019-benchmarking-script/<br>
 <br>
 To run the benchmark type/paste:<br>
@@ -9,8 +9,12 @@ curl https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh 
 <br>
 <b>Update History</b><br>
 <br>
+May 25th 2019<br>
+-Improved HDD and SSD identification including form factor, speed, size and class<br>
+-Added Lexar as SD manufacturer 0x00009e<br>
+<br>
 May 4th 2019<br>
--Added Sony as manufacturer 0x00009c
+-Added Sony as SD manufacturer 0x00009c<br>
 <br>
 April 27th 2019<br>
 -Added cross platform CPU frequency detection to use if vcgencmd is not present<br>
@@ -19,7 +23,7 @@ April 27th 2019<br>
 -Added check to prevent installing iozone if it is already present on system<br>
 <br>
 April 16th 2019<br>
--Added "Team Group" MicroSD vendor (code -B, 0x000045)<br>
+-Added "Team Group" as SD vendor (code -B, 0x000045)<br>
 -Added Maxell MicroSD vendor (code TI)<br>
 -Added fix to get gpu_freq on older Raspberry Pis that don't have core_freq<br>
 <br>
