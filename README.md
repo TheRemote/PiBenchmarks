@@ -9,6 +9,9 @@ curl https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh 
 <br>
 <b>Update History</b><br>
 <br>
+June 22nd 2019<br>
+-Added Hama manufacturer identification<br>
+<br>
 May 25th 2019<br>
 -Improved HDD and SSD identification including form factor, speed, size and class<br>
 -Added Lexar as SD manufacturer 0x00009e<br>

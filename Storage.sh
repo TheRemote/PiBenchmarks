@@ -293,6 +293,9 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
     0x000045)
       Manufacturer="Team Group"
       ;;
+    0x000073)
+      Manufacturer="Hama"
+      ;;
     0x000074)
       Manufacturer="Transcend"
       ;;
@@ -325,6 +328,9 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
       ;;
     4V)
       Vendor="SanDisk"
+      ;;
+    BG)
+      Vendor="Hama"
       ;;
     PA)
       Vendor="Panasonic"
