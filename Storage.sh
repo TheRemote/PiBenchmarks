@@ -444,8 +444,9 @@ else
   DriveCapacity=$(echo "$BootDriveInfo" | grep -m 1 "device size with M = 1000*" | cut -d\( -f2 | cut -d' ' -f1 | xargs)
 
   if [ -n "$DriveCapacity" ]; then
-    if [[ "$DriveCapacity" > 0 ]]; then
-      Capacity=$DriveCapacity"G"
+    if [ "$DriveCapacity" -eq "$DriveCapacity" ] 2>/dev/null
+    then
+        Capacity=$DriveCapacity"G"
     fi
   fi
   DriveType=$(echo "$BootDriveInfo" | grep -m 1 "Nominal Media Rotation Rate:" | cut -d: -f2 | xargs)
