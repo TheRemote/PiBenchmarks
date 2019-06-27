@@ -9,6 +9,10 @@ curl https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh 
 <br>
 <b>Update History</b><br>
 <br>
+June 26th 2019<br>
+-Improved USB Flash drive detection<br>
+-Added Platinum manufacturer identification<br>
+<br>
 June 22nd 2019<br>
 -Added Hama manufacturer identification<br>
 <br>

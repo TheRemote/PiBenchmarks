@@ -217,6 +217,7 @@ fi
 Print_Style "System drive has been detected as $BootDrive" $YELLOW
 BootDriveInfo=$(udevadm info -a -n $BootDrive | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
 BootDriveInfo+=$(lsblk -l)
+BootDriveInfo+=$(ls /dev/disk/by-id)
 Capacity=$(lsblk -l | grep disk -m 1 | awk 'NR==1{ print $4 }' | sed 's/,/./g')
 
 # Check for MicroSD card
@@ -292,6 +293,9 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
       ;;
     0x000045)
       Manufacturer="Team Group"
+      ;;
+    0x00006f)
+      Manufacturer="Platinum"
       ;;
     0x000073)
       Manufacturer="Hama"
@@ -374,6 +378,9 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
     TI)
       Vendor="Maxell"
       ;;
+    )
+      Vendor="Platinum"
+      ;;
     *)
       ;;
   esac
@@ -421,10 +428,13 @@ else
   # Attempt to identify drive manufacturer and model
   Manufacturer=$(echo "$BootDriveInfo" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3 }')
   if [ ! -n "$Manufacturer" ]; then
-    Manufacturer=$(echo "$BootDriveInfo" | grep -m 1 "manufacturer" | cut -d= -f3 | cut -d\" -f2 | xargs)
+    Manufacturer=$(echo "$BootDriveInfo" | grep -m 1 "{manufacturer}" | cut -d= -f3 | cut -d\" -f2 | xargs)
   fi
   Vendor="$Manufacturer"
   Model=$(echo "$BootDriveInfo" | grep -m 1 "Model Number:" | awk 'NR==1{ print $4$5$6$7$8$9 }')
+  if [ ! -n "$Model" ]; then
+    Model=$(echo "$BootDriveInfo" | grep -m 1 "{model}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+  fi
 
   # Identify drive type, form factor, capacity
   FormFactor=$(echo "$BootDriveInfo" | grep -m 1 "Form Factor:" | cut -d: -f2 | cut -d' ' -f1 | xargs)
@@ -432,6 +442,7 @@ else
     FormFactor="2.5"
   fi
   DriveCapacity=$(echo "$BootDriveInfo" | grep -m 1 "device size with M = 1000*" | cut -d\( -f2 | cut -d' ' -f1 | xargs)
+
   if [ -n "$DriveCapacity" ]; then
     if [[ "$DriveCapacity" > 0 ]]; then
       Capacity=$DriveCapacity"G"
@@ -448,7 +459,7 @@ else
       Class="SSD ($FormFactor\" SATA)"
       ;;
     *)
-      Product="N/A"
+      Product="USB Flash"
       ;;
   esac
 
