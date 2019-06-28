@@ -164,20 +164,20 @@ else
   # Check for vcgencmd
   if [ -n "`which vcgencmd`" ]; then
     HostConfig=$(vcgencmd get_config int)
-    HostCPUClock=$(echo "$HostConfig" | grep -m 1 arm_freq | cut -d= -f2)
+    HostCPUClock=$(echo "$HostConfig" | grep -m 1 arm_freq= | cut -d= -f2)
     if [ ! -n "$HostCPUClock" ]; then
       HostCPUClock=$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq)
       HostCPUClock=$(echo "scale=0; $HostCPUClock / 1000" | bc)
     fi
-    HostCoreClock=$(echo "$HostConfig" | grep -m 1 core_freq | cut -d= -f2)
+    HostCoreClock=$(echo "$HostConfig" | grep -m 1 core_freq= | cut -d= -f2)
     if [ ! -n "$HostCoreClock" ]; then
-      HostCoreClock=$(echo "$HostConfig" | grep -m 1 gpu_freq | cut -d= -f2)
+      HostCoreClock=$(echo "$HostConfig" | grep -m 1 gpu_freq= | cut -d= -f2)
     fi
     if [ ! -n "$HostCoreClock" ]; then
-      HostCoreClock=$(vcgencmd measure_clock core)
+      HostCoreClock=$(vcgencmd measure_clock core | cut -d= -f2)
       HostCoreClock=$(echo "scale=0; $HostCoreClock / 1000" | bc)
     fi
-    HostRAMClock=$(echo "$HostConfig" | grep -m 1 sdram_freq | cut -d= -f2)
+    HostRAMClock=$(echo "$HostConfig" | grep -m 1 sdram_freq= | cut -d= -f2)
     if [ ! -n "$HostRAMClock" ]; then
       HostRAMClock="N/A"
     fi
@@ -487,7 +487,7 @@ fi
 
 # Run HDParm tests
 Print_Style "Running HDParm tests ..." $YELLOW
-HDParm=$(hdparm -Tt --direct $BootDrive | sed '/^[[:space:]]*$/d')
+HDParm=$(hdparm -Tt --direct $BootDrive 2>/dev/null | sed '/^[[:space:]]*$/d')
 Print_Style "$HDParm" $NORMAL
 HDParmDisk=$(echo "$HDParm" | grep "Timing O_DIRECT disk" | awk 'NR==1{ print $11 }')
 HDParmCached=$(echo "$HDParm" | grep "Timing O_DIRECT cached" | awk 'NR==1{ print $11 }')
