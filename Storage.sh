@@ -62,7 +62,7 @@ if [[ "$(whoami)" != "root" ]]; then
 fi
 
 # Change directory to home directory
-cd ~
+cd /
 
 # Get host board information
 HostArchitecture=$(uname -m)
