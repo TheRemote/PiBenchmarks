@@ -10,7 +10,9 @@ curl https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh 
 <b>Update History</b><br>
 <br>
 June 27th 2019<br>
-Improved CPU/core/memory clock detection in older Pis<br>
+-Improved CPU/core/memory clock detection in older Pis<br>
+-Improved Arch Linux support<br>
+-Improved system architecture detection<br>
 <br>
 June 26th 2019<br>
 -Improved USB Flash drive detection<br>

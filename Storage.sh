@@ -111,14 +111,19 @@ if [[ -n "`which apt`" ]]; then
   
   apt-get install hdparm curl fio bc lshw -y
   
+  DpkgArch=$(dpkg --print-architecture)
   if [ ! -n "`which iozone`" ]; then
     # Attempt to install iozone from package
-    if [[ "$HostArchitecture" == *"armv7"* || "$HostArchitecture" == *"armhf"* ]]; then
+    if [[ "$DpkgArch" == *"armhf"* || "$HostArchitecture" == *"armv"* || "$HostArchitecture" == *"armhf"* ]]; then
       curl -o iozone3.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_armhf.deb
       dpkg --install iozone3.deb
       rm iozone3.deb
-    elif [[ "$HostArchitecture" == *"aarch64"* || "$HostArchitecture" == *"arm64"* ]]; then
+    elif [[ "$DpkgArch" == *"arm64"* || "$HostArchitecture" == *"aarch64"* || "$HostArchitecture" == *"arm64"* ]]; then
       curl -o iozone3.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_arm64.deb
+      dpkg --install iozone3.deb
+      rm iozone3.deb
+    elif [[ "$DpkgArch" == *"armel"* ]]; then
+      curl -o iozone3.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_armel.deb
       dpkg --install iozone3.deb
       rm iozone3.deb
     elif [[ "$HostArchitecture" == *"x86_64"* || "$HostArchitecture" == *"amd64"* ]]; then
@@ -232,205 +237,213 @@ BootDriveInfo+=$(lsblk -l)
 BootDriveInfo+=$(ls /dev/disk/by-id)
 Capacity=$(lsblk -l | grep disk -m 1 | awk 'NR==1{ print $4 }' | sed 's/,/./g')
 
-# Check for MicroSD card
+# Check for Micro SD / MMC card
 if [[ "$BootDrive" == *"mmcblk"* ]]; then
-  # Attempt MicroSD hardware identification
-  HostSDClock=$(grep "actual clock" /sys/kernel/debug/mmc0/ios 2>/dev/null | awk '{printf("%0.1f", $3/1000000)}')
+
+  # Determine if MMC or Micro SD
+  RootDrive=$(echo "$BootDrive" | cut -dp -f1 | cut -d/ -f3)
+  MMCType=$(cat /sys/block/$RootDrive/device/type)
   
-  # Get card information
-  Manufacturer=$(echo "$BootDriveInfo" | grep -m 1 "manfid" | cut -d= -f3 | cut -d\" -f2 | xargs)
-  if [ ! -n "$Manufacturer" ]; then
-    RootDrive=$(echo "$BootDrive" | cut -dp -f1 | cut -d/ -f3)
-    Manufacturer=$(cat /sys/block/$RootDrive/device/manfid)
-    Product=$(cat /sys/block/$RootDrive/device/type)
-    Firmware=$(cat /sys/block/$RootDrive/device/fwrev)
-    DateManufactured=$(cat /sys/block/$RootDrive/device/date)
-    Model=$(cat /sys/block/$RootDrive/device/name)
-    Version=$(cat /sys/block/$RootDrive/device/hwrev)
-    Vendor=$(cat /sys/block/$RootDrive/device/oemid)
-    SSR=$(cat /sys/block/$RootDrive/device/ssr)
-    SCR=$(cat /sys/block/$RootDrive/device/scr)
-    CID=$(cat /sys/block/$RootDrive/device/cid)
-    CSD=$(cat /sys/block/$RootDrive/device/csd)
-    OCR=$(cat /sys/block/$RootDrive/device/ocr)
-  else
-    Product=$(echo "$BootDriveInfo" | grep -m 1 "{type}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-    Firmware=$(echo "$BootDriveInfo" | grep -m 1 "{fwrev}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-    DateManufactured=$(echo "$BootDriveInfo" | grep -m 1 "date" | cut -d= -f3 | cut -d\" -f2 | xargs)
-    Model=$(echo "$BootDriveInfo" | grep -m 1 "{name}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-    Version=$(echo "$BootDriveInfo" | grep -m 1 "{hwrev}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-    Vendor=$(echo "$BootDriveInfo" | grep -m 1 "oemid" | cut -d= -f3 | cut -d\" -f2 | xargs | xxd -r)
-    SSR=$(echo "$BootDriveInfo" | grep -m 1 "{ssr}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-    SCR=$(echo "$BootDriveInfo" | grep -m 1 "{scr}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-    CID=$(echo "$BootDriveInfo" | grep -m 1 "{cid}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-    CSD=$(echo "$BootDriveInfo" | grep -m 1 "{csd}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-    OCR=$(echo "$BootDriveInfo" | grep -m 1 "{ocr}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-  fi
+  if [[ "$MMCType" == *"SD"* ]]; then
+    # MicroSD hardware identification
+    HostSDClock=$(grep "actual clock" /sys/kernel/debug/mmc0/ios 2>/dev/null | awk '{printf("%0.1f", $3/1000000)}')
+    
+    # Get card information
+    Manufacturer=$(echo "$BootDriveInfo" | grep -m 1 "manfid" | cut -d= -f3 | cut -d\" -f2 | xargs)
+    if [ ! -n "$Manufacturer" ]; then
+      Manufacturer=$(cat /sys/block/$RootDrive/device/manfid)
+      Product=$(cat /sys/block/$RootDrive/device/type)
+      Firmware=$(cat /sys/block/$RootDrive/device/fwrev)
+      DateManufactured=$(cat /sys/block/$RootDrive/device/date)
+      Model=$(cat /sys/block/$RootDrive/device/name)
+      Version=$(cat /sys/block/$RootDrive/device/hwrev)
+      Vendor=$(cat /sys/block/$RootDrive/device/oemid)
+      SSR=$(cat /sys/block/$RootDrive/device/ssr)
+      SCR=$(cat /sys/block/$RootDrive/device/scr)
+      CID=$(cat /sys/block/$RootDrive/device/cid)
+      CSD=$(cat /sys/block/$RootDrive/device/csd)
+      OCR=$(cat /sys/block/$RootDrive/device/ocr)
+    else
+      Product=$(echo "$BootDriveInfo" | grep -m 1 "{type}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+      Firmware=$(echo "$BootDriveInfo" | grep -m 1 "{fwrev}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+      DateManufactured=$(echo "$BootDriveInfo" | grep -m 1 "date" | cut -d= -f3 | cut -d\" -f2 | xargs)
+      Model=$(echo "$BootDriveInfo" | grep -m 1 "{name}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+      Version=$(echo "$BootDriveInfo" | grep -m 1 "{hwrev}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+      Vendor=$(echo "$BootDriveInfo" | grep -m 1 "oemid" | cut -d= -f3 | cut -d\" -f2 | xargs | xxd -r)
+      SSR=$(echo "$BootDriveInfo" | grep -m 1 "{ssr}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+      SCR=$(echo "$BootDriveInfo" | grep -m 1 "{scr}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+      CID=$(echo "$BootDriveInfo" | grep -m 1 "{cid}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+      CSD=$(echo "$BootDriveInfo" | grep -m 1 "{csd}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+      OCR=$(echo "$BootDriveInfo" | grep -m 1 "{ocr}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+    fi
 
-  # Parse binary to get card attributes
-  SSRBinary=$(Get_Binary $SSR)
-  SSRAppClass=$(Get_Decimal $(Get_Bits $SSRBinary 336 4 512))
-  SSRVideoClass=$(Get_Decimal $(Get_Bits $SSRBinary 384 8 512))
-  SSRUHSClass=$(Get_Decimal $(Get_Bits $SSRBinary 396 4 512))
-  SSRSpeedClass=$(Get_Decimal $(Get_Bits $SSRBinary 440 8 512))
+    # Parse binary to get card attributes
+    SSRBinary=$(Get_Binary $SSR)
+    SSRAppClass=$(Get_Decimal $(Get_Bits $SSRBinary 336 4 512))
+    SSRVideoClass=$(Get_Decimal $(Get_Bits $SSRBinary 384 8 512))
+    SSRUHSClass=$(Get_Decimal $(Get_Bits $SSRBinary 396 4 512))
+    SSRSpeedClass=$(Get_Decimal $(Get_Bits $SSRBinary 440 8 512))
 
-  # Check for known manufacturers
-  case "$Manufacturer" in
-    0x000001)
-      Manufacturer="Panasonic"
-      ;;
-    0x000002)
-      Manufacturer="Toshiba"
-      ;;
-    0x000003)
-      Manufacturer="SanDisk"
-      ;;
-    0x00001b)
-      Manufacturer="Samsung"
-      ;;
-    0x00001d)
-      Manufacturer="AData"
-      ;;
-    0x000027)
-      Manufacturer="Phison"
-      ;;
-    0x000028)
-      Manufacturer="Lexar"
-      ;;
-    0x000031)
-      Manufacturer="Silicon Power"
-      ;;
-    0x000041)
-      Manufacturer="Kingston"
-      ;;
-    0x000045)
-      Manufacturer="Team Group"
-      ;;
-    0x00006f)
-      Manufacturer="Platinum"
-      ;;
-    0x000073)
-      Manufacturer="Hama"
-      ;;
-    0x000074)
-      Manufacturer="Transcend"
-      ;;
-    0x000076)
-      Manufacturer="Patriot"
-      ;;
-    0x000082)
-      Manufacturer="Sony"
-      ;;
-    0x000092)
-      Manufacturer="Sony"
-      ;;
-    0x00009c)
-      Manufacturer="Sony"
-      ;;
-    0x00009e)
-      Manufacturer="Lexar"
-      ;;
-    0x00009f)
-      Manufacturer="Netac"
-      ;;
-    *)
-      ;;
-  esac
+    # Check for known manufacturers
+    case "$Manufacturer" in
+      0x000001)
+        Manufacturer="Panasonic"
+        ;;
+      0x000002)
+        Manufacturer="Toshiba"
+        ;;
+      0x000003)
+        Manufacturer="SanDisk"
+        ;;
+      0x00001b)
+        Manufacturer="Samsung"
+        ;;
+      0x00001d)
+        Manufacturer="AData"
+        ;;
+      0x000027)
+        Manufacturer="Phison"
+        ;;
+      0x000028)
+        Manufacturer="Lexar"
+        ;;
+      0x000031)
+        Manufacturer="Silicon Power"
+        ;;
+      0x000041)
+        Manufacturer="Kingston"
+        ;;
+      0x000045)
+        Manufacturer="Team Group"
+        ;;
+      0x00006f)
+        Manufacturer="Platinum"
+        ;;
+      0x000073)
+        Manufacturer="Hama"
+        ;;
+      0x000074)
+        Manufacturer="Transcend"
+        ;;
+      0x000076)
+        Manufacturer="Patriot"
+        ;;
+      0x000082)
+        Manufacturer="Sony"
+        ;;
+      0x000092)
+        Manufacturer="Sony"
+        ;;
+      0x00009c)
+        Manufacturer="Sony"
+        ;;
+      0x00009e)
+        Manufacturer="Lexar"
+        ;;
+      0x00009f)
+        Manufacturer="Netac"
+        ;;
+      *)
+        ;;
+    esac
 
-  # Identify vendor
-  case "$Vendor" in
-    SD)
-      Vendor="SanDisk"
-      ;;
-    4V)
-      Vendor="SanDisk"
-      ;;
-    BG)
-      Vendor="Hama"
-      ;;
-    PA)
-      Vendor="Panasonic"
-      ;;
-    SM)
-      Vendor="Samsung"
-      ;;
-    TM)
-      Vendor="Toshiba"
-      ;;
-    AD)
-      Vendor="AData"
-      ;;
-    BE)
-      Vendor="Lexar"
-      ;;
-    PH)
-      Vendor="Phison"
-      ;;
-    SP)
-      Vendor="Silicon Power"
-      ;;
-    42)
-      Vendor="Kingston"
-      ;;
-    JT)
-      Vendor="Sony"
-      ;;
-    SO)
-      Vendor="Sony"
-      ;;
-    J\`)
-      Vendor="Transcend"
-      ;;
-    JE)
-      Vendor="Transcend"
-      ;;
-    -B)
-      Vendor="Team Group"
-      ;;
-    TI)
-      Vendor="Maxell"
-      ;;
-    )
-      Vendor="Platinum"
-      ;;
-    *)
-      ;;
-  esac
+    # Identify vendor
+    case "$Vendor" in
+      SD)
+        Vendor="SanDisk"
+        ;;
+      4V)
+        Vendor="SanDisk"
+        ;;
+      BG)
+        Vendor="Hama"
+        ;;
+      PA)
+        Vendor="Panasonic"
+        ;;
+      SM)
+        Vendor="Samsung"
+        ;;
+      TM)
+        Vendor="Toshiba"
+        ;;
+      AD)
+        Vendor="AData"
+        ;;
+      BE)
+        Vendor="Lexar"
+        ;;
+      PH)
+        Vendor="Phison"
+        ;;
+      SP)
+        Vendor="Silicon Power"
+        ;;
+      42)
+        Vendor="Kingston"
+        ;;
+      JT)
+        Vendor="Sony"
+        ;;
+      SO)
+        Vendor="Sony"
+        ;;
+      J\`)
+        Vendor="Transcend"
+        ;;
+      JE)
+        Vendor="Transcend"
+        ;;
+      -B)
+        Vendor="Team Group"
+        ;;
+      TI)
+        Vendor="Maxell"
+        ;;
+      )
+        Vendor="Platinum"
+        ;;
+      *)
+        ;;
+    esac
 
-  # Identify card classifications
-  Class=""
-  if [[ $SSRAppClass > 0 ]]; then
-    Class="A$SSRAppClass"
+    # Identify card classifications
+    Class=""
+    if [[ $SSRAppClass > 0 ]]; then
+      Class="A$SSRAppClass"
+    fi
+    case "$SSRSpeedClass" in
+      0)
+        Class="$Class Class 0"
+        ;;
+      1)
+        Class="$Class Class 2"
+        ;;
+      2)
+        Class="$Class Class 4"
+        ;;
+      3)
+        Class="$Class Class 6"
+        ;;
+      4)
+        Class="$Class Class 10"
+        ;;
+      *)
+        Class="$Class ?"
+        ;;
+    esac
+    if [[ $SSRVideoClass > 0 ]]; then
+      Class="$Class V$SSRVideoClass"
+    fi
+    if [[ $SSRUHSClass > 0 ]]; then
+      Class="$Class U$SSRUHSClass"
+    fi
+    Class=$(echo "$Class" | xargs)
+    Print_Style "MicroSD information: Clock Speed: $HostSDClock - Manufacturer: $Manufacturer - Model: $Model - Vendor: $Vendor - Product: $Product - HW Version: $Version - FW Version: $Firmware - Date Manufactured: $DateManufactured" $YELLOW
+    Print_Style "Class: $Class" $YELLOW
+  elif [[ "$MMCType" == *"MMC"* ]]; then
+  
   fi
-  case "$SSRSpeedClass" in
-    0)
-      Class="$Class Class 0"
-      ;;
-    1)
-      Class="$Class Class 2"
-      ;;
-    2)
-      Class="$Class Class 4"
-      ;;
-    3)
-      Class="$Class Class 6"
-      ;;
-    4)
-      Class="$Class Class 10"
-      ;;
-    *)
-      Class="$Class ?"
-      ;;
-  esac
-  if [[ $SSRVideoClass > 0 ]]; then
-    Class="$Class V$SSRVideoClass"
-  fi
-  if [[ $SSRUHSClass > 0 ]]; then
-    Class="$Class U$SSRUHSClass"
-  fi
-  Class=$(echo "$Class" | xargs)
-  Print_Style "MicroSD information: Clock Speed: $HostSDClock - Manufacturer: $Manufacturer - Model: $Model - Vendor: $Vendor - Product: $Product - HW Version: $Version - FW Version: $Firmware - Date Manufactured: $DateManufactured" $YELLOW
-  Print_Style "Class: $Class" $YELLOW
 else
   # Not a MicroSD card
   BootDriveInfo+=$(hdparm -I $BootDrive 2>/dev/null)
