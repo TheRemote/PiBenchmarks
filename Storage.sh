@@ -165,7 +165,7 @@ else
   if [ -n "`which vcgencmd`" ]; then
     HostConfig=$(vcgencmd get_config int)
     HostCPUClock=$(echo "$HostConfig" | grep -m 1 arm_freq | cut -d= -f2)
-    if [ ! -n "$HostCPUClock"]; then
+    if [ ! -n "$HostCPUClock" ]; then
       HostCPUClock=$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq)
       HostCPUClock=$(echo "scale=0; $HostCPUClock / 1000" | bc)
     fi
@@ -432,8 +432,8 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
   Print_Style "Class: $Class" $YELLOW
 else
   # Not a MicroSD card
-  BootDriveInfo+=$(hdparm -I $BootDrive)
-  BootDriveInfo+=$(hdparm -i $BootDrive)
+  BootDriveInfo+=$(hdparm -I $BootDrive 2>/dev/null)
+  BootDriveInfo+=$(hdparm -i $BootDrive 2>/dev/null)
 
   HostSDClock="N/A"
   DateManufactured="N/A"
