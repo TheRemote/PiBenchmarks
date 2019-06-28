@@ -13,6 +13,7 @@ June 27th 2019<br>
 -Improved CPU/core/memory clock detection in older Pis<br>
 -Improved Arch Linux support<br>
 -Improved system architecture detection<br>
+-Fixed a portability with parsing dd test output<br>
 <br>
 June 26th 2019<br>
 -Improved USB Flash drive detection<br>

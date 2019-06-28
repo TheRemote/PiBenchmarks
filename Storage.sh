@@ -61,6 +61,16 @@ if [[ "$(whoami)" != "root" ]]; then
   exit 1
 fi
 
+# Initialize variables
+Score=0
+DDWriteResult=0
+fio4kRandReadIOPS=0
+fio4kRandWriteIOPS=0
+IO4kRead=0
+IO4kWrite=0
+IO4kRandRead=0
+IO4kRandWrite=0
+
 # Change directory to home directory
 cd /
 
@@ -510,7 +520,8 @@ Print_Style "HDParm: $HDParmDisk MB/s - HDParmCached: $HDParmCached MB/s" $YELLO
 # Run DD tests
 Print_Style "Running dd tests ..." $YELLOW
 DDWrite=$(dd if=/dev/zero of=test bs=4k count=80k conv=fsync 2>&1 | sed '/^[[:space:]]*$/d')
-DDWriteResult=$(echo "$DDWrite" | tail -n 1 |  awk 'NR==1{ print $10 }' | sed 's/,/./g')
+DDWriteResult=$(echo "$DDWrite" | tail -n 1 | awk 'NR==1{ print $(NF-1) }' | sed 's/,/./g')
+
 echo "$DDWrite"
 Print_Style "DD Write Speed: $DDWriteResult MB/s" $YELLOW
 rm -f test
@@ -582,3 +593,6 @@ printf "\n$BRIGHT$MAGENTA$UNDERLINE%-25s %-25s %-25s\n" " " "Score: $Score" " "
 echo ""
 echo "Compare with previous benchmark results at:"
 echo "https://www.jamesachambers.com/raspberry-pi-storage-benchmarks/ $NORMAL"
+
+# Return to home directory
+cd ~
