@@ -254,34 +254,34 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
   RootDrive=$(echo "$BootDrive" | cut -dp -f1 | cut -d/ -f3)
   MMCType=$(cat /sys/block/$RootDrive/device/type)
   
-    # Get card information
-    Manufacturer=$(echo "$BootDriveInfo" | grep -m 1 "manfid" | cut -d= -f3 | cut -d\" -f2 | xargs)
-    if [ ! -n "$Manufacturer" ]; then
-      Manufacturer=$(cat /sys/block/$RootDrive/device/manfid)
-      Product=$(cat /sys/block/$RootDrive/device/type)
-      Firmware=$(cat /sys/block/$RootDrive/device/fwrev)
-      DateManufactured=$(cat /sys/block/$RootDrive/device/date)
-      Model=$(cat /sys/block/$RootDrive/device/name)
-      Version=$(cat /sys/block/$RootDrive/device/hwrev)
-      Vendor=$(cat /sys/block/$RootDrive/device/oemid)
-      SSR=$(cat /sys/block/$RootDrive/device/ssr)
-      SCR=$(cat /sys/block/$RootDrive/device/scr)
-      CID=$(cat /sys/block/$RootDrive/device/cid)
-      CSD=$(cat /sys/block/$RootDrive/device/csd)
-      OCR=$(cat /sys/block/$RootDrive/device/ocr)
-    else
-      Product=$(echo "$BootDriveInfo" | grep -m 1 "{type}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-      Firmware=$(echo "$BootDriveInfo" | grep -m 1 "{fwrev}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-      DateManufactured=$(echo "$BootDriveInfo" | grep -m 1 "date" | cut -d= -f3 | cut -d\" -f2 | xargs)
-      Model=$(echo "$BootDriveInfo" | grep -m 1 "{name}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-      Version=$(echo "$BootDriveInfo" | grep -m 1 "{hwrev}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-      Vendor=$(echo "$BootDriveInfo" | grep -m 1 "oemid" | cut -d= -f3 | cut -d\" -f2 | xargs | xxd -r)
-      SSR=$(echo "$BootDriveInfo" | grep -m 1 "{ssr}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-      SCR=$(echo "$BootDriveInfo" | grep -m 1 "{scr}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-      CID=$(echo "$BootDriveInfo" | grep -m 1 "{cid}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-      CSD=$(echo "$BootDriveInfo" | grep -m 1 "{csd}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-      OCR=$(echo "$BootDriveInfo" | grep -m 1 "{ocr}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-    fi
+  # Get card information
+  Manufacturer=$(echo "$BootDriveInfo" | grep -m 1 "manfid" | cut -d= -f3 | cut -d\" -f2 | xargs)
+  if [ ! -n "$Manufacturer" ]; then
+    Manufacturer=$(cat /sys/block/$RootDrive/device/manfid)
+    Product=$(cat /sys/block/$RootDrive/device/type)
+    Firmware=$(cat /sys/block/$RootDrive/device/fwrev)
+    DateManufactured=$(cat /sys/block/$RootDrive/device/date)
+    Model=$(cat /sys/block/$RootDrive/device/name)
+    Version=$(cat /sys/block/$RootDrive/device/hwrev)
+    Vendor=$(cat /sys/block/$RootDrive/device/oemid)
+    SSR=$(cat /sys/block/$RootDrive/device/ssr)
+    SCR=$(cat /sys/block/$RootDrive/device/scr)
+    CID=$(cat /sys/block/$RootDrive/device/cid)
+    CSD=$(cat /sys/block/$RootDrive/device/csd)
+    OCR=$(cat /sys/block/$RootDrive/device/ocr)
+  else
+    Product=$(echo "$BootDriveInfo" | grep -m 1 "{type}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+    Firmware=$(echo "$BootDriveInfo" | grep -m 1 "{fwrev}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+    DateManufactured=$(echo "$BootDriveInfo" | grep -m 1 "date" | cut -d= -f3 | cut -d\" -f2 | xargs)
+    Model=$(echo "$BootDriveInfo" | grep -m 1 "{name}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+    Version=$(echo "$BootDriveInfo" | grep -m 1 "{hwrev}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+    Vendor=$(echo "$BootDriveInfo" | grep -m 1 "oemid" | cut -d= -f3 | cut -d\" -f2 | xargs | xxd -r)
+    SSR=$(echo "$BootDriveInfo" | grep -m 1 "{ssr}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+    SCR=$(echo "$BootDriveInfo" | grep -m 1 "{scr}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+    CID=$(echo "$BootDriveInfo" | grep -m 1 "{cid}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+    CSD=$(echo "$BootDriveInfo" | grep -m 1 "{csd}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+    OCR=$(echo "$BootDriveInfo" | grep -m 1 "{ocr}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+  fi
 
   if [[ "$MMCType" == *"SD"* ]]; then
     # MicroSD hardware identification
@@ -404,9 +404,9 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
     Print_Style "MicroSD information: Clock Speed: $HostSDClock - Manufacturer: $Manufacturer - Model: $Model - Vendor: $Vendor - Product: $Product - HW Version: $Version - FW Version: $Firmware - Date Manufactured: $DateManufactured" $YELLOW
     Print_Style "Class: $Class" $YELLOW
   elif [[ "$MMCType" == *"MMC"* ]]; then
-    # Identify MMC
-    Product="MMC"
-    Class="MMC"
+    # Attempt to identify MMC device
+
+    HostSDClock="N/A"
 
     case "$Manufacturer" in
       0x000000)
@@ -442,6 +442,43 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
       *)
         ;;
     esac
+
+    # Get capacity
+    DriveCapacity=$(cat /sys/block/$RootDrive/device/emmc_total_size)
+    if [ -n "$DriveCapacity" ]; then
+      if [ "$DriveCapacity" -eq "$DriveCapacity" ] 2>/dev/null
+      then
+          Capacity=$DriveCapacity"G"
+      fi
+    fi
+    
+    # Parse CSD register
+    CSDBinary=$(Get_Binary $CSD)
+    CSDSpecVersion=$(Get_Decimal $(Get_Bits $CSDBinary 122 4 128))
+
+    # Parse CID register
+    CIDBinary=$(Get_Binary $CID)
+    CIDCBX=$(Get_Decimal $(Get_Bits $CIDBinary 112 1 128))
+
+    # Check CBX value to see if MMC is embedded or removable
+    case "$CIDCBX" in
+      0)
+        Product="MMC"
+        Class="MMC v$CSDSpecVersion (Card)"
+        ;;
+      1)
+        Product="eMMC"
+        Class="eMMC v$CSDSpecVersion (Embedded)"
+        ;;
+      10)
+        Product="MMC"
+        Class="MMC v$CSDSpecVersion (POP)"
+        ;;
+      *)
+        ;;
+    esac
+
+  Print_Style "MMC Type: $Class - Manufacturer: $Manufacturer - Model: $Model - Size: $Capacity" $YELLOW
 
   fi
 else
@@ -496,7 +533,7 @@ else
   Version=$(echo "$BootDriveInfo" | grep -m 1 "version" | cut -d= -f3 | cut -d\" -f2 | xargs)
   Firmware=$(echo "$BootDriveInfo" | grep -m 1 "Firmware Revision:" | awk 'NR==1{ print $3 $4 $5 }')
 
-  Print_Style "Drive information: Manufacturer: $Manufacturer - Model: $Model - Vendor: $Vendor - Product: $Product - HW Version: $Version - FW Version: $Firmware" $YELLOW
+  Print_Style "Drive information: Manufacturer: $Manufacturer - Model: $Model - Vendor: $Vendor - Product: $Product" $YELLOW
 fi
 
 # Run HDParm tests
