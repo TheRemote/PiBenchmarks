@@ -442,7 +442,7 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
     Print_Style "MicroSD information: Clock Speed: $HostSDClock - Manufacturer: $Manufacturer - Model: $Model - Vendor: $Vendor - Product: $Product - HW Version: $Version - FW Version: $Firmware - Date Manufactured: $DateManufactured" $YELLOW
     Print_Style "Class: $Class" $YELLOW
   elif [[ "$MMCType" == *"MMC"* ]]; then
-  
+    Product="MMC"
   fi
 else
   # Not a MicroSD card
