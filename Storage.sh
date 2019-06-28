@@ -138,6 +138,7 @@ if [[ -n "`which apt`" ]]; then
   fi
 # Next test for Pac-Man (Arch Linux)
 elif [ -n "`which pacman`" ]; then
+  pacman -Syy
   pacman --needed --noconfirm -S vim hdparm base-devel fio bc lshw
 
   # Check if running on a Raspberry Pi
@@ -175,7 +176,7 @@ else
     fi
     if [ ! -n "$HostCoreClock" ]; then
       HostCoreClock=$(vcgencmd measure_clock core | cut -d= -f2)
-      HostCoreClock=$(echo "scale=0; $HostCoreClock / 1000" | bc)
+      HostCoreClock=$(echo "scale=0; $HostCoreClock / 1000000" | bc)
     fi
     HostRAMClock=$(echo "$HostConfig" | grep -m 1 sdram_freq= | cut -d= -f2)
     if [ ! -n "$HostRAMClock" ]; then
