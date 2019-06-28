@@ -124,7 +124,7 @@ if [[ -n "`which apt`" ]]; then
   DpkgArch=$(dpkg --print-architecture)
   if [ ! -n "`which iozone`" ]; then
     # Attempt to install iozone from package
-    if [[ "$DpkgArch" == *"armhf"* || "$HostArchitecture" == *"armv"* || "$HostArchitecture" == *"armhf"* ]]; then
+    if [[ "$HostArchitecture" == *"armv7"* || "$HostArchitecture" == *"armhf"* ]]; then
       curl -o iozone3.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_armhf.deb
       dpkg --install iozone3.deb
       rm iozone3.deb
