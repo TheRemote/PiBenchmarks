@@ -9,6 +9,9 @@ curl https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh 
 <br>
 <b>Update History</b><br>
 <br>
+June 27th 2019<br>
+Improved CPU/core/memory clock detection in older Pis<br>
+<br>
 June 26th 2019<br>
 -Improved USB Flash drive detection<br>
 -Added Platinum manufacturer identification<br>

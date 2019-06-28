@@ -164,12 +164,23 @@ else
   # Check for vcgencmd
   if [ -n "`which vcgencmd`" ]; then
     HostConfig=$(vcgencmd get_config int)
-    HostCPUClock=$(echo "$HostConfig" | grep arm_freq | cut -d= -f2)
-    HostCoreClock=$(echo "$HostConfig" | grep core_freq | cut -d= -f2)
-    if [ ! -n "$HostCoreClock" ]; then
-      HostCoreClock=$(echo "$HostConfig" | grep gpu_freq | cut -d= -f2)
+    HostCPUClock=$(echo "$HostConfig" | grep -m 1 arm_freq | cut -d= -f2)
+    if [ ! -n "$HostCPUClock"]; then
+      HostCPUClock=$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq)
+      HostCPUClock=$(echo "scale=0; $HostCPUClock / 1000" | bc)
     fi
-    HostRAMClock=$(echo "$HostConfig" | grep sdram_freq | cut -d= -f2)
+    HostCoreClock=$(echo "$HostConfig" | grep -m 1 core_freq | cut -d= -f2)
+    if [ ! -n "$HostCoreClock" ]; then
+      HostCoreClock=$(echo "$HostConfig" | grep -m 1 gpu_freq | cut -d= -f2)
+    fi
+    if [ ! -n "$HostCoreClock" ]; then
+      HostCoreClock=$(vcgencmd measure_clock core)
+      HostCoreClock=$(echo "scale=0; $HostCoreClock / 1000" | bc)
+    fi
+    HostRAMClock=$(echo "$HostConfig" | grep -m 1 sdram_freq | cut -d= -f2)
+    if [ ! -n "$HostRAMClock" ]; then
+      HostRAMClock="N/A"
+    fi
     HostConfig+=$(echo "/n")
     HostConfig+=$(lshw)
   else
@@ -422,6 +433,8 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
 else
   # Not a MicroSD card
   BootDriveInfo+=$(hdparm -I $BootDrive)
+  BootDriveInfo+=$(hdparm -i $BootDrive)
+
   HostSDClock="N/A"
   DateManufactured="N/A"
 
@@ -461,6 +474,7 @@ else
       ;;
     *)
       Product="USB Flash"
+      Class="USB Flash Drive"
       ;;
   esac
 
@@ -516,7 +530,7 @@ IOZone=$(echo "$IOZone" | sed '/^[[:space:]]*$/d')
 Print_Style "RandRead: $IO4kRandRead - RandWrite: $IO4kRandWrite - Read: $IO4kRead - Write: $IO4kWrite" $YELLOW
 
 # Get brand information
-Print_Style "Enter your storage brand marketing name -- Example: SanDisk Pro, Samsung Evo+, Corsair MX100, etc."
+Print_Style "Enter your storage brand marketing name such as SanDisk Ultra, Samsung Evo+, Kingston A400, etc."
 read -p 'Brand Name: ' Brand < /dev/tty
 Print_Style "(Optional) Enter alias to use on benchmark results.  Leave blank for completely anonymous."
 read -p 'Alias (leave blank for Anonymous): ' UserAlias < /dev/tty
