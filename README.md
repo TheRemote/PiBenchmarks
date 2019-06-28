@@ -10,9 +10,11 @@ curl https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh 
 <b>Update History</b><br>
 <br>
 June 27th 2019<br>
+-MMC storage is now correctly identified<br>
 -Improved CPU/core/memory clock detection in older Pis<br>
 -Improved Arch Linux support<br>
 -Improved system architecture detection<br>
+-Added several new SD and MMC manufacturers<br>
 -Fixed a portability with parsing dd test output<br>
 <br>
 June 26th 2019<br>

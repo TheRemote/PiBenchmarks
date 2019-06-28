@@ -254,10 +254,6 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
   RootDrive=$(echo "$BootDrive" | cut -dp -f1 | cut -d/ -f3)
   MMCType=$(cat /sys/block/$RootDrive/device/type)
   
-  if [[ "$MMCType" == *"SD"* ]]; then
-    # MicroSD hardware identification
-    HostSDClock=$(grep "actual clock" /sys/kernel/debug/mmc0/ios 2>/dev/null | awk '{printf("%0.1f", $3/1000000)}')
-    
     # Get card information
     Manufacturer=$(echo "$BootDriveInfo" | grep -m 1 "manfid" | cut -d= -f3 | cut -d\" -f2 | xargs)
     if [ ! -n "$Manufacturer" ]; then
@@ -287,6 +283,10 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
       OCR=$(echo "$BootDriveInfo" | grep -m 1 "{ocr}" | cut -d= -f3 | cut -d\" -f2 | xargs)
     fi
 
+  if [[ "$MMCType" == *"SD"* ]]; then
+    # MicroSD hardware identification
+    HostSDClock=$(grep "actual clock" /sys/kernel/debug/mmc0/ios 2>/dev/null | awk '{printf("%0.1f", $3/1000000)}')
+
     # Parse binary to get card attributes
     SSRBinary=$(Get_Binary $SSR)
     SSRAppClass=$(Get_Decimal $(Get_Bits $SSRBinary 336 4 512))
@@ -305,11 +305,17 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
       0x000003)
         Manufacturer="SanDisk"
         ;;
+      0x000008)
+        Manufacturer="Silicon Power"
+        ;;
+      0x000018)
+        Manufacturer="Infineon"
+        ;;
       0x00001b)
         Manufacturer="Samsung"
         ;;
       0x00001d)
-        Manufacturer="AData"
+        Manufacturer="Corsair/AData"
         ;;
       0x000027)
         Manufacturer="Phison"
@@ -317,8 +323,14 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
       0x000028)
         Manufacturer="Lexar"
         ;;
+      0x000030)
+        Manufacturer="SanDisk"
+        ;;
       0x000031)
         Manufacturer="Silicon Power"
+        ;;
+      0x000033)
+        Manufacturer="STMicroelectronics"
         ;;
       0x000041)
         Manufacturer="Kingston"
@@ -327,7 +339,7 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
         Manufacturer="Team Group"
         ;;
       0x00006f)
-        Manufacturer="Platinum"
+        Manufacturer="STMicroelectronics"
         ;;
       0x000073)
         Manufacturer="Hama"
@@ -351,67 +363,7 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
         Manufacturer="Lexar"
         ;;
       0x00009f)
-        Manufacturer="Netac"
-        ;;
-      *)
-        ;;
-    esac
-
-    # Identify vendor
-    case "$Vendor" in
-      SD)
-        Vendor="SanDisk"
-        ;;
-      4V)
-        Vendor="SanDisk"
-        ;;
-      BG)
-        Vendor="Hama"
-        ;;
-      PA)
-        Vendor="Panasonic"
-        ;;
-      SM)
-        Vendor="Samsung"
-        ;;
-      TM)
-        Vendor="Toshiba"
-        ;;
-      AD)
-        Vendor="AData"
-        ;;
-      BE)
-        Vendor="Lexar"
-        ;;
-      PH)
-        Vendor="Phison"
-        ;;
-      SP)
-        Vendor="Silicon Power"
-        ;;
-      42)
-        Vendor="Kingston"
-        ;;
-      JT)
-        Vendor="Sony"
-        ;;
-      SO)
-        Vendor="Sony"
-        ;;
-      J\`)
-        Vendor="Transcend"
-        ;;
-      JE)
-        Vendor="Transcend"
-        ;;
-      -B)
-        Vendor="Team Group"
-        ;;
-      TI)
-        Vendor="Maxell"
-        ;;
-      )
-        Vendor="Platinum"
+        Manufacturer="Texas Instruments"
         ;;
       *)
         ;;
@@ -452,7 +404,45 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
     Print_Style "MicroSD information: Clock Speed: $HostSDClock - Manufacturer: $Manufacturer - Model: $Model - Vendor: $Vendor - Product: $Product - HW Version: $Version - FW Version: $Firmware - Date Manufactured: $DateManufactured" $YELLOW
     Print_Style "Class: $Class" $YELLOW
   elif [[ "$MMCType" == *"MMC"* ]]; then
+    # Identify MMC
     Product="MMC"
+    Class="MMC"
+
+    case "$Manufacturer" in
+      0x000000)
+        Manufacturer="SanDisk"
+        ;;
+      0x000002)
+        Manufacturer="Kingston/SanDisk"
+        ;;
+      0x000003)
+        Manufacturer="Toshiba"
+        ;;
+      0x000011)
+        Manufacturer="Toshiba"
+        ;;
+      0x000015)
+        Manufacturer="Samsung/SanDisk/LG"
+        ;;
+      0x000037)
+        Manufacturer="KingMax"
+        ;;
+      0x000044)
+        Manufacturer="SanDisk"
+        ;;
+      0x000090)
+        Manufacturer="SK Hynix"
+        ;;
+      0x00002c)
+        Manufacturer="Kingston"
+        ;;
+      0x000070)
+        Manufacturer="Kingston"
+        ;;
+      *)
+        ;;
+    esac
+
   fi
 else
   # Not a MicroSD card
