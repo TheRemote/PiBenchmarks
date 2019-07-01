@@ -228,20 +228,23 @@ fi
 sync
 
 # Get system boot drive information
-BootDrive=$(fdisk -l | grep '^/dev/[a-z]*[0-9]' | awk '$2 == "*" { print $1 }')
+BootDrive=$(findmnt -n -o SOURCE /)
 if [ ! -n "$BootDrive" ]; then
-  BootDrive=$(lsblk | grep "\`" | awk 'NR==1{ print $1 }' | cut -d- -f2)
-  if [ -n "$BootDrive" ]; then
-    BootDrive="/dev/$BootDrive"
-  fi
+  RDEV=$(mountpoint -d /)
+
+  for file in /dev/* ; do
+    CURRENT_DEVICE=$(printf "%d:%d" $(stat --printf="0x%t 0x%T" "$file"))
+    if [ $CURRENT_DEVICE = $RDEV ]; then
+      BootDrive=$file
+      break
+    fi
+  done
 fi
 if [ ! -n "$BootDrive" ]; then
-  BootDrive=$(df -H | grep boot | awk 'NR==1{ print $1 }')
+  BootDrive=$(df -H | grep -m 1 boot | awk 'NR==1{ print $1 }')
 fi
-if [ ! -n "$BootDrive" ]; then
-  BootDrive=$(fdisk -l | grep -m 1 '^/dev/[a-z]*[0-9]' | awk 'NR==1{ print $1 }')
-fi
-Print_Style "System drive has been detected as $BootDrive" $YELLOW
+
+Print_Style "System rootfs drive (/) has been detected as $BootDrive" $YELLOW
 BootDriveInfo=$(udevadm info -a -n $BootDrive | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
 BootDriveInfo+=$(lsblk -l)
 BootDriveInfo+=$(ls /dev/disk/by-id)

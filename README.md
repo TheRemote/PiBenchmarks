@@ -8,6 +8,8 @@ To run the benchmark type/paste:<br>
 curl https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh | sudo bash<br>
 <br>
 <b>Update History</b><br>
+June 30th 2019<br>
+-Improved rootfs device detection<br>
 <br>
 June 27th 2019<br>
 -MMC storage is now correctly identified<br>
