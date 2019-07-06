@@ -8,6 +8,11 @@ To run the benchmark type/paste:<br>
 curl https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh | sudo bash<br>
 <br>
 <b>Update History</b><br>
+July 5th 2019<br>
+-Further improved rootfs device and size detection<br>
+-Improved portability with non-Raspbian platforms<br>
+-Improved hdparm detection<br>
+<br>
 June 30th 2019<br>
 -Improved rootfs device detection<br>
 <br>

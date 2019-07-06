@@ -71,7 +71,7 @@ IO4kWrite=0
 IO4kRandRead=0
 IO4kRandWrite=0
 
-# Change directory to home directory
+# Change directory to rootfs
 cd /
 
 # Get host board information
@@ -119,7 +119,14 @@ if [[ -n "`which apt`" ]]; then
     apt-get update
   fi
   
-  apt-get install hdparm curl fio bc lshw -y
+  apt-get install hdparm -y
+  apt-get install lshw -y
+  apt-get install bc -y
+  apt-get install fio -y
+  apt-get install curl -y
+  apt-get install iozone -y
+  apt-get install iozone3 -y
+  apt-get install libcurl4 -y
   
   DpkgArch=$(dpkg --print-architecture)
   if [ ! -n "`which iozone`" ]; then
@@ -154,7 +161,14 @@ if [[ -n "`which apt`" ]]; then
 # Next test for Pac-Man (Arch Linux)
 elif [ -n "`which pacman`" ]; then
   pacman -Syy
-  pacman --needed --noconfirm -S vim hdparm base-devel fio bc lshw
+  pacman --needed --noconfirm -S vim
+  pacman --needed --noconfirm -S hdparm
+  pacman --needed --noconfirm -S base-devel
+  pacman --needed --noconfirm -S fio
+  pacman --needed --noconfirm -S bc
+  pacman --needed --noconfirm -S lshw
+  pacman --needed --noconfirm -S iozone3
+  pacman --needed --noconfirm -S iozone
 
   # Check if running on a Raspberry Pi
   if [[ $HostModel == *"Raspberry Pi"* ]]; then
@@ -227,7 +241,8 @@ fi
 # Run sync to make sure all changes have been written to disk
 sync
 
-# Get system boot drive information
+# --Get system boot drive information--
+# Find from mountpoint first
 BootDrive=$(findmnt -n -o SOURCE /)
 if [ ! -n "$BootDrive" ]; then
   RDEV=$(mountpoint -d /)
@@ -240,15 +255,37 @@ if [ ! -n "$BootDrive" ]; then
     fi
   done
 fi
+# Fall back to finding from lsblk
+if [ ! -n "$BootDrive" ]; then
+  BootDrive=$(lsblk -l | grep -v "0 part /boot" | grep -m 1 "0 part /" | awk 'NR==1{ print $1 }')
+  if [ -n "$BootDrive" ]; then
+    BootDrive="/dev/"$BootDrive
+  fi
+fi
+# Fall back to finding from df
 if [ ! -n "$BootDrive" ]; then
   BootDrive=$(df -H | grep -m 1 boot | awk 'NR==1{ print $1 }')
 fi
 
-Print_Style "System rootfs drive (/) has been detected as $BootDrive" $YELLOW
+# Detect BootDrive suffix
+BootDriveSuffix=$(echo "$BootDrive" | cut -d"/" -f3)
+if [ ! -n "$BootDriveSuffix" ]; then
+  BootDriveSuffix=$(echo "$BootDrive" | cut -d"/" -f2)
+fi
+if [ ! -n "$BootDriveSuffix" ]; then
+  BootDriveSuffix=$(echo "$BootDrive" | cut -d"/" -f1)
+fi
+if [ ! -n "$BootDriveSuffix" ]; then
+  BootDriveSuffix="$BootDrive"
+fi
+
+Print_Style "System rootfs drive (/) has been detected as $BootDrive ($BootDriveSuffix)" $YELLOW
+
 BootDriveInfo=$(udevadm info -a -n $BootDrive | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
 BootDriveInfo+=$(lsblk -l)
+BootDriveInfo+=$(findmnt -n)
 BootDriveInfo+=$(ls /dev/disk/by-id)
-Capacity=$(lsblk -l | grep disk -m 1 | awk 'NR==1{ print $4 }' | sed 's/,/./g')
+Capacity=$(lsblk -l | grep $BootDriveSuffix -m 1 | awk 'NR==1{ print $4 }' | sed 's/,/./g')
 
 # Check for Micro SD / MMC card
 if [[ "$BootDrive" == *"mmcblk"* ]]; then
@@ -542,9 +579,24 @@ fi
 # Run HDParm tests
 Print_Style "Running HDParm tests ..." $YELLOW
 HDParm=$(hdparm -Tt --direct $BootDrive 2>/dev/null | sed '/^[[:space:]]*$/d')
+if [ ! -n "$HDParm" ]; then
+  HDParm=$(hdparm -Tt $BootDrive 2>/dev/null | sed '/^[[:space:]]*$/d')
+fi
+if [ ! -n "$HDParm" ]; then
+  HDParm=$(hdparm -T --direct $BootDrive 2>/dev/null | sed '/^[[:space:]]*$/d')
+fi
+if [ ! -n "$HDParm" ]; then
+  HDParm=$(hdparm -T $BootDrive 2>/dev/null | sed '/^[[:space:]]*$/d')
+fi
+if [ ! -n "$HDParm" ]; then
+  HDParm=$(hdparm -t --direct $BootDrive 2>/dev/null | sed '/^[[:space:]]*$/d')
+fi
+if [ ! -n "$HDParm" ]; then
+  HDParm=$(hdparm -t $BootDrive 2>/dev/null | sed '/^[[:space:]]*$/d')
+fi
 Print_Style "$HDParm" $NORMAL
-HDParmDisk=$(echo "$HDParm" | grep "Timing O_DIRECT disk" | awk 'NR==1{ print $11 }')
-HDParmCached=$(echo "$HDParm" | grep "Timing O_DIRECT cached" | awk 'NR==1{ print $11 }')
+HDParmDisk=$(echo "$HDParm" | grep "disk reads:" | awk 'NR==1{ print $11 }')
+HDParmCached=$(echo "$HDParm" | grep "cached reads:" | awk 'NR==1{ print $11 }')
 Print_Style "HDParm: $HDParmDisk MB/s - HDParmCached: $HDParmCached MB/s" $YELLOW
 
 # Run DD tests
