@@ -55,6 +55,11 @@ Get_Hex () {
     printf '%x\n' "$((2#$1))"
 }
 
+# Get string of text from binary
+Get_Text() {
+  for a in $1; do printf "%x\n" $((2#$a)); done | xxd -r -p
+}
+
 # Check if script is running as root first
 if [[ "$(whoami)" != "root" ]]; then
   Print_Style "Benchmarks must be ran as root!  Example: sudo ./Storage.sh" $RED
@@ -327,12 +332,55 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
     # MicroSD hardware identification
     HostSDClock=$(grep "actual clock" /sys/kernel/debug/mmc0/ios 2>/dev/null | awk '{printf("%0.1f", $3/1000000)}')
 
-    # Parse binary to get card attributes
+    # Parse SSR status register
     SSRBinary=$(Get_Binary $SSR)
     SSRAppClass=$(Get_Decimal $(Get_Bits $SSRBinary 336 4 512))
     SSRVideoClass=$(Get_Decimal $(Get_Bits $SSRBinary 384 8 512))
     SSRUHSClass=$(Get_Decimal $(Get_Bits $SSRBinary 396 4 512))
     SSRSpeedClass=$(Get_Decimal $(Get_Bits $SSRBinary 440 8 512))
+
+    # Parse CID status register
+    CIDBinary=$(Get_Binary $CID)
+    CIDMID=$(Get_Hex $(Get_Bits $CIDBinary 120 8 128))
+    CIDMDateM=$(Get_Decimal $(Get_Bits $CIDBinary 8 4 128))
+    CIDMDateY=$(Get_Decimal $(Get_Bits $CIDBinary 12 8 128))
+    CIDMDate="$CIDMDateM/20$CIDMDateY"
+    CIDOID=$(Get_Text $(Get_Bits $CIDBinary 104 16 128))
+    CIDPNM=$(Get_Text $(Get_Bits $CIDBinary 64 40 128))
+    CIDPRVHW=$(Get_Hex $(Get_Bits $CIDBinary 60 4 128))
+    CIDPRVFW=$(Get_Hex $(Get_Bits $CIDBinary 56 4 128))
+    CIDPRV="$CIDPRVHW.$CIDPRVFW"
+    Print_Style "Card CID status register: MID: $CIDMID OID: $CIDOID PNM: $CIDPNM PRV: $CIDPRV MDATE: $CIDMDate" $YELLOW
+
+    # Parse CSD status register
+    CSDBinary=$(Get_Binary $CSD)
+    CSDMID=$(Get_Hex $(Get_Bits $CSDBinary 120 8 128))
+    Print_Style "Card CSD status register: MID: $CIDMID OID: $CIDOID PNM: $CIDPNM PRV: $CIDPRV MDATE: $CIDMDate" $YELLOW
+
+    # Parse SCR status register
+    SCRBinary=$(Get_Binary $SCR)
+    SCRSDSpec=$(Get_Decimal $(Get_Bits $SCRBinary 56 4 64))
+    SCRSDSpec3=$(Get_Decimal $(Get_Bits $SCRBinary 47 1 64))
+    SCRSDSpec4=$(Get_Decimal $(Get_Bits $SCRBinary 42 1 64))
+    SCRSDSpecX=$(Get_Decimal $(Get_Bits $SCRBinary 38 4 64))
+
+    # Get SD physical layer specification version
+    if [ "$SCRSDSpecX" == "2" ]; then # 6.XX
+      SCRSDSpecVer="6"
+    elif [ "$SCRSDSpecX" == "1" ]; then # 5.XX
+      SCRSDSpecVer="5"
+    elif [ "$SCRSDSpec4" == "1" ]; then # 4.XX
+      SCRSDSpecVer="4"
+    elif [ "$SCRSDSpec3" == "1" ]; then # 3.XX
+      SCRSDSpecVer="3"
+    elif [ "$SCRSDSpec" == "2" ]; then # 2.00
+      SCRSDSpecVer="2"
+    elif [ "$SCRSDSpec" == "1" ]; then # 1.10
+      SCRSDSpecVer="1.1"
+    elif [ "$SCRSDSpec" == "0" ]; then # 1.0
+      SCRSDSpecVer="1"
+    fi
+    Print_Style "Card SCR status register: SD Physical Version Specification: $SCRSDSpecVer" $YELLOW
 
     # Check for known manufacturers
     case "$Manufacturer" in
