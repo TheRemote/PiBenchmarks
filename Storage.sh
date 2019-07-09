@@ -124,7 +124,6 @@ if [[ -n "`which apt`" ]]; then
   apt-get install bc -y
   apt-get install fio -y
   apt-get install curl -y
-  apt-get install iozone -y
   apt-get install iozone3 -y
   apt-get install libcurl4 -y
   
@@ -168,7 +167,6 @@ elif [ -n "`which pacman`" ]; then
   pacman --needed --noconfirm -S bc
   pacman --needed --noconfirm -S lshw
   pacman --needed --noconfirm -S iozone3
-  pacman --needed --noconfirm -S iozone
 
   # Check if running on a Raspberry Pi
   if [[ $HostModel == *"Raspberry Pi"* ]]; then
@@ -194,27 +192,28 @@ else
   # Check for vcgencmd
   if [ -n "`which vcgencmd`" ]; then
     HostConfig=$(vcgencmd get_config int)
-    HostCPUClock=$(echo "$HostConfig" | grep -m 1 arm_freq= | cut -d= -f2)
+    HostCPUClock=$(echo "$HostConfig" | grep -m 1 arm_freq= | cut -d= -f2 | xargs)
     if [ ! -n "$HostCPUClock" ]; then
-      HostCPUClock=$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq)
+      HostCPUClock=$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq | xargs)
       HostCPUClock=$(echo "scale=0; $HostCPUClock / 1000" | bc)
     fi
-    HostCoreClock=$(echo "$HostConfig" | grep -m 1 core_freq= | cut -d= -f2)
+    HostCoreClock=$(echo "$HostConfig" | grep -m 1 core_freq= | cut -d= -f2 | xargs)
     if [ ! -n "$HostCoreClock" ]; then
-      HostCoreClock=$(echo "$HostConfig" | grep -m 1 gpu_freq= | cut -d= -f2)
+      HostCoreClock=$(echo "$HostConfig" | grep -m 1 gpu_freq= | cut -d= -f2 | xargs)
     fi
     if [ ! -n "$HostCoreClock" ]; then
-      HostCoreClock=$(vcgencmd measure_clock core | cut -d= -f2)
+      HostCoreClock=$(vcgencmd measure_clock core | cut -d= -f2 | xargs)
       HostCoreClock=$(echo "scale=0; $HostCoreClock / 1000000" | bc)
     fi
-    HostRAMClock=$(echo "$HostConfig" | grep -m 1 sdram_freq= | cut -d= -f2)
+    HostRAMClock=$(echo "$HostConfig" | grep -m 1 sdram_freq= | cut -d= -f2 | xargs)
     if [ ! -n "$HostRAMClock" ]; then
       HostRAMClock="N/A"
     fi
     HostConfig+=$(echo "/n")
     HostConfig+=$(lshw)
   else
-    HostConfig=$(lshw)
+    HostConfig+=$(echo "/n")
+    HostConfig+=$(lshw)
     HostCPUClock=$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq)
     HostCPUClock=$(echo "scale=0; $HostCPUClock / 1000" | bc)
     HostCoreClock="N/A"
@@ -529,30 +528,48 @@ else
   HostSDClock="N/A"
   DateManufactured="N/A"
 
-  # Attempt to identify drive manufacturer and model
-  Manufacturer=$(echo "$BootDriveInfo" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3 }')
+  # Attempt to identify drive manufacturer
+  Manufacturer=$(echo "$BootDriveInfo" | grep -m 1 "{manufacturer}" | cut -d= -f3 | cut -d\" -f2 | xargs)
   if [ ! -n "$Manufacturer" ]; then
-    Manufacturer=$(echo "$BootDriveInfo" | grep -m 1 "{manufacturer}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+    Manufacturer=$(echo "$BootDriveInfo" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3 }' | cut -d_ -f1 | xargs)
   fi
   Vendor="$Manufacturer"
-  Model=$(echo "$BootDriveInfo" | grep -m 1 "Model Number:" | awk 'NR==1{ print $4$5$6$7$8$9 }')
+
+  Model=$(echo "$BootDriveInfo" | grep -m 1 "{model}" | cut -d= -f3 | cut -d\" -f2 | xargs)
   if [ ! -n "$Model" ]; then
-    Model=$(echo "$BootDriveInfo" | grep -m 1 "{model}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+    Model=$(echo "$BootDriveInfo" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3$4$5$6$7$8$9 }' | xargs)
   fi
 
-  # Identify drive type, form factor, capacity
-  FormFactor=$(echo "$BootDriveInfo" | grep -m 1 "Form Factor:" | cut -d: -f2 | cut -d' ' -f1 | xargs)
+  # Attempt to identify drive model
+  case "$Model" in
+    "ASM105x")
+      # This is the ASMedia USB TO 2.5" SATA adapter chipset
+      Product="SSD"
+      FormFactor="2.5"
+      Class="SSD (2.5\" SATA)"
+      ;;
+    *)
+      ;;
+  esac
+
+  # Identify drive type, form factor
   if [ ! -n "$FormFactor" ]; then
-    FormFactor="2.5"
+    FormFactor=$(echo "$BootDriveInfo" | grep -m 1 "Form Factor:" | cut -d: -f2 | cut -d' ' -f1 | xargs)
+    if [ ! -n "$FormFactor" ]; then
+      FormFactor="2.5"
+    fi
   fi
-  DriveCapacity=$(echo "$BootDriveInfo" | grep -m 1 "device size with M = 1000*" | cut -d\( -f2 | cut -d' ' -f1 | xargs)
 
+  # Attempt to get drive capacity
+  DriveCapacity=$(echo "$BootDriveInfo" | grep -m 1 "device size with M = 1000*" | cut -d\( -f2 | cut -d' ' -f1 | xargs)
   if [ -n "$DriveCapacity" ]; then
     if [ "$DriveCapacity" -eq "$DriveCapacity" ] 2>/dev/null
     then
         Capacity=$DriveCapacity"G"
     fi
   fi
+
+  # Attempt to identify drive type
   DriveType=$(echo "$BootDriveInfo" | grep -m 1 "Nominal Media Rotation Rate:" | cut -d: -f2 | xargs)
   case "$DriveType" in
     5400 | 7200 | 10000)
