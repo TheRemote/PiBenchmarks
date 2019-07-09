@@ -282,6 +282,7 @@ Print_Style "System rootfs drive (/) has been detected as $BootDrive ($BootDrive
 
 BootDriveInfo=$(udevadm info -a -n $BootDrive | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
 BootDriveInfo+=$(lsblk -l)
+BootDriveInfo+=$(lshw -class disk -class storage)
 BootDriveInfo+=$(findmnt -n)
 BootDriveInfo+=$(ls /dev/disk/by-id)
 Capacity=$(lsblk -l | grep $BootDriveSuffix -m 1 | awk 'NR==1{ print $4 }' | sed 's/,/./g')
@@ -532,11 +533,15 @@ else
   DateManufactured="N/A"
 
   # Attempt to identify drive manufacturer
+  Vendor=$(echo "$BootDriveInfo" | grep -m 1 "{vendor}" | cut -d= -f3 | cut -d\" -f2 | xargs)
   Manufacturer=$(echo "$BootDriveInfo" | grep -m 1 "{manufacturer}" | cut -d= -f3 | cut -d\" -f2 | xargs)
   if [ ! -n "$Manufacturer" ]; then
-    Manufacturer=$(echo "$BootDriveInfo" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3 }' | cut -d_ -f1 | xargs)
+    Manufacturer=$(echo "$BootDriveInfo" | grep "_" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3 }' | cut -d_ -f1 | xargs)
+    Model=$(echo "$BootDriveInfo" | grep "_" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3 }' | cut -d_ -f2 | xargs)
   fi
-  Vendor="$Manufacturer"
+  if [ ! -n "$Manufacturer" ]; then
+    Manufacturer=$(echo "$BootDriveInfo" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3 }' | xargs)
+  fi
 
   Model=$(echo "$BootDriveInfo" | grep -m 1 "{model}" | cut -d= -f3 | cut -d\" -f2 | xargs)
     # Attempt to identify drive model
@@ -546,14 +551,11 @@ else
       Product="SSD"
       FormFactor="2.5"
       Class="SSD (2.5\" SATA)"
+      Model=$(echo "$BootDriveInfo" | grep "_" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3 }' | cut -d_ -f1 | xargs)
       ;;
     *)
       ;;
   esac
-
-  if [ ! -n "$Model" ]; then
-    Model=$(echo "$BootDriveInfo" | grep -m 1 "Model Number:" | awk 'NR==1{ print $4 }' | xargs)
-  fi
   if [ ! -n "$Model" ]; then
     Model=$(echo "$BootDriveInfo" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3$4$5$6$7$8$9 }' | xargs)
   fi
