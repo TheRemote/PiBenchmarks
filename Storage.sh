@@ -543,8 +543,8 @@ else
     Manufacturer=$(echo "$BootDriveInfo" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3 }' | xargs)
   fi
 
+  # Attempt to identify drive model
   Model=$(echo "$BootDriveInfo" | grep -m 1 "{model}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-    # Attempt to identify drive model
   case "$Model" in
     "ASM105x")
       # This is the ASMedia USB TO 2.5" SATA adapter chipset
@@ -559,6 +559,11 @@ else
   if [ ! -n "$Model" ]; then
     Model=$(echo "$BootDriveInfo" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3$4$5$6$7$8$9 }' | xargs)
   fi
+  if [ ! -n "$Model" ]; then
+    Model=$(echo "$BootDriveInfo" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3$4$5$6$7$8$9 }' | xargs)
+  fi
+
+  
 
 
 
