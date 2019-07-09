@@ -527,7 +527,7 @@ else
   if [ ! -n "$HDParmInfo" ]; then
     HDParmInfo=$(hdparm -I "$BootDrive" 2>/dev/null | sed '/^[[:space:]]*$/d')
   fi
-  BootDriveInfo+=$(HDParmInfo)
+  BootDriveInfo+=$(echo "$HDParmInfo")
 
   HostSDClock="N/A"
   DateManufactured="N/A"
