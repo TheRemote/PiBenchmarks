@@ -546,11 +546,22 @@ else
       Model=
       Manufacturer=
       ;;
+    "SABRENT")
+      # This is the Sabrent USB TO 2.5" SATA adapter chipset
+      Product="SSD"
+      FormFactor="2.5"
+      Class="SSD (2.5\" SATA)"
+      Model=
+      Manufacturer=
+      ;;
     *)
       ;;
   esac
   if [ ! -n "$Model" ]; then
-    Model=$(echo "$BootDriveInfo" | grep "_" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3 }' | cut -d_ -f2 | xargs)
+    Model=$(echo "$BootDriveInfo" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3 }' | grep "_" | cut -d_ -f2 | xargs)
+  fi
+  if [ ! -n "$Model" ]; then
+    Model=$(echo "$BootDriveInfo" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3 }' | grep " " | cut -d" " -f2 | xargs)
   fi
   if [ ! -n "$Model" ]; then
     Model=$(echo "$BootDriveInfo" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3$4$5$6$7$8$9 }' | xargs)
@@ -561,7 +572,10 @@ else
 
   # Attempt to identify drive manufacturer
   if [ ! -n "$Manufacturer" ]; then
-    Manufacturer=$(echo "$BootDriveInfo" | grep "_" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3 }' | cut -d_ -f1 | xargs)
+    Manufacturer=$(echo "$BootDriveInfo" | grep -m 1 "Model Number:" | grep "_" | awk 'NR==1{ print $3 }' | cut -d_ -f1 | xargs)
+  fi
+  if [ ! -n "$Manufacturer" ]; then
+    Manufacturer=$(echo "$BootDriveInfo" | grep -m 1 "Model Number:" | grep " " | awk 'NR==1{ print $3 }' | cut -d" " -f1 | xargs)
   fi
   if [ ! -n "$Manufacturer" ]; then
     Manufacturer=$(echo "$BootDriveInfo" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3 }' | xargs)

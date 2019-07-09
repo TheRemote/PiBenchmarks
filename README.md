@@ -10,6 +10,7 @@ curl https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh 
 <b>Update History</b><br>
 July 8th 2019<br>
 -Improved drive detection for SSDs going through adapters<br>
+-Added detection of SSD adapters being used<br>
 <br>
 July 5th 2019<br>
 -Further improved rootfs device and size detection<br>
