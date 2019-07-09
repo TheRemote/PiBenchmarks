@@ -544,7 +544,9 @@ else
   fi
 
   # Attempt to identify drive model
-  Model=$(echo "$BootDriveInfo" | grep -m 1 "{model}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+  if [ ! -n "$Model" ]; then
+    Model=$(echo "$BootDriveInfo" | grep -m 1 "{model}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+  fi
   case "$Model" in
     "ASM105x")
       # This is the ASMedia USB TO 2.5" SATA adapter chipset
@@ -562,10 +564,6 @@ else
   if [ ! -n "$Model" ]; then
     Model=$(echo "$BootDriveInfo" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3$4$5$6$7$8$9 }' | xargs)
   fi
-
-  
-
-
 
   # Identify drive type, form factor
   if [ ! -n "$FormFactor" ]; then
@@ -605,7 +603,7 @@ else
   Version=$(echo "$BootDriveInfo" | grep -m 1 "version" | cut -d= -f3 | cut -d\" -f2 | xargs)
   Firmware=$(echo "$BootDriveInfo" | grep -m 1 "Firmware Revision:" | awk 'NR==1{ print $3 $4 $5 }')
 
-  Print_Style "Drive information: Manufacturer: $Manufacturer - Model: $Model - Vendor: $Vendor - Product: $Product" $YELLOW
+  Print_Style "Drive information: Manufacturer: $Manufacturer - Model: $Model - Product: $Product" $YELLOW
 fi
 
 # Run HDParm tests
