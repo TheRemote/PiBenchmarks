@@ -532,23 +532,11 @@ else
   HostSDClock="N/A"
   DateManufactured="N/A"
 
-  # Attempt to identify drive manufacturer
+  # Attempt to identify drive model
+  Model=$(echo "$BootDriveInfo" | grep -m 1 "{model}" | cut -d= -f3 | cut -d\" -f2 | xargs)
   Vendor=$(echo "$BootDriveInfo" | grep -m 1 "{vendor}" | cut -d= -f3 | cut -d\" -f2 | xargs)
   Manufacturer=$(echo "$BootDriveInfo" | grep -m 1 "{manufacturer}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-  if [ ! -n "$Manufacturer" ]; then
-    Manufacturer=$(echo "$BootDriveInfo" | grep "_" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3 }' | cut -d_ -f1 | xargs)
-    if [ ! -n "$Manufacturer" ]; then
-      Model=
-    fi
-  fi
-  if [ ! -n "$Manufacturer" ]; then
-    Manufacturer=$(echo "$BootDriveInfo" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3 }' | xargs)
-  fi
 
-  # Attempt to identify drive model
-  if [ ! -n "$Model" ]; then
-    Model=$(echo "$BootDriveInfo" | grep -m 1 "{model}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-  fi
   case "$Model" in
     "ASM105x")
       # This is the ASMedia USB TO 2.5" SATA adapter chipset
@@ -556,6 +544,7 @@ else
       FormFactor="2.5"
       Class="SSD (2.5\" SATA)"
       Model=
+      Manufacturer=
       ;;
     *)
       ;;
@@ -568,6 +557,14 @@ else
   fi
   if [ ! -n "$Model" ]; then
     Model=$(echo "$BootDriveInfo" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3$4$5$6$7$8$9 }' | xargs)
+  fi
+
+  # Attempt to identify drive manufacturer
+  if [ ! -n "$Manufacturer" ]; then
+    Manufacturer=$(echo "$BootDriveInfo" | grep "_" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3 }' | cut -d_ -f1 | xargs)
+  fi
+  if [ ! -n "$Manufacturer" ]; then
+    Manufacturer=$(echo "$BootDriveInfo" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3 }' | xargs)
   fi
 
   # Identify drive type, form factor
