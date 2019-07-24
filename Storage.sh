@@ -617,6 +617,14 @@ else
       Model=
       Manufacturer=
       ;;
+    "USB 3.0 Device")
+      # ASMedia USB to SATA adapter (generic)
+      Product="SSD"
+      FormFactor="2.5"
+      Class="SSD (2.5\" SATA)"
+      Model=
+      Manufacturer=
+      ;;
     *)
       ;;
   esac
