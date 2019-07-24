@@ -350,7 +350,6 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
     CIDPRVHW=$(Get_Hex $(Get_Bits $CIDBinary 60 4 128))
     CIDPRVFW=$(Get_Hex $(Get_Bits $CIDBinary 56 4 128))
     CIDPRV="$CIDPRVHW.$CIDPRVFW"
-    Print_Style "Card CID status register: MID: $CIDMID OID: $CIDOID PNM: $CIDPNM PRV: $CIDPRV MDATE: $CIDMDate" $YELLOW
 
     # Parse CSD status register
     CSDBinary=$(Get_Binary $CSD)
@@ -602,6 +601,22 @@ else
       Model=
       Manufacturer=
       ;;
+    "2105")
+      # ASMedia adapter 2105
+      Product="SSD"
+      FormFactor="2.5"
+      Class="SSD (2.5\" SATA)"
+      Model=
+      Manufacturer=
+      ;;
+    "2115")
+      # ASMedia adapter 2115
+      Product="SSD"
+      FormFactor="2.5"
+      Class="SSD (2.5\" SATA)"
+      Model=
+      Manufacturer=
+      ;;
     *)
       ;;
   esac
@@ -664,8 +679,12 @@ else
   esac
 
   # Identify hardware and firmware versions of drive
-  Version=$(echo "$BootDriveInfo" | grep -m 1 "version" | cut -d= -f3 | cut -d\" -f2 | xargs)
-  Firmware=$(echo "$BootDriveInfo" | grep -m 1 "Firmware Revision:" | awk 'NR==1{ print $3 $4 $5 }')
+  Version=$(echo "$BootDriveInfo" | grep -m 1 "{version}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+  Firmware=$(echo "$BootDriveInfo" | grep -m 1 "Firmware Revision:" | awk 'NR==1{ print $3$4$5$6 }')
+  if [ -n "$Firmware" ]; then
+    Firmware=$(echo "$BootDriveInfo" | grep -m 1 "Firmware Revision:" | awk 'NR==1{ print $3$4$5$6 }')
+  fi
+
 
   Print_Style "Drive information: Manufacturer: $Manufacturer - Model: $Model - Product: $Product" $YELLOW
 fi

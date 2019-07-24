@@ -8,6 +8,9 @@ To run the benchmark type/paste:<br>
 curl https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh | sudo bash<br>
 <br>
 <b>Update History</b><br>
+July 24th 2019<br>
+-Further improved SSD drive detection<br>
+<br>
 July 8th 2019<br>
 -Improved drive detection for SSDs going through adapters<br>
 -Added detection of SSD adapters being used<br>
