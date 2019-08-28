@@ -66,6 +66,9 @@ if [[ "$(whoami)" != "root" ]]; then
   exit 1
 fi
 
+# Trim drives for more accurate benchmarking
+sudo fstrim -av
+
 # Initialize variables
 Score=0
 DDWriteResult=0
