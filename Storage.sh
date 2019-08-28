@@ -123,7 +123,7 @@ if [[ -n "`which apt`" ]]; then
   else
     apt-get update
   fi
-  
+
   apt-get install hdparm -y
   apt-get install lshw -y
   apt-get install bc -y
@@ -131,7 +131,7 @@ if [[ -n "`which apt`" ]]; then
   apt-get install curl -y
   apt-get install iozone3 -y
   apt-get install libcurl4 -y
-  
+
   DpkgArch=$(dpkg --print-architecture)
   if [ ! -n "`which iozone`" ]; then
     # Attempt to install iozone from package
@@ -298,7 +298,7 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
   # Determine if MMC or Micro SD
   RootDrive=$(echo "$BootDrive" | cut -dp -f1 | cut -d/ -f3)
   MMCType=$(cat /sys/block/$RootDrive/device/type)
-  
+
   # Get card information
   Manufacturer=$(echo "$BootDriveInfo" | grep -m 1 "manfid" | cut -d= -f3 | cut -d\" -f2 | xargs)
   if [ ! -n "$Manufacturer" ]; then
@@ -538,7 +538,7 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
           Capacity=$DriveCapacity"G"
       fi
     fi
-    
+
     # Parse CSD register
     CSDBinary=$(Get_Binary $CSD)
     CSDSpecVersion=$(Get_Decimal $(Get_Bits $CSDBinary 122 4 128))
@@ -758,14 +758,14 @@ IOZone=$(echo "$IOZone" | sed '/^[[:space:]]*$/d')
 Print_Style "RandRead: $IO4kRandRead - RandWrite: $IO4kRandWrite - Read: $IO4kRead - Write: $IO4kWrite" $YELLOW
 
 # Get brand information
-Print_Style "Enter your storage brand marketing name such as SanDisk Ultra, Samsung Evo+, Kingston A400, etc."
-read -p 'Brand Name: ' Brand < /dev/tty
-Print_Style "(Optional) Enter alias to use on benchmark results.  Leave blank for completely anonymous."
+Print_Style "Enter a description of your storage (SSD vs SD card, made by SanDisk, anything relevant:"
+read -p 'Description: ' Brand < /dev/tty
+Print_Style "(Optional) Enter alias to use on benchmark results.  Leave blank for completely anonymous:"
 read -p 'Alias (leave blank for Anonymous): ' UserAlias < /dev/tty
 if [[ ! "$UserAlias" ]]; then UserAlias="Anonymous"; fi
 
 # Submit results
-curl --form "form_tools_form_id=1" --form "DDTest=$DDWrite" --form "DDWriteSpeed=$DDWriteResult" --form "HDParmDisk=$HDParmDisk" --form "HDParmCached=$HDParmCached" --form "HDParm=$HDParm" --form "fio4kRandRead=$fio4kRandRead" --form "fio4kRandWrite=$fio4kRandWrite" --form "fio4kRandWriteIOPS=$fio4kRandWriteIOPS" --form "fio4kRandReadIOPS=$fio4kRandReadIOPS" --form "fio4kRandWriteSpeed=$fio4kRandWriteSpeed" --form "fio4kRandReadSpeed=$fio4kRandReadSpeed" --form "IOZone=$IOZone" --form "IO4kRandRead=$IO4kRandRead" --form "IO4kRandWrite=$IO4kRandWrite" --form "IO4kRead=$IO4kRead" --form "IO4kWrite=$IO4kWrite" --form "Drive=$BootDrive" --form "DriveInfo=$BootDriveInfo" --form "Model=$Model" --form "Vendor=$Vendor" --form "Capacity=$Capacity" --form "Manufacturer=$Manufacturer" --form "Product=$Product" --form "Version=$Version" --form "Firmware=$Firmware" --form "DateManufactured=$DateManufactured" --form "Brand=$Brand" --form "Class=$Class" --form "OCR=$OCR" --form "SSR=$SSR" --form "SCR=$SCR" --form "CID=$CID" --form "CSD=$CSD" --form "UserAlias=$UserAlias" --form "HostModel=$HostModel" --form "HostSDClock=$HostSDClock" --form "HostConfig=$HostConfig" --form "HostCPUClock=$HostCPUClock" --form "HostCoreClock=$HostCoreClock" --form "HostRAMClock=$HostRAMClock" --form "HostArchitecture=$HostArchitecture" --form "HostOS=$HostOS" --form "HostOSInfo=$HostOSInfo" --form "HostManufacturer=$HostManufacturer" https://jamesachambers.com/formtools/process.php
+curl --form "form_tools_form_id=1" --form "DDTest=$DDWrite" --form "DDWriteSpeed=$DDWriteResult" --form "HDParmDisk=$HDParmDisk" --form "HDParmCached=$HDParmCached" --form "HDParm=$HDParm" --form "fio4kRandRead=$fio4kRandRead" --form "fio4kRandWrite=$fio4kRandWrite" --form "fio4kRandWriteIOPS=$fio4kRandWriteIOPS" --form "fio4kRandReadIOPS=$fio4kRandReadIOPS" --form "fio4kRandWriteSpeed=$fio4kRandWriteSpeed" --form "fio4kRandReadSpeed=$fio4kRandReadSpeed" --form "IOZone=$IOZone" --form "IO4kRandRead=$IO4kRandRead" --form "IO4kRandWrite=$IO4kRandWrite" --form "IO4kRead=$IO4kRead" --form "IO4kWrite=$IO4kWrite" --form "Drive=$BootDrive" --form "DriveInfo=$BootDriveInfo" --form "Model=$Model" --form "Vendor=$Vendor" --form "Capacity=$Capacity" --form "Manufacturer=$Manufacturer" --form "Product=$Product" --form "DateManufactured=$DateManufactured" --form "Note=$Brand" --form "Class=$Class" --form "OCR=$OCR" --form "SSR=$SSR" --form "SCR=$SCR" --form "CID=$CID" --form "CSD=$CSD" --form "UserAlias=$UserAlias" --form "HostModel=$HostModel" --form "HostSDClock=$HostSDClock" --form "HostConfig=$HostConfig" --form "HostCPUClock=$HostCPUClock" --form "HostCoreClock=$HostCoreClock" --form "HostRAMClock=$HostRAMClock" --form "HostArchitecture=$HostArchitecture" --form "HostOS=$HostOS" --form "HostOSInfo=$HostOSInfo" --form "HostManufacturer=$HostManufacturer" https://jamesachambers.com/formtools/process.php
 
 # Calculate score
 Score=$(echo "scale=2; $DDWriteResult * 1024" | bc)
@@ -784,11 +784,11 @@ Score=$(echo "scale=0; $Score / 100" | bc )
 # Display results
 printf "\n$BRIGHT$UNDERLINE%-25s %-25s %-25s\n" "     Category" "     Test" "     Result     "$NORMAL$CYAN
 printf "%-25s %-25s %-25s\n" "HDParm" "Disk Read" "$HDParmDisk MB/s"
-printf "%-25s %-25s %-25s\n" "HDParm" "Cached Disk Read" "$HDParmCached MB/s" 
-printf "%-25s %-25s %-25s\n" "DD" "Disk Write" "$DDWriteResult MB/s" 
+printf "%-25s %-25s %-25s\n" "HDParm" "Cached Disk Read" "$HDParmCached MB/s"
+printf "%-25s %-25s %-25s\n" "DD" "Disk Write" "$DDWriteResult MB/s"
 printf "%-25s %-25s %-25s\n" "FIO" "4k random read" "$fio4kRandReadIOPS IOPS ($fio4kRandReadSpeed KB/s)"
 printf "%-25s %-25s %-25s\n" "FIO" "4k random write" "$fio4kRandWriteIOPS IOPS ($fio4kRandWriteSpeed KB/s)"
-printf "%-25s %-25s %-25s\n" "IOZone" "4k read" "$IO4kRead KB/s" 
+printf "%-25s %-25s %-25s\n" "IOZone" "4k read" "$IO4kRead KB/s"
 printf "%-25s %-25s %-25s\n" "IOZone" "4k write" "$IO4kWrite KB/s"
 printf "%-25s %-25s %-25s\n" "IOZone" "4k random read" "$IO4kRandRead KB/s"
 printf "%-25s %-25s %-25s\n" "IOZone" "4k random write" "$IO4kRandWrite KB/s"
