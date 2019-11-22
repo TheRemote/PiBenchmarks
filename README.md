@@ -8,6 +8,9 @@ To run the benchmark type/paste:<br>
 curl https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh | sudo bash<br>
 <br>
 <b>Update History</b><br>
+November 22nd 2019<br>
+-Parted out some tests into separate variables -- cleaning up code/tests for upcoming system improvements<br>
+<br>
 July 24th 2019<br>
 -Further improved SSD drive detection<br>
 <br>
