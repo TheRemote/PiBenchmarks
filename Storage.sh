@@ -642,27 +642,27 @@ else
       ;;
   esac
   if [ ! -n "$Model" ]; then
-    Model=$(echo "$Test_udevadm" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3 }' | grep "_" | cut -d_ -f2 | xargs)
+    Model=$(echo "$Test_hdparm" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3 }' | grep "_" | cut -d_ -f2 | xargs)
   fi
   if [ ! -n "$Model" ]; then
-    Model=$(echo "$Test_udevadm" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3 }' | grep " " | cut -d" " -f2 | xargs)
+    Model=$(echo "$Test_hdparm" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3 }' | grep " " | cut -d" " -f2 | xargs)
   fi
   if [ ! -n "$Model" ]; then
-    Model=$(echo "$Test_udevadm" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3$4$5$6$7$8$9 }' | xargs)
+    Model=$(echo "$Test_hdparm" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3$4$5$6$7$8$9 }' | xargs)
   fi
   if [ ! -n "$Model" ]; then
-    Model=$(echo "$Test_udevadm" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3$4$5$6$7$8$9 }' | xargs)
+    Model=$(echo "$Test_hdparm" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3$4$5$6$7$8$9 }' | xargs)
   fi
 
   # Attempt to identify drive manufacturer
   if [ ! -n "$Manufacturer" ]; then
-    Manufacturer=$(echo "$Test_udevadm" | grep -m 1 "Model Number:" | grep "_" | awk 'NR==1{ print $3 }' | cut -d_ -f1 | xargs)
+    Manufacturer=$(echo "$Test_hdparm" | grep -m 1 "Model Number:" | grep "_" | awk 'NR==1{ print $3 }' | cut -d_ -f1 | xargs)
   fi
   if [ ! -n "$Manufacturer" ]; then
-    Manufacturer=$(echo "$Test_udevadm" | grep -m 1 "Model Number:" | grep " " | awk 'NR==1{ print $3 }' | cut -d" " -f1 | xargs)
+    Manufacturer=$(echo "$Test_hdparm" | grep -m 1 "Model Number:" | grep " " | awk 'NR==1{ print $3 }' | cut -d" " -f1 | xargs)
   fi
   if [ ! -n "$Manufacturer" ]; then
-    Manufacturer=$(echo "$Test_udevadm" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3 }' | xargs)
+    Manufacturer=$(echo "$Test_hdparm" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3 }' | xargs)
   fi
 
   # Identify drive type, form factor
