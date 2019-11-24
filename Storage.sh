@@ -637,6 +637,15 @@ else
       Model=
       Manufacturer=
       ;;
+    "AQ3120")
+      # Geekworm x855
+      Product="SSD"
+      FormFactor="2.5"
+      Class="SSD (mSATA)"
+      Adapter="Geekworm x855"
+      Model=
+      Manufacturer=
+      ;;
     *)
       ;;
   esac
