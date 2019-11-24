@@ -289,16 +289,15 @@ fi
 Print_Style "System rootfs drive (/) has been detected as $BootDrive ($BootDriveSuffix)" $YELLOW
 
 Test_udevadm=$(udevadm info -a -n $BootDrive | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
-Test_lsblk=$(lsblk -l)
-Test_lshw=$(lshw -class disk -class storage)
+Test_lsblk=$(lsblk -l -o NAME,FSTYPE,LABEL,MOUNTPOINT,SIZE,MODEL)
+Test_lshw_storage=$(lshw -class disk -class storage)
+Test_lshw=$(lshw)
 Test_findmnt=$(findmnt -n)
 Test_diskbyid=$(ls /dev/disk/by-id)
 Test_lsusb=$(lsusb 2>&1)
-BootDriveInfo="$Test_udevadm"
-BootDriveInfo+="$Test_lsblk"
-BootDriveInfo+="$Test_lshw"
-BootDriveInfo+="$Test_findmnt"
-BootDriveInfo+="$Test_diskbyid"
+Test_lspci=$(lspci 2>&1)
+Test_df=$(df -h 2>&1)
+Test_cpuinfo=$(cat /proc/cpuinfo 2>&1)
 Capacity=$(lsblk -l | grep $BootDriveSuffix -m 1 | awk 'NR==1{ print $4 }' | sed 's/,/./g')
 
 # Check for Micro SD / MMC card
@@ -309,7 +308,7 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
   MMCType=$(cat /sys/block/$RootDrive/device/type)
 
   # Get card information
-  Manufacturer=$(echo "$BootDriveInfo" | grep -m 1 "manfid" | cut -d= -f3 | cut -d\" -f2 | xargs)
+  Manufacturer=$(echo "$Test_udevadm" | grep -m 1 "manfid" | cut -d= -f3 | cut -d\" -f2 | xargs)
   if [ ! -n "$Manufacturer" ]; then
     Manufacturer=$(cat /sys/block/$RootDrive/device/manfid)
     Product=$(cat /sys/block/$RootDrive/device/type)
@@ -324,17 +323,17 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
     CSD=$(cat /sys/block/$RootDrive/device/csd)
     OCR=$(cat /sys/block/$RootDrive/device/ocr)
   else
-    Product=$(echo "$BootDriveInfo" | grep -m 1 "{type}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-    Firmware=$(echo "$BootDriveInfo" | grep -m 1 "{fwrev}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-    DateManufactured=$(echo "$BootDriveInfo" | grep -m 1 "date" | cut -d= -f3 | cut -d\" -f2 | xargs)
-    Model=$(echo "$BootDriveInfo" | grep -m 1 "{name}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-    Version=$(echo "$BootDriveInfo" | grep -m 1 "{hwrev}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-    Vendor=$(echo "$BootDriveInfo" | grep -m 1 "oemid" | cut -d= -f3 | cut -d\" -f2 | xargs | xxd -r)
-    SSR=$(echo "$BootDriveInfo" | grep -m 1 "{ssr}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-    SCR=$(echo "$BootDriveInfo" | grep -m 1 "{scr}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-    CID=$(echo "$BootDriveInfo" | grep -m 1 "{cid}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-    CSD=$(echo "$BootDriveInfo" | grep -m 1 "{csd}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-    OCR=$(echo "$BootDriveInfo" | grep -m 1 "{ocr}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+    Product=$(echo "$Test_udevadm" | grep -m 1 "{type}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+    Firmware=$(echo "$Test_udevadm" | grep -m 1 "{fwrev}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+    DateManufactured=$(echo "$Test_udevadm" | grep -m 1 "date" | cut -d= -f3 | cut -d\" -f2 | xargs)
+    Model=$(echo "$Test_udevadm" | grep -m 1 "{name}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+    Version=$(echo "$Test_udevadm" | grep -m 1 "{hwrev}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+    Vendor=$(echo "$Test_udevadm" | grep -m 1 "oemid" | cut -d= -f3 | cut -d\" -f2 | xargs | xxd -r)
+    SSR=$(echo "$Test_udevadm" | grep -m 1 "{ssr}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+    SCR=$(echo "$Test_udevadm" | grep -m 1 "{scr}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+    CID=$(echo "$Test_udevadm" | grep -m 1 "{cid}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+    CSD=$(echo "$Test_udevadm" | grep -m 1 "{csd}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+    OCR=$(echo "$Test_udevadm" | grep -m 1 "{ocr}" | cut -d= -f3 | cut -d\" -f2 | xargs)
   fi
 
   if [[ "$MMCType" == *"SD"* ]]; then
@@ -584,15 +583,14 @@ else
     HDParmInfo=$(hdparm -I "$BootDrive" 2>/dev/null | sed '/^[[:space:]]*$/d')
   fi
   Test_hdparm=$(echo "$HDParmInfo")
-  BootDriveInfo+="$Test_hdparm"
 
   HostSDClock="N/A"
   DateManufactured="N/A"
 
   # Attempt to identify drive model
-  Model=$(echo "$BootDriveInfo" | grep -m 1 "{model}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-  Vendor=$(echo "$BootDriveInfo" | grep -m 1 "{vendor}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-  Manufacturer=$(echo "$BootDriveInfo" | grep -m 1 "{manufacturer}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+  Model=$(echo "$Test_udevadm" | grep -m 1 "{model}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+  Vendor=$(echo "$Test_udevadm" | grep -m 1 "{vendor}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+  Manufacturer=$(echo "$Test_udevadm" | grep -m 1 "{manufacturer}" | cut -d= -f3 | cut -d\" -f2 | xargs)
 
   case "$Model" in
     "ASM105x")
@@ -600,6 +598,7 @@ else
       Product="SSD"
       FormFactor="2.5"
       Class="SSD (2.5\" SATA)"
+      Adapter="ASMedia ASM105x"
       Model=
       Manufacturer=
       ;;
@@ -608,6 +607,7 @@ else
       Product="SSD"
       FormFactor="2.5"
       Class="SSD (2.5\" SATA)"
+      Adapter="Sabrent"
       Model=
       Manufacturer=
       ;;
@@ -616,6 +616,7 @@ else
       Product="SSD"
       FormFactor="2.5"
       Class="SSD (2.5\" SATA)"
+      Adapter="ASMedia 2105"
       Model=
       Manufacturer=
       ;;
@@ -624,6 +625,7 @@ else
       Product="SSD"
       FormFactor="2.5"
       Class="SSD (2.5\" SATA)"
+      Adapter="ASMedia 2115"
       Model=
       Manufacturer=
       ;;
@@ -632,6 +634,7 @@ else
       Product="SSD"
       FormFactor="2.5"
       Class="SSD (2.5\" SATA)"
+      Adapter="ASMedia 3.0 Generic"
       Model=
       Manufacturer=
       ;;
@@ -639,39 +642,39 @@ else
       ;;
   esac
   if [ ! -n "$Model" ]; then
-    Model=$(echo "$BootDriveInfo" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3 }' | grep "_" | cut -d_ -f2 | xargs)
+    Model=$(echo "$Test_udevadm" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3 }' | grep "_" | cut -d_ -f2 | xargs)
   fi
   if [ ! -n "$Model" ]; then
-    Model=$(echo "$BootDriveInfo" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3 }' | grep " " | cut -d" " -f2 | xargs)
+    Model=$(echo "$Test_udevadm" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3 }' | grep " " | cut -d" " -f2 | xargs)
   fi
   if [ ! -n "$Model" ]; then
-    Model=$(echo "$BootDriveInfo" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3$4$5$6$7$8$9 }' | xargs)
+    Model=$(echo "$Test_udevadm" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3$4$5$6$7$8$9 }' | xargs)
   fi
   if [ ! -n "$Model" ]; then
-    Model=$(echo "$BootDriveInfo" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3$4$5$6$7$8$9 }' | xargs)
+    Model=$(echo "$Test_udevadm" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3$4$5$6$7$8$9 }' | xargs)
   fi
 
   # Attempt to identify drive manufacturer
   if [ ! -n "$Manufacturer" ]; then
-    Manufacturer=$(echo "$BootDriveInfo" | grep -m 1 "Model Number:" | grep "_" | awk 'NR==1{ print $3 }' | cut -d_ -f1 | xargs)
+    Manufacturer=$(echo "$Test_udevadm" | grep -m 1 "Model Number:" | grep "_" | awk 'NR==1{ print $3 }' | cut -d_ -f1 | xargs)
   fi
   if [ ! -n "$Manufacturer" ]; then
-    Manufacturer=$(echo "$BootDriveInfo" | grep -m 1 "Model Number:" | grep " " | awk 'NR==1{ print $3 }' | cut -d" " -f1 | xargs)
+    Manufacturer=$(echo "$Test_udevadm" | grep -m 1 "Model Number:" | grep " " | awk 'NR==1{ print $3 }' | cut -d" " -f1 | xargs)
   fi
   if [ ! -n "$Manufacturer" ]; then
-    Manufacturer=$(echo "$BootDriveInfo" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3 }' | xargs)
+    Manufacturer=$(echo "$Test_udevadm" | grep -m 1 "Model Number:" | awk 'NR==1{ print $3 }' | xargs)
   fi
 
   # Identify drive type, form factor
   if [ ! -n "$FormFactor" ]; then
-    FormFactor=$(echo "$BootDriveInfo" | grep -m 1 "Form Factor:" | cut -d: -f2 | cut -d' ' -f1 | xargs)
+    FormFactor=$(echo "$Test_hdparm" | grep -m 1 "Form Factor:" | cut -d: -f2 | cut -d' ' -f1 | xargs)
     if [ ! -n "$FormFactor" ]; then
       FormFactor="2.5"
     fi
   fi
 
   # Attempt to get drive capacity
-  DriveCapacity=$(echo "$BootDriveInfo" | grep -m 1 "device size with M = 1000*" | cut -d\( -f2 | cut -d' ' -f1 | xargs)
+  DriveCapacity=$(echo "$Test_hdparm" | grep -m 1 "device size with M = 1000*" | cut -d\( -f2 | cut -d' ' -f1 | xargs)
   if [ -n "$DriveCapacity" ]; then
     if [ "$DriveCapacity" -eq "$DriveCapacity" ] 2>/dev/null
     then
@@ -680,7 +683,7 @@ else
   fi
 
   # Attempt to identify drive type
-  DriveType=$(echo "$BootDriveInfo" | grep -m 1 "Nominal Media Rotation Rate:" | cut -d: -f2 | xargs)
+  DriveType=$(echo "$Test_hdparm" | grep -m 1 "Nominal Media Rotation Rate:" | cut -d: -f2 | xargs)
   case "$DriveType" in
     5400 | 7200 | 10000)
       Product="HDD"
@@ -697,10 +700,10 @@ else
   esac
 
   # Identify hardware and firmware versions of drive
-  Version=$(echo "$BootDriveInfo" | grep -m 1 "{version}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-  Firmware=$(echo "$BootDriveInfo" | grep -m 1 "Firmware Revision:" | awk 'NR==1{ print $3$4$5$6 }')
+  Version=$(echo "$Test_udevadm" | grep -m 1 "{version}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+  Firmware=$(echo "$Test_hdparm" | grep -m 1 "Firmware Revision:" | awk 'NR==1{ print $3$4$5$6 }')
   if [ -n "$Firmware" ]; then
-    Firmware=$(echo "$BootDriveInfo" | grep -m 1 "Firmware Revision:" | awk 'NR==1{ print $3$4$5$6 }')
+    Firmware=$(echo "$Test_hdparm" | grep -m 1 "Firmware Revision:" | awk 'NR==1{ print $3$4$5$6 }')
   fi
 
 
