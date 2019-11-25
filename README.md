@@ -8,6 +8,12 @@ To run the benchmark type/paste:<br>
 curl https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh | sudo bash<br>
 <br>
 <b>Update History</b><br>
+November 24th 2019<br>
+<ul>
+  <li>Added SSD adapter detection</li>
+  <li>Added dmesg test in order to detect applied storage quirks</li>
+  <li>Speed increases to dependency detection</li>
+</ul>
 November 22nd 2019<br>
 -Parted out some tests into separate variables -- cleaning up code/tests for upcoming system improvements<br>
 <br>

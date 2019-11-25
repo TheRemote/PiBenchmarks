@@ -127,13 +127,12 @@ if [[ -n "`which apt`" ]]; then
     apt-get update
   fi
 
-  apt-get install hdparm -y
-  apt-get install lshw -y
-  apt-get install bc -y
-  apt-get install fio -y
-  apt-get install curl -y
-  apt-get install iozone3 -y
-  apt-get install libcurl4 -y
+  if [ ! -n "`which hdparm`" ]; then apt-get install hdparm -y; fi
+  if [ ! -n "`which lshw`" ]; then apt-get install lshw -y; fi
+  if [ ! -n "`which bc`" ]; then apt-get install bc -y; fi
+  if [ ! -n "`which fio`" ]; then apt-get install fio -y; fi
+  if [ ! -n "`which curl`" ]; then apt-get install curl -y; fi
+  if [ ! -n "`which iozone3`" ]; then apt-get install iozone3 -y; fi
 
   DpkgArch=$(dpkg --print-architecture)
   if [ ! -n "`which iozone`" ]; then
@@ -195,7 +194,6 @@ if [[ "$HostArchitecture" == *"x86"* || "$HostArchitecture" == *"amd64"* ]]; the
   HostCoreClock="N/A"
   HostRAMClock=$(dmidecode -t17 | grep -m 1 "Speed: " | cut -d' ' -f2 | xargs)
   HostConfig+=$(echo "/n")
-  HostConfig+=$(lshw)
 else
   # Check for vcgencmd
   if [ -n "`which vcgencmd`" ]; then
@@ -218,10 +216,8 @@ else
       HostRAMClock="N/A"
     fi
     HostConfig+=$(echo "/n")
-    HostConfig+=$(lshw)
   else
     HostConfig+=$(echo "/n")
-    HostConfig+=$(lshw)
     HostCPUClock=$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq)
     HostCPUClock=$(echo "scale=0; $HostCPUClock / 1000" | bc)
     HostCoreClock="N/A"
@@ -290,13 +286,14 @@ Print_Style "System rootfs drive (/) has been detected as $BootDrive ($BootDrive
 
 Test_udevadm=$(udevadm info -a -n $BootDrive | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
 Test_lsblk=$(lsblk -l -o NAME,FSTYPE,LABEL,MOUNTPOINT,SIZE,MODEL)
-Test_lshw=$(lshw -class disk -class storage)
+Test_lshw=$(lshw)
 Test_findmnt=$(findmnt -n)
 Test_diskbyid=$(ls /dev/disk/by-id)
-Test_lsusb=$(lsusb 2>&1)
-Test_lspci=$(lspci 2>&1)
+Test_lsusb=$(lsusb -v 2>&1)
+Test_lspci=$(lspci -v lks2>&1)
 Test_df=$(df -h 2>&1)
 Test_cpuinfo=$(cat /proc/cpuinfo 2>&1)
+Test_dmsg=$(dmesg | tail -1000)
 Capacity=$(lsblk -l | grep $BootDriveSuffix -m 1 | awk 'NR==1{ print $4 }' | sed 's/,/./g')
 
 # Check for Micro SD / MMC card
