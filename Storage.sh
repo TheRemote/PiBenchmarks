@@ -129,6 +129,8 @@ if [[ -n "`which apt`" ]]; then
 
   if [ ! -n "`which hdparm`" ]; then apt-get install hdparm -y; fi
   if [ ! -n "`which lshw`" ]; then apt-get install lshw -y; fi
+  if [ ! -n "`which lsusb`" ]; then apt-get install lsusb -y; fi
+  if [ ! -n "`which lspci`" ]; then apt-get install lspci -y; fi
   if [ ! -n "`which bc`" ]; then apt-get install bc -y; fi
   if [ ! -n "`which fio`" ]; then apt-get install fio -y; fi
   if [ ! -n "`which curl`" ]; then apt-get install curl -y; fi
