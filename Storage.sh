@@ -293,7 +293,7 @@ Test_lsusb=$(lsusb -v 2>&1)
 Test_lspci=$(lspci -v 2>&1)
 Test_df=$(df -h 2>&1)
 Test_cpuinfo=$(cat /proc/cpuinfo 2>&1)
-Test_dmesg=$(dmesg | tail -500)
+Test_dmesg=$(dmesg | tail -1000)
 Test_fstab=$(cat /etc/fstab > /dev/null 2>&1)
 Capacity=$(lsblk -l | grep $BootDriveSuffix -m 1 | awk 'NR==1{ print $4 }' | sed 's/,/./g')
 
