@@ -298,7 +298,7 @@ Print_Style "System rootfs drive (/) has been detected as $BootDrive ($BootDrive
 curl -o inxi https://raw.githubusercontent.com/smxi/inxi/master/inxi
 chmod +x inxi
 Test_inxi=$(./inxi -v8 -c0)
-./inxi -v4
+echo "$Test_inxi"
 rm -f inxi
 
 Test_udevadm=$(udevadm info -a -n $BootDrive | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
@@ -822,8 +822,7 @@ Score=$(echo "scale=2; $Score + $ScratchPad" | bc)
 Score=$(echo "scale=0; $Score / 100" | bc )
 
 # Display results
-printf "\n$B
-# Display reRIGHT$UNDERLINE%-25s %-25s %-25s\n" "     Category" "     Test" "     Result     "$NORMAL$CYAN
+printf "\n$BRIGHT$UNDERLINE%-25s %-25s %-25s\n" "     Category" "     Test" "     Result     "$NORMAL$CYAN
 printf "%-25s %-25s %-25s\n" "HDParm" "Disk Read" "$HDParmDisk MB/s"
 printf "%-25s %-25s %-25s\n" "HDParm" "Cached Disk Read" "$HDParmCached MB/s"
 printf "%-25s %-25s %-25s\n" "DD" "Disk Write" "$DDWriteResult MB/s"
