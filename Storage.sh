@@ -297,8 +297,8 @@ Print_Style "System rootfs drive (/) has been detected as $BootDrive ($BootDrive
 # Retrieve inxi hardware identification utility (https://github.com/smxi/inxi for more info)
 curl -o inxi https://raw.githubusercontent.com/smxi/inxi/master/inxi
 chmod +x inxi
-Test_inxi=$(./inxi -v8 -c0)
-echo "$Test_inxi"
+Test_inxi=$(./inxi -F -v8 -M -m -d -f -i -l -m -o -p -r -t -u -xxx)
+./inxi -v4 -d -c0
 rm -f inxi
 
 Test_udevadm=$(udevadm info -a -n $BootDrive | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
