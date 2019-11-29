@@ -298,15 +298,15 @@ Print_Style "System rootfs drive (/) has been detected as $BootDrive ($BootDrive
 curl -o inxi https://raw.githubusercontent.com/smxi/inxi/master/inxi
 chmod +x inxi
 Test_inxi=$(./inxi -v8 -c0)
+./inxi -v4
 rm -f inxi
-echo "$Test_inxi"
 
 Test_udevadm=$(udevadm info -a -n $BootDrive | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
 Test_lsblk=$(lsblk -l -o NAME,FSTYPE,LABEL,MOUNTPOINT,SIZE,MODEL 2>&1)
 Test_lshw=$(lshw 2>&1)
 Test_lsusb=$(lsusb 2>&1)
 Test_lsscsi=$(lsscsi -Lv 2>&1)
-Test_lscpu=$(lscpu -J 2>&1)
+Test_lscpu=$(lscpu 2>&1)
 Test_lspci=$(lspci -v 2>&1)
 Test_findmnt=$(findmnt -n)
 Test_diskbyid=$(ls /dev/disk/by-id)
@@ -315,7 +315,7 @@ Test_cpuinfo=$(cat /proc/cpuinfo 2>&1)
 Test_dmesg=$(dmesg | tail -1000)
 Test_fstab=$(cat /etc/fstab > /dev/null 2>&1)
 Test_dmidecode=$(dmidecode 2>&1)
-Test_hwinfo=$(hwinfo 2>&1)
+Test_hwinfo=$(hwinfo --short 2>&1)
 Capacity=$(lsblk -l | grep $BootDriveSuffix -m 1 | awk 'NR==1{ print $4 }' | sed 's/,/./g')
 
 # Check for Micro SD / MMC card
