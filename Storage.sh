@@ -226,6 +226,7 @@ else
       HostRAMClock="N/A"
     fi
     HostConfig+=$(echo " ")
+    HostConfig+=$(vcgencmd get_config str)
   else
     HostConfig+=$(echo " ")
     HostCPUClock=$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq)
@@ -297,7 +298,7 @@ Print_Style "System rootfs drive (/) has been detected as $BootDrive ($BootDrive
 # Retrieve inxi hardware identification utility (https://github.com/smxi/inxi for more info)
 curl -o inxi https://raw.githubusercontent.com/smxi/inxi/master/inxi
 chmod +x inxi
-Test_inxi=$(./inxi -F -v8 -M -m -d -f -i -l -m -o -p -r -t -u -xxx)
+Test_inxi=$(./inxi -F -v8 -c0 -M -m -d -f -i -l -m -o -p -r -t -u -xxx)
 ./inxi -v4 -d -c0
 rm -f inxi
 
@@ -313,7 +314,7 @@ Test_diskbyid=$(ls /dev/disk/by-id)
 Test_df=$(df -h 2>&1)
 Test_cpuinfo=$(cat /proc/cpuinfo 2>&1)
 Test_dmesg=$(dmesg | tail -1000)
-Test_fstab=$(cat /etc/fstab > /dev/null 2>&1)
+Test_fstab=$(cat /etc/fstab 2>&1)
 Test_dmidecode=$(dmidecode 2>&1)
 Test_hwinfo=$(hwinfo --short 2>&1)
 Capacity=$(lsblk -l | grep $BootDriveSuffix -m 1 | awk 'NR==1{ print $4 }' | sed 's/,/./g')
@@ -732,9 +733,6 @@ else
   if [ -n "$Firmware" ]; then
     Firmware=$(echo "$Test_hdparm" | grep -m 1 "Firmware Revision:" | awk 'NR==1{ print $3$4$5$6 }')
   fi
-
-
-  Print_Style "Drive information: Manufacturer: $Manufacturer - Model: $Model - Product: $Product" $YELLOW
 fi
 
 # Run HDParm tests
