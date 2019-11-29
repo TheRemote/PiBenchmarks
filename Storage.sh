@@ -301,13 +301,14 @@ curl -o inxi https://raw.githubusercontent.com/smxi/inxi/master/inxi
 chmod +x inxi
 Test_inxi=$(./inxi -v8 -c0)
 rm -f inxi
+echo "$Test_inxi"
 
 Test_udevadm=$(udevadm info -a -n $BootDrive | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
-Test_lsblk=$(lsblk -l -o NAME,FSTYPE,LABEL,MOUNTPOINT,SIZE,MODEL)
-Test_lshw=$(lshw)
+Test_lsblk=$(lsblk -l -o NAME,FSTYPE,LABEL,MOUNTPOINT,SIZE,MODEL 2>&1)
+Test_lshw=$(lshw 2>&1)
 Test_lsusb=$(lsusb -v 2>&1)
-Test_lsscsi=$(lsscsi -Lv)
-Test_lscpu=$(lscpu -J)
+Test_lsscsi=$(lsscsi -Lv 2>&1)
+Test_lscpu=$(lscpu -J 2>&1)
 Test_lspci=$(lspci -v 2>&1)
 Test_findmnt=$(findmnt -n)
 Test_diskbyid=$(ls /dev/disk/by-id)
@@ -315,8 +316,8 @@ Test_df=$(df -h 2>&1)
 Test_cpuinfo=$(cat /proc/cpuinfo 2>&1)
 Test_dmesg=$(dmesg)
 Test_fstab=$(cat /etc/fstab > /dev/null 2>&1)
-Test_dmidecode=$(dmidecode)
-Test_hwinfo=$(hwinfo)
+Test_dmidecode=$(dmidecode 2>&1)
+Test_hwinfo=$(hwinfo 2>&1)
 Capacity=$(lsblk -l | grep $BootDriveSuffix -m 1 | awk 'NR==1{ print $4 }' | sed 's/,/./g')
 
 # Check for Micro SD / MMC card
@@ -806,7 +807,7 @@ read -p 'Alias (leave blank for Anonymous): ' UserAlias < /dev/tty
 if [[ ! "$UserAlias" ]]; then UserAlias="Anonymous"; fi
 
 # Submit results
-curl --form "form_tools_form_id=1" --form "DDTest=$DDWrite" --form "DDWriteSpeed=$DDWriteResult" --form "HDParmDisk=$HDParmDisk" --form "HDParmCached=$HDParmCached" --form "HDParm=$HDParm" --form "fio4kRandRead=$fio4kRandRead" --form "fio4kRandWrite=$fio4kRandWrite" --form "fio4kRandWriteIOPS=$fio4kRandWriteIOPS" --form "fio4kRandReadIOPS=$fio4kRandReadIOPS" --form "fio4kRandWriteSpeed=$fio4kRandWriteSpeed" --form "fio4kRandReadSpeed=$fio4kRandReadSpeed" --form "IOZone=$IOZone" --form "IO4kRandRead=$IO4kRandRead" --form "IO4kRandWrite=$IO4kRandWrite" --form "IO4kRead=$IO4kRead" --form "IO4kWrite=$IO4kWrite" --form "Drive=$BootDrive" --form "Test_hdparm=$Test_hdparm" --form "Test_lsblk=$Test_lsblk" --form "Test_findmnt=$Test_findmnt" --form "Test_lsusb=$Test_lsusb" --form "Test_lshw=$Test_lshw" --form "Test_lspci=$Test_lspci" --form "Test_diskbyid=$Test_diskbyid" --form "Test_df=$Test_df" --form "Test_cpuinfo=$Test_cpuinfo" --form "Test_udevadm=$Test_udevadm" --form "Test_dmesg=$Test_dmesg" --form "Test_fstab=$Test_fstab" --form "Model=$Model" --form "Vendor=$Vendor" --form "Capacity=$Capacity" --form "Manufacturer=$Manufacturer" --form "Product=$Product" --form "DateManufactured=$DateManufactured" --form "Note=$Brand" --form "Class=$Class" --form "OCR=$OCR" --form "SSR=$SSR" --form "SCR=$SCR" --form "CID=$CID" --form "CSD=$CSD" --form "UserAlias=$UserAlias" --form "HostModel=$HostModel" --form "HostSDClock=$HostSDClock" --form "HostConfig=$HostConfig" --form "HostCPUClock=$HostCPUClock" --form "HostCoreClock=$HostCoreClock" --form "HostRAMClock=$HostRAMClock" --form "HostArchitecture=$HostArchitecture" --form "HostOS=$HostOS" --form "HostOSInfo=$HostOSInfo" --form "HostManufacturer=$HostManufacturer" --form "Adapter=$Adapter" https://jamesachambers.com/formtools/process.php
+curl --form "form_tools_form_id=1" --form "DDTest=$DDWrite" --form "DDWriteSpeed=$DDWriteResult" --form "HDParmDisk=$HDParmDisk" --form "HDParmCached=$HDParmCached" --form "HDParm=$HDParm" --form "fio4kRandRead=$fio4kRandRead" --form "fio4kRandWrite=$fio4kRandWrite" --form "fio4kRandWriteIOPS=$fio4kRandWriteIOPS" --form "fio4kRandReadIOPS=$fio4kRandReadIOPS" --form "fio4kRandWriteSpeed=$fio4kRandWriteSpeed" --form "fio4kRandReadSpeed=$fio4kRandReadSpeed" --form "IOZone=$IOZone" --form "IO4kRandRead=$IO4kRandRead" --form "IO4kRandWrite=$IO4kRandWrite" --form "IO4kRead=$IO4kRead" --form "IO4kWrite=$IO4kWrite" --form "Drive=$BootDrive" --form "Test_hdparm=$Test_hdparm" --form "Test_lsblk=$Test_lsblk" --form "Test_findmnt=$Test_findmnt" --form "Test_lsusb=$Test_lsusb" --form "Test_lshw=$Test_lshw" --form "Test_lspci=$Test_lspci" --form "Test_lsscsi=$Test_lsscsi" --form "Test_lscpu=$Test_lscpu" --form "Test_diskbyid=$Test_diskbyid" --form "Test_df=$Test_df" --form "Test_cpuinfo=$Test_cpuinfo" --form "Test_udevadm=$Test_udevadm" --form "Test_dmesg=$Test_dmesg" --form "Test_fstab=$Test_fstab" --form "Test_inxi=$Test_inxi" --form "Test_hwinfo=$Test_hwinfo " --form "Model=$Model" --form "Vendor=$Vendor" --form "Capacity=$Capacity" --form "Manufacturer=$Manufacturer" --form "Product=$Product" --form "DateManufactured=$DateManufactured" --form "Note=$Brand" --form "Class=$Class" --form "OCR=$OCR" --form "SSR=$SSR" --form "SCR=$SCR" --form "CID=$CID" --form "CSD=$CSD" --form "UserAlias=$UserAlias" --form "HostModel=$HostModel" --form "HostSDClock=$HostSDClock" --form "HostConfig=$HostConfig" --form "HostCPUClock=$HostCPUClock" --form "HostCoreClock=$HostCoreClock" --form "HostRAMClock=$HostRAMClock" --form "HostArchitecture=$HostArchitecture" --form "HostOS=$HostOS" --form "HostOSInfo=$HostOSInfo" --form "HostManufacturer=$HostManufacturer" --form "Adapter=$Adapter" https://jamesachambers.com/formtools/process.php
 
 # Calculate score
 Score=$(echo "scale=2; $DDWriteResult * 1024" | bc)
