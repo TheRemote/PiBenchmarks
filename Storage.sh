@@ -201,11 +201,9 @@ fi
 # Get clock speeds
 if [[ "$HostArchitecture" == *"x86"* || "$HostArchitecture" == *"amd64"* ]]; then
   # X86 or X86_64 system -- use dmidecode
-  HostConfig=$(dmidecode)
   HostCPUClock=$(dmidecode -t4 | grep -m 1 'Max Speed' | cut -d: -f2 | cut -d' ' -f2 | xargs)
   HostCoreClock="N/A"
   HostRAMClock=$(dmidecode -t17 | grep -m 1 "Speed: " | cut -d' ' -f2 | xargs)
-  HostConfig+=$(echo "/n")
 else
   # Check for vcgencmd
   if [ -n "`which vcgencmd`" ]; then
@@ -227,9 +225,9 @@ else
     if [ ! -n "$HostRAMClock" ]; then
       HostRAMClock="N/A"
     fi
-    HostConfig+=$(echo "/n")
+    HostConfig+=$(echo " ")
   else
-    HostConfig+=$(echo "/n")
+    HostConfig+=$(echo " ")
     HostCPUClock=$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq)
     HostCPUClock=$(echo "scale=0; $HostCPUClock / 1000" | bc)
     HostCoreClock="N/A"
@@ -314,7 +312,7 @@ Test_findmnt=$(findmnt -n)
 Test_diskbyid=$(ls /dev/disk/by-id)
 Test_df=$(df -h 2>&1)
 Test_cpuinfo=$(cat /proc/cpuinfo 2>&1)
-Test_dmesg=$(dmesg)
+Test_dmesg=$(dmesg | tail -1000)
 Test_fstab=$(cat /etc/fstab > /dev/null 2>&1)
 Test_dmidecode=$(dmidecode 2>&1)
 Test_hwinfo=$(hwinfo 2>&1)
