@@ -109,6 +109,8 @@ Print_Style "Fetching required components ..." $YELLOW
 
 # Test for apt first (all Debian based distros)
 if [[ -n "`which apt`" ]]; then
+  apt-get update
+
   # Check if we are on a Raspberry Pi
   if [[ $HostModel == *"Raspberry Pi"* ]]; then
     # Check if we are running Ubuntu
@@ -118,22 +120,25 @@ if [[ -n "`which apt`" ]]; then
         add-apt-repository ppa:ubuntu-raspi2/ppa -y
       fi
     fi
-    apt-get update
+    
     # Check for vcgencmd (measures clock speeds)
     if [ ! -n "`which vcgencmd`" ]; then
       apt-get install libraspberrypi-bin -y
     fi
-  else
-    apt-get update
   fi
 
-  if [ ! -n "`which hdparm`" ]; then apt-get install hdparm -y; fi
+  # Retrieve dependencies -- these are all bare minimum system tools to identify the hardware (many will already be built in)
+  apt-get install lshw pciutils usbutils lsscsi bc curl hwinfo hdparm dmidecode -y
   if [ ! -n "`which lshw`" ]; then apt-get install lshw -y; fi
-  if [ ! -n "`which lsusb`" ]; then apt-get install lsusb -y; fi
-  if [ ! -n "`which lspci`" ]; then apt-get install lspci -y; fi
+  if [ ! -n "`which lspci`" ]; then apt-get install pciutils -y; fi
+  if [ ! -n "`which lsusb`" ]; then apt-get install usbutils -y; fi
+  if [ ! -n "`which lsscsi`" ]; then apt-get install lsscsi -y; fi
   if [ ! -n "`which bc`" ]; then apt-get install bc -y; fi
-  if [ ! -n "`which fio`" ]; then apt-get install fio -y; fi
   if [ ! -n "`which curl`" ]; then apt-get install curl -y; fi
+  if [ ! -n "`which hwinfo`" ]; then apt-get install hwinfo -y; fi
+  if [ ! -n "`which hdparm`" ]; then apt-get install hdparm -y; fi
+  if [ ! -n "`which dmidecode`" ]; then apt-get install dmidecode -y; fi
+  if [ ! -n "`which fio`" ]; then apt-get install fio -y; fi
   if [ ! -n "`which iozone3`" ]; then apt-get install iozone3 -y; fi
 
   DpkgArch=$(dpkg --print-architecture)
@@ -164,7 +169,7 @@ if [[ -n "`which apt`" ]]; then
 
   # Test if we were able to install iozone3 from a package and don't install build-essential if we were
   if [ ! -n "`which iozone`" ]; then
-    apt-get install build-essential
+    apt-get install build-essential -y
   fi
 # Next test for Pac-Man (Arch Linux)
 elif [ -n "`which pacman`" ]; then
@@ -174,8 +179,13 @@ elif [ -n "`which pacman`" ]; then
   pacman --needed --noconfirm -S base-devel
   pacman --needed --noconfirm -S fio
   pacman --needed --noconfirm -S bc
+  pacman --needed --noconfirm -S curl
   pacman --needed --noconfirm -S lshw
+  pacman --needed --noconfirm -S lsusb
+  pacman --needed --noconfirm -S lspci
+  pacman --needed --noconfirm -S lsscsi
   pacman --needed --noconfirm -S iozone3
+  pacman --needed --noconfirm -S dmidecode
 
   # Check if running on a Raspberry Pi
   if [[ $HostModel == *"Raspberry Pi"* ]]; then
@@ -286,17 +296,27 @@ fi
 
 Print_Style "System rootfs drive (/) has been detected as $BootDrive ($BootDriveSuffix)" $YELLOW
 
+# Retrieve inxi hardware identification utility (https://github.com/smxi/inxi for more info)
+curl -o inxi https://raw.githubusercontent.com/smxi/inxi/master/inxi
+chmod +x inxi
+Test_inxi=$(./inxi -v8 -c0)
+rm -f inxi
+
 Test_udevadm=$(udevadm info -a -n $BootDrive | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
 Test_lsblk=$(lsblk -l -o NAME,FSTYPE,LABEL,MOUNTPOINT,SIZE,MODEL)
 Test_lshw=$(lshw)
+Test_lsusb=$(lsusb -v 2>&1)
+Test_lsscsi=$(lsscsi -Lv)
+Test_lscpu=$(lscpu -J)
+Test_lspci=$(lspci -v 2>&1)
 Test_findmnt=$(findmnt -n)
 Test_diskbyid=$(ls /dev/disk/by-id)
-Test_lsusb=$(lsusb -v 2>&1)
-Test_lspci=$(lspci -v 2>&1)
 Test_df=$(df -h 2>&1)
 Test_cpuinfo=$(cat /proc/cpuinfo 2>&1)
-Test_dmesg=$(dmesg | tail -1000)
+Test_dmesg=$(dmesg)
 Test_fstab=$(cat /etc/fstab > /dev/null 2>&1)
+Test_dmidecode=$(dmidecode)
+Test_hwinfo=$(hwinfo)
 Capacity=$(lsblk -l | grep $BootDriveSuffix -m 1 | awk 'NR==1{ print $4 }' | sed 's/,/./g')
 
 # Check for Micro SD / MMC card
