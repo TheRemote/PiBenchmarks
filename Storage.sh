@@ -479,6 +479,9 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
       0x00009f)
         Manufacturer="Texas Instruments"
         ;;
+      0x0000ff)
+        Manufacturer="Netac"
+        ;;
       *)
         ;;
     esac
