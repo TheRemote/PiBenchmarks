@@ -174,31 +174,24 @@ if [[ -n "`which apt`" ]]; then
 # Next test for Pac-Man (Arch Linux)
 elif [ -n "`which pacman`" ]; then
   pacman -Syy
-  pacman --needed --noconfirm -S vim
-  pacman --needed --noconfirm -S hdparm
-  pacman --needed --noconfirm -S base-devel
-  pacman --needed --noconfirm -S fio
-  pacman --needed --noconfirm -S bc
-  pacman --needed --noconfirm -S curl
-  pacman --needed --noconfirm -S lshw
-  pacman --needed --noconfirm -S usbutils
-  pacman --needed --noconfirm -S pciutils
-  pacman --needed --noconfirm -S lsscsi
-  pacman --needed --noconfirm -S dmidecode
+  pacman --needed --noconfirm -S \
+    base-devel \
+    bc \
+    curl \
+    dmidecode \
+    fio \
+    hdparm \
+    lshw \
+    lsscsi \
+    pciutils \
+    usbutils
 
   # Install iozone
   if ! command -v iozone
   then
-    if ! command -v yay
-    then
-      mkdir /tmp/yay
-      cd /tmp/yay
-      curl -L -o PKGBUILD "https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=yay"
-      makepkg -si --noconfirm --needed
-      rm -rf /tmp/yay
-    fi
-    gpg --recv-key 8C004C2F93481F6B
-    yay -S --noconfirm iozone
+    echo "Please install iozone via the AUR for this script to work" >&2
+    echo "https://aur.archlinux.org/packages/iozone/" >&2
+    exit 3
   fi
 
   # Check if running on a Raspberry Pi
