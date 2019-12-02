@@ -174,18 +174,25 @@ if [[ -n "`which apt`" ]]; then
 # Next test for Pac-Man (Arch Linux)
 elif [ -n "`which pacman`" ]; then
   pacman -Syy
-  pacman --needed --noconfirm -S vim
-  pacman --needed --noconfirm -S hdparm
-  pacman --needed --noconfirm -S base-devel
-  pacman --needed --noconfirm -S fio
-  pacman --needed --noconfirm -S bc
-  pacman --needed --noconfirm -S curl
-  pacman --needed --noconfirm -S lshw
-  pacman --needed --noconfirm -S lsusb
-  pacman --needed --noconfirm -S lspci
-  pacman --needed --noconfirm -S lsscsi
-  pacman --needed --noconfirm -S iozone3
-  pacman --needed --noconfirm -S dmidecode
+  pacman --needed --noconfirm -S \
+    base-devel \
+    bc \
+    curl \
+    dmidecode \
+    fio \
+    hdparm \
+    lshw \
+    lsscsi \
+    pciutils \
+    usbutils
+
+  # Install iozone
+  if ! command -v iozone
+  then
+    echo "Please install iozone via the AUR for this script to work" >&2
+    echo "https://aur.archlinux.org/packages/iozone/" >&2
+    exit 3
+  fi
 
   # Check if running on a Raspberry Pi
   if [[ $HostModel == *"Raspberry Pi"* ]]; then
