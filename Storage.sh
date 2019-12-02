@@ -181,10 +181,9 @@ elif [ -n "`which pacman`" ]; then
   pacman --needed --noconfirm -S bc
   pacman --needed --noconfirm -S curl
   pacman --needed --noconfirm -S lshw
-  pacman --needed --noconfirm -S lsusb
-  pacman --needed --noconfirm -S lspci
+  pacman --needed --noconfirm -S usbutils
+  pacman --needed --noconfirm -S pciutils
   pacman --needed --noconfirm -S lsscsi
-  pacman --needed --noconfirm -S iozone3
   pacman --needed --noconfirm -S dmidecode
 
   # Check if running on a Raspberry Pi
