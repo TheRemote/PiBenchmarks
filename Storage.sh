@@ -186,6 +186,21 @@ elif [ -n "`which pacman`" ]; then
   pacman --needed --noconfirm -S lsscsi
   pacman --needed --noconfirm -S dmidecode
 
+  # Install iozone
+  if ! command -v iozone
+  then
+    if ! command -v yay
+    then
+      mkdir /tmp/yay
+      cd /tmp/yay
+      curl -L -o PKGBUILD "https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=yay"
+      makepkg -si --noconfirm --needed
+      rm -rf /tmp/yay
+    fi
+    gpg --recv-key 8C004C2F93481F6B
+    yay -S --noconfirm iozone
+  fi
+
   # Check if running on a Raspberry Pi
   if [[ $HostModel == *"Raspberry Pi"* ]]; then
     if [ ! -n "`which vcgencmd`" ]; then
