@@ -1,4 +1,4 @@
-# PiBenchmarks
+# Raspberry Pi Storage Benchmarking Script
 <h3>Overview</h3>
 Raspberry Pi benchmarking scripts featuring a storage benchmark with a score<br>
 Anonymously uploads your score to jamesachambers.com to help others make good decisions on Pi storage<br>
@@ -51,7 +51,6 @@ curl https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh 
   <li>Improved portability with non-Raspbian platforms</li>
   <li>Improved hdparm detection</li>
 </ul>
-<br>
 
 <h4>June 30th 2019</h4>
 <ul>
