@@ -4,7 +4,7 @@
 # Results and discussion available at https://jamesachambers.com/raspberry-pi-storage-benchmarks-2019-benchmarking-script/
 #
 # To run the benchmark use the following command:
-# curl https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh | sudo bash
+# sudo curl https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh | sudo bash
 
 # Terminal colors
 BLACK=$(tput setaf 0)

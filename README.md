@@ -10,7 +10,7 @@ View the full results at: https://jamesachambers.com/raspberry-pi-storage-benchm
 
 <h3>Running the Benchmark</h3>
 To run the benchmark type/paste:<br>
-curl https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh | sudo bash
+sudo curl https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh | sudo bash
 
 <h3>Update History</h3>
 
