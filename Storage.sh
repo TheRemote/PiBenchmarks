@@ -305,11 +305,11 @@ Print_Style "System rootfs drive (/) has been detected as $BootDrive ($BootDrive
 # Retrieve inxi hardware identification utility (https://github.com/smxi/inxi for more info)
 curl -o inxi https://raw.githubusercontent.com/smxi/inxi/master/inxi
 chmod +x inxi
-Test_inxi=$(./inxi -F -v8 -c0 -M -m -d -f -i -l -m -o -p -r -t -u -xxx)
+Test_inxi=$(./inxi -F -v8 -c0 -M -m -d -f -i -l -m -o -p -r -t -u -xxx 2>&1)
 ./inxi -v4 -d -c0
 rm -f inxi
 
-Test_udevadm=$(udevadm info -a -n $BootDrive | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
+Test_udevadm=$(udevadm info -a -n $BootDrive 2>&1 | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
 Test_lsblk=$(lsblk -l -o NAME,FSTYPE,LABEL,MOUNTPOINT,SIZE,MODEL 2>&1)
 Test_lshw=$(lshw 2>&1)
 Test_lsusb=$(lsusb 2>&1)
@@ -317,10 +317,10 @@ Test_lsscsi=$(lsscsi -Lv 2>&1)
 Test_lscpu=$(lscpu 2>&1)
 Test_lspci=$(lspci -v 2>&1)
 Test_findmnt=$(findmnt -n)
-Test_diskbyid=$(ls /dev/disk/by-id)
+Test_diskbyid=$(ls /dev/disk/by-id 2>&1)
 Test_df=$(df -h 2>&1)
 Test_cpuinfo=$(cat /proc/cpuinfo 2>&1)
-Test_dmesg=$(dmesg | tail -1000)
+Test_dmesg=$(dmesg | tail -1000 2>&1)
 Test_fstab=$(cat /etc/fstab 2>&1)
 Test_dmidecode=$(dmidecode 2>&1)
 Test_hwinfo=$(hwinfo --short 2>&1)
@@ -806,9 +806,12 @@ IOZone=$(echo "$IOZone" | sed '/^[[:space:]]*$/d')
 Print_Style "RandRead: $IO4kRandRead - RandWrite: $IO4kRandWrite - Read: $IO4kRead - Write: $IO4kWrite" $YELLOW
 
 # Get brand information
-Print_Style "Enter a description of your storage (SSD vs SD card, made by SanDisk, anything relevant:"
+Print_Style "Enter a description of your storage and setup (Example: Kingston A400 SSD on Pi 4 using StarTech SATA to USB adapter)"
+Print_Style "Anything you know / see like brands / classifications / models / etc. is helpful for identification"
+read -d '' -t 0.1 -n 10000
 read -p 'Description: ' Brand < /dev/tty
-Print_Style "(Optional) Enter alias to use on benchmark results.  Leave blank for completely anonymous:"
+Print_Style "(Optional) Enter alias to use on benchmark results.  Leave blank for completely anonymous."
+read -d '' -t 0.1 -n 10000
 read -p 'Alias (leave blank for Anonymous): ' UserAlias < /dev/tty
 if [[ ! "$UserAlias" ]]; then UserAlias="Anonymous"; fi
 
