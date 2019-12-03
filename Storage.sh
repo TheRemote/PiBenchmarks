@@ -99,7 +99,7 @@ else
   elif [[ "$HostModel" == *"Tinker Board"* ]]; then
     HostManufacturer="ASUSTeK"
   else
-    HostManufacturer="N/A"
+    HostManufacturer=""
   fi
 fi
 Print_Style "Board information: Manufacturer: $HostManufacturer - Model: $HostModel - Architecture: $HostArchitecture - OS: $HostOS" $YELLOW
@@ -209,7 +209,7 @@ fi
 if [[ "$HostArchitecture" == *"x86"* || "$HostArchitecture" == *"amd64"* ]]; then
   # X86 or X86_64 system -- use dmidecode
   HostCPUClock=$(dmidecode -t4 | grep -m 1 'Max Speed' | cut -d: -f2 | cut -d' ' -f2 | xargs)
-  HostCoreClock="N/A"
+  HostCoreClock=""
   HostRAMClock=$(dmidecode -t17 | grep -m 1 "Speed: " | cut -d' ' -f2 | xargs)
 else
   # Check for vcgencmd
@@ -230,7 +230,7 @@ else
     fi
     HostRAMClock=$(echo "$HostConfig" | grep -m 1 sdram_freq= | cut -d= -f2 | xargs)
     if [ ! -n "$HostRAMClock" ]; then
-      HostRAMClock="N/A"
+      HostRAMClock=""
     fi
     HostConfig+=$(echo " ")
     HostConfig+=$(vcgencmd get_config str)
@@ -238,8 +238,8 @@ else
     HostConfig+=$(echo " ")
     HostCPUClock=$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq)
     HostCPUClock=$(echo "scale=0; $HostCPUClock / 1000" | bc)
-    HostCoreClock="N/A"
-    HostRAMClock="N/A"
+    HostCoreClock=""
+    HostRAMClock=""
   fi
 fi
 Print_Style "Clock speeds: CPU: $HostCPUClock - Core: $HostCoreClock - RAM: $HostRAMClock" $YELLOW
@@ -530,7 +530,7 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
   elif [[ "$MMCType" == *"MMC"* ]]; then
     # Attempt to identify MMC device
 
-    HostSDClock="N/A"
+    HostSDClock=""
 
     case "$Manufacturer" in
       0x000000)
@@ -613,8 +613,8 @@ else
   fi
   Test_hdparm=$(echo "$HDParmInfo")
 
-  HostSDClock="N/A"
-  DateManufactured="N/A"
+  HostSDClock=""
+  DateManufactured=""
 
   # Attempt to identify drive model
   Model=$(echo "$Test_udevadm" | grep -m 1 "{model}" | cut -d= -f3 | cut -d\" -f2 | xargs)
