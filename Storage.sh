@@ -67,7 +67,8 @@ if [[ "$(whoami)" != "root" ]]; then
 fi
 
 # Trim drives for more accurate benchmarking
-sudo fstrim -av
+fstrim -av
+sync; sync
 
 # Initialize variables
 Score=0
@@ -747,6 +748,7 @@ fi
 
 # Run HDParm tests
 Print_Style "Running HDParm tests ..." $YELLOW
+sync; sync
 HDParm=$(hdparm -Tt --direct $BootDrive 2>/dev/null | sed '/^[[:space:]]*$/d')
 if [ ! -n "$HDParm" ]; then
   HDParm=$(hdparm -Tt $BootDrive 2>/dev/null | sed '/^[[:space:]]*$/d')
@@ -770,6 +772,7 @@ Print_Style "HDParm: $HDParmDisk MB/s - HDParmCached: $HDParmCached MB/s" $YELLO
 
 # Run DD tests
 Print_Style "Running dd tests ..." $YELLOW
+sync; sync
 DDWrite=$(dd if=/dev/zero of=test bs=4k count=80k conv=fsync 2>&1 | sed '/^[[:space:]]*$/d')
 DDWriteResult=$(echo "$DDWrite" | tail -n 1 | awk 'NR==1{ print $(NF-1) }' | sed 's/,/./g')
 
@@ -779,11 +782,13 @@ rm -f test
 
 # Run fio tests
 Print_Style "Running fio write test ..." $YELLOW
+sync; sync
 fio4kRandWrite=$(fio --minimal --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --name=test --filename=test --bs=4k --iodepth=64 --size=80M --readwrite=randwrite | sed 's/;/!/g')
 fio4kRandWriteIOPS=$(echo "$fio4kRandWrite" | awk -F '!' '{print $49}')
 fio4kRandWriteSpeed=$(echo "$fio4kRandWrite" | awk -F '!' '{print $48}')
 rm -f test
 Print_Style "Running fio read test ..." $YELLOW
+sync; sync
 fio4kRandRead=$(fio --minimal --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --name=test --filename=test --bs=4k --iodepth=64 --size=80M --readwrite=randread | sed 's/;/!/g')
 fio4kRandReadIOPS=$(echo "$fio4kRandRead" | awk -F '!' '{print $8}')
 fio4kRandReadSpeed=$(echo "$fio4kRandRead" | awk -F '!' '{print $7}')
@@ -792,6 +797,7 @@ rm -f test
 
 # Run iozone tests
 Print_Style "Running iozone test ..." $YELLOW
+sync; sync
 if [ ! -n "`which iozone`" ]; then
   IOZone=$(iozone/src/current/./iozone -a -e -I -i 0 -i 1 -i 2 -s 80M -r 4k)
 else
@@ -808,10 +814,10 @@ Print_Style "RandRead: $IO4kRandRead - RandWrite: $IO4kRandWrite - Read: $IO4kRe
 # Get brand information
 Print_Style "Enter a description of your storage and setup (Example: Kingston A400 SSD on Pi 4 using StarTech SATA to USB adapter)"
 Print_Style "Anything you know / see like brands / classifications / models / etc. is helpful for identification"
-while read -r -t 0; do read -r; done
+while read -r -t 0 < /dev/tty; do read -r < /dev/tty; done
 read -p 'Description: ' Brand < /dev/tty
 Print_Style "(Optional) Enter alias to use on benchmark results.  Leave blank for completely anonymous."
-while read -r -t 0; do read -r; done
+while read -r -t 0 < /dev/tty; do read -r < /dev/tty; done
 read -p 'Alias (leave blank for Anonymous): ' UserAlias < /dev/tty
 if [[ ! "$UserAlias" ]]; then UserAlias="Anonymous"; fi
 
