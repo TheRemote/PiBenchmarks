@@ -779,12 +779,12 @@ rm -f test
 
 # Run fio tests
 Print_Style "Running fio write test ..." $YELLOW
-fio4kRandWrite=$(fio --minimal --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --name=test --filename=test --bs=4k --iodepth=64 --size=100M --readwrite=randwrite | sed 's/;/!/g')
+fio4kRandWrite=$(fio --minimal --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --name=test --filename=test --bs=4k --iodepth=64 --size=80M --readwrite=randwrite | sed 's/;/!/g')
 fio4kRandWriteIOPS=$(echo "$fio4kRandWrite" | awk -F '!' '{print $49}')
 fio4kRandWriteSpeed=$(echo "$fio4kRandWrite" | awk -F '!' '{print $48}')
 rm -f test
 Print_Style "Running fio read test ..." $YELLOW
-fio4kRandRead=$(fio --minimal --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --name=test --filename=test --bs=4k --iodepth=64 --size=200M --readwrite=randread | sed 's/;/!/g')
+fio4kRandRead=$(fio --minimal --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --name=test --filename=test --bs=4k --iodepth=64 --size=80M --readwrite=randread | sed 's/;/!/g')
 fio4kRandReadIOPS=$(echo "$fio4kRandRead" | awk -F '!' '{print $8}')
 fio4kRandReadSpeed=$(echo "$fio4kRandRead" | awk -F '!' '{print $7}')
 Print_Style "FIO results - 4k RandWrite: $fio4kRandWriteIOPS IOPS ($fio4kRandWriteSpeed KB/s) - 4k RandRead: $fio4kRandReadIOPS IOPS ($fio4kRandReadSpeed KB/s)" $YELLOW
