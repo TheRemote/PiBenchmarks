@@ -808,10 +808,10 @@ Print_Style "RandRead: $IO4kRandRead - RandWrite: $IO4kRandWrite - Read: $IO4kRe
 # Get brand information
 Print_Style "Enter a description of your storage and setup (Example: Kingston A400 SSD on Pi 4 using StarTech SATA to USB adapter)"
 Print_Style "Anything you know / see like brands / classifications / models / etc. is helpful for identification"
-read -d '' -t 0.1 -n 10000
+while read -r -t 0; do read -r; done
 read -p 'Description: ' Brand < /dev/tty
 Print_Style "(Optional) Enter alias to use on benchmark results.  Leave blank for completely anonymous."
-read -d '' -t 0.1 -n 10000
+while read -r -t 0; do read -r; done
 read -p 'Alias (leave blank for Anonymous): ' UserAlias < /dev/tty
 if [[ ! "$UserAlias" ]]; then UserAlias="Anonymous"; fi
 
