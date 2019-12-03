@@ -306,25 +306,25 @@ Print_Style "System rootfs drive (/) has been detected as $BootDrive ($BootDrive
 # Retrieve inxi hardware identification utility (https://github.com/smxi/inxi for more info)
 curl -o inxi https://raw.githubusercontent.com/smxi/inxi/master/inxi
 chmod +x inxi
-Test_inxi=$(./inxi -F -v8 -c0 -M -m -d -f -i -l -m -o -p -r -t -u -xxx 2>&1)
+Test_inxi=$(./inxi -F -v8 -c0 -M -m -d -f -i -l -m -o -p -r -t -u -xxx 2>&1 | sed 's/;/!/g')
 ./inxi -v4 -d -c0 2>&1
 rm -f inxi
 
 Test_udevadm=$(udevadm info -a -n $BootDrive 2>&1 | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
-Test_lsblk=$(lsblk -l -o NAME,FSTYPE,LABEL,MOUNTPOINT,SIZE,MODEL 2>&1)
-Test_lshw=$(lshw 2>&1)
-Test_lsusb=$(lsusb 2>&1)
-Test_lsscsi=$(lsscsi -Lv 2>&1)
-Test_lscpu=$(lscpu 2>&1)
-Test_lspci=$(lspci -v 2>&1)
-Test_findmnt=$(findmnt -n)
-Test_diskbyid=$(ls /dev/disk/by-id 2>&1)
-Test_df=$(df -h 2>&1)
-Test_cpuinfo=$(cat /proc/cpuinfo 2>&1)
-Test_dmesg=$(dmesg -Lnever | tail -1000 2>&1)
-Test_fstab=$(cat /etc/fstab 2>&1)
-Test_dmidecode=$(dmidecode 2>&1)
-Test_hwinfo=$(hwinfo --short 2>&1)
+Test_lsblk=$(lsblk -l -o NAME,FSTYPE,LABEL,MOUNTPOINT,SIZE,MODEL 2>&1 | sed 's/;/!/g')
+Test_lshw=$(lshw 2>&1 | sed 's/;/!/g')
+Test_lsusb=$(lsusb 2>&1 | sed 's/;/!/g')
+Test_lsscsi=$(lsscsi -Lv 2>&1 | sed 's/;/!/g')
+Test_lscpu=$(lscpu 2>&1 | sed 's/;/!/g')
+Test_lspci=$(lspci -v 2>&1 | sed 's/;/!/g')
+Test_findmnt=$(findmnt -n | sed 's/;/!/g')
+Test_diskbyid=$(ls /dev/disk/by-id 2>&1 | sed 's/;/!/g')
+Test_df=$(df -h 2>&1 | sed 's/;/!/g')
+Test_cpuinfo=$(cat /proc/cpuinfo 2>&1 | sed 's/;/!/g')
+Test_dmesg=$(dmesg -Lnever | tail -1000 2>&1 | sed 's/;/!/g')
+Test_fstab=$(cat /etc/fstab 2>&1 | sed 's/;/!/g')
+Test_dmidecode=$(dmidecode 2>&1 | sed 's/;/!/g')
+Test_hwinfo=$(hwinfo --short 2>&1 | sed 's/;/!/g')
 Capacity=$(lsblk -l 2>&1 | grep $BootDriveSuffix -m 1 | awk 'NR==1{ print $4 }' | sed 's/,/./g')
 
 # Check for Micro SD / MMC card
@@ -766,8 +766,8 @@ if [ ! -n "$HDParm" ]; then
   HDParm=$(hdparm -t $BootDrive 2>/dev/null | sed '/^[[:space:]]*$/d')
 fi
 Print_Style "$HDParm" $NORMAL
-HDParmDisk=$(echo "$HDParm" | grep "disk reads:" | awk 'NR==1{ print $11 }')
-HDParmCached=$(echo "$HDParm" | grep "cached reads:" | awk 'NR==1{ print $11 }')
+HDParmDisk=$(echo "$HDParm" | grep "disk reads:" | awk 'NR==1{ print $11 }' | sed 's/;/!/g')
+HDParmCached=$(echo "$HDParm" | grep "cached reads:" | awk 'NR==1{ print $11 }' | sed 's/;/!/g')
 Print_Style "HDParm: $HDParmDisk MB/s - HDParmCached: $HDParmCached MB/s" $YELLOW
 
 # Run DD tests
