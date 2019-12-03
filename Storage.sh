@@ -129,7 +129,7 @@ if [[ -n "`which apt`" ]]; then
   fi
 
   # Retrieve dependencies -- these are all bare minimum system tools to identify the hardware (many will already be built in)
-  apt-get install lshw pciutils usbutils lsscsi bc curl hwinfo hdparm dmidecode -y
+  apt-get install lshw pciutils usbutils lsscsi bc curl hwinfo hdparm dmidecode fio -y
   if [ ! -n "`which lshw`" ]; then apt-get install lshw -y; fi
   if [ ! -n "`which lspci`" ]; then apt-get install pciutils -y; fi
   if [ ! -n "`which lsusb`" ]; then apt-get install usbutils -y; fi
@@ -307,7 +307,7 @@ Print_Style "System rootfs drive (/) has been detected as $BootDrive ($BootDrive
 curl -o inxi https://raw.githubusercontent.com/smxi/inxi/master/inxi
 chmod +x inxi
 Test_inxi=$(./inxi -F -v8 -c0 -M -m -d -f -i -l -m -o -p -r -t -u -xxx 2>&1)
-./inxi -v4 -d -c0
+./inxi -v4 -d -c0 2>&1
 rm -f inxi
 
 Test_udevadm=$(udevadm info -a -n $BootDrive 2>&1 | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
@@ -325,7 +325,7 @@ Test_dmesg=$(dmesg | tail -1000 2>&1)
 Test_fstab=$(cat /etc/fstab 2>&1)
 Test_dmidecode=$(dmidecode 2>&1)
 Test_hwinfo=$(hwinfo --short 2>&1)
-Capacity=$(lsblk -l | grep $BootDriveSuffix -m 1 | awk 'NR==1{ print $4 }' | sed 's/,/./g')
+Capacity=$(lsblk -l 2>&1 | grep $BootDriveSuffix -m 1 | awk 'NR==1{ print $4 }' | sed 's/,/./g')
 
 # Check for Micro SD / MMC card
 if [[ "$BootDrive" == *"mmcblk"* ]]; then
@@ -812,12 +812,11 @@ IOZone=$(echo "$IOZone" | sed '/^[[:space:]]*$/d')
 Print_Style "RandRead: $IO4kRandRead - RandWrite: $IO4kRandWrite - Read: $IO4kRead - Write: $IO4kWrite" $YELLOW
 
 # Get brand information
-Print_Style "Enter a description of your storage and setup (Example: Kingston A400 SSD on Pi 4 using StarTech SATA to USB adapter)"
-Print_Style "Anything you know / see like brands / classifications / models / etc. is helpful for identification"
-while read -r -t 0 < /dev/tty; do read -r < /dev/tty; done
+Print_Style "Enter a description of your storage and setup (Example: Kingston A400 SSD on Pi 4 using StarTech SATA to USB adapter)" $GREEN
+read -t 0.001 < /dev/tty;
 read -p 'Description: ' Brand < /dev/tty
-Print_Style "(Optional) Enter alias to use on benchmark results.  Leave blank for completely anonymous."
-while read -r -t 0 < /dev/tty; do read -r < /dev/tty; done
+Print_Style "(Optional) Enter alias to use on benchmark results.  Leave blank for completely anonymous." $GREEN
+read -t 0.001 < /dev/tty;
 read -p 'Alias (leave blank for Anonymous): ' UserAlias < /dev/tty
 if [[ ! "$UserAlias" ]]; then UserAlias="Anonymous"; fi
 
