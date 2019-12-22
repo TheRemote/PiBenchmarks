@@ -14,6 +14,12 @@ sudo curl https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storag
 
 <h3>Update History</h3>
 
+<h4>December 22nd 2019</h4>
+<ul>
+  <li>Added new smartctl test to help identify drives on USB adapters that don't support hdparm</li>
+  <li>Improved the hwinfo test to provide better drive identifying information</li>
+</ul>
+
 <h4>December 21st 2019</h4>
 <ul>
   <li>Added new NVME test to help better identify NVME drives</li>
