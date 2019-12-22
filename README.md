@@ -14,6 +14,12 @@ sudo curl https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storag
 
 <h3>Update History</h3>
 
+<h4>December 21st 2019</h4>
+<ul>
+  <li>Added new NVME test to help better identify NVME drives</li>
+  <li>Double quoted variables to ensure maximum compatibility across distros</li>
+</ul>
+
 <h4>December 2nd 2019</h4>
 <ul>
   <li>Merged pull request from pschmitt improving the test dramatically on Arch Linux (thanks!)</li>
