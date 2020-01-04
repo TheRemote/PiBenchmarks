@@ -6,7 +6,7 @@ Anonymously uploads your score to jamesachambers.com to help others make good de
 <h3>View Results</h3>
 
 View current benchmarks, discussion and analysis at: https://jamesachambers.com/raspberry-pi-storage-benchmarks-2019-benchmarking-script/<br>
-View the full results at: https://jamesachambers.com/raspberry-pi-storage-benchmarks/<br>
+View the full results at: https://storage.jamesachambers.com/<br>
 
 <h3>Running the Benchmark</h3>
 To run the benchmark type/paste:<br>
