@@ -16,7 +16,7 @@ sudo curl https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storag
 
 <h4>January 6th 2020</h4>
 <ul>
-  <li>Launched early beta of <a href=https://storage.jamesachambers.com/>https://storage.jamesachambers.com/ results browser</li>
+  <li>Launched early beta of <a href=https://storage.jamesachambers.com/>https://storage.jamesachambers.com/</a> results browser</li>
   <li>Fixed an issue where dmesg was giving too much output resulting in "argument list too long" error that prevented results from submitting (thanks winkelement)</li>
 </ul>
 
