@@ -14,6 +14,12 @@ sudo curl https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storag
 
 <h3>Update History</h3>
 
+<h4>January 1st 2020</h4>
+<ul>
+  <li>Launched early beta of <a href=https://storage.jamesachambers.com/>https://storage.jamesachambers.com/ results browser</li>
+  <li>Fixed an issue where dmesg was giving too much output resulting in "argument list too long" error that prevented results from submitting (thanks winkelement)</li>
+</ul>
+
 <h4>December 22nd 2019</h4>
 <ul>
   <li>Added new smartctl test to help identify drives on USB adapters that don't support hdparm</li>
