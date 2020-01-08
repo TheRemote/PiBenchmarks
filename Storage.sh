@@ -131,7 +131,7 @@ if [[ -n "$(which apt)" ]]; then
   fi
 
   # Retrieve dependencies -- these are all bare minimum system tools to identify the hardware (many will already be built in)
-  apt-get install lshw pciutils usbutils lsscsi bc curl hwinfo hdparm nvme-cli dmidecode smartmontools fio --no-install-recommends -y
+  apt-get install lshw pciutils usbutils lsscsi bc curl hwinfo hdparm nvme-cli dmidecode smartmontools fio sdparm --no-install-recommends -y
   if [ -z "$(which lshw)" ]; then apt-get install lshw -y; fi
   if [ -z "$(which lspci)" ]; then apt-get install pciutils -y; fi
   if [ -z "$(which lsusb)" ]; then apt-get install usbutils -y; fi
@@ -145,6 +145,7 @@ if [[ -n "$(which apt)" ]]; then
   if [ -z "$(which iozone3)" ]; then apt-get install iozone3 -y; fi
   if [ -z "$(which nvme)" ]; then apt-get install nvme-cli -y; fi
   if [ -z "$(which smartctl)" ]; then apt-get install smartmontools --no-install-recommends -y; fi
+  if [ -z "$(which sdparm)" ]; then apt-get install sdparm -y; fi
 
   DpkgArch=$(dpkg --print-architecture)
   if [ -z "$(which iozone)" ]; then
@@ -190,7 +191,8 @@ elif [ -n "$(which pacman)" ]; then
   lsscsi \
   pciutils \
   usbutils \
-  nvme-cli
+  nvme-cli \
+  sdparm
 
   # Install iozone
   if ! command -v iozone; then
@@ -327,17 +329,18 @@ Test_lsusb=$(lsusb 2>&1 | sed 's/;/!/g')
 Test_lsscsi=$(lsscsi -Lv 2>&1 | sed 's/;/!/g')
 Test_lscpu=$(lscpu 2>&1 | sed 's/;/!/g')
 Test_lspci=$(lspci -v 2>&1 | sed 's/;/!/g')
-Test_findmnt=$(findmnt -n | sed 's/;/!/g')
+Test_findmnt=$(findmnt -n 2>&1 | sed 's/;/!/g')
 Test_diskbyid=$(ls /dev/disk/by-id 2>&1 | sed 's/;/!/g')
 Test_df=$(df -h 2>&1 | sed 's/;/!/g')
 Test_cpuinfo=$(cat /proc/cpuinfo 2>&1 | sed 's/;/!/g')
-Test_dmesg=$(dmesg -Lnever | tail -1000 2>&1 | sed 's/;/!/g')
+Test_dmesg=$(dmesg -Lnever 2>&1 | tail -1000 | sed 's/;/!/g')
 Test_fstab=$(cat /etc/fstab 2>&1 | sed 's/;/!/g')
 Test_dmidecode=$(dmidecode 2>&1 | sed 's/;/!/g')
 Test_hwinfo=$(hwinfo --arch --bios --block --bridge --disk --framebuffer --gfxcard --hub --ide --isapnp --listmd --memory --mmc-ctrl --monitor --netcard --partition --pci --pcmcia --pcmcia-ctrl --redasd --scsi --sound --storage-ctrl --sys --tape --usb --usb-ctrl 2>&1 | sed 's/;/!/g')
 Test_nvme=$(nvme list -o json 2>&1)
 Test_nvme+=$(nvme show-regs "$BootDrive" -H 2>&1 | sed 's/;/!/g')
 Test_smartctl=$(smartctl -x "$BootDrive" 2>&1 | sed 's/;/!/g')
+Test_smartctl=$(sudo sdparm --long --verbose "$BootDrive" 2>&1 | sed 's/;/!/g')
 Capacity=$(lsblk -l 2>&1 | grep "$BootDriveSuffix" -m 1 | awk 'NR==1{ print $4 }' | sed 's/,/./g')
 
 # Check for Micro SD / MMC card
