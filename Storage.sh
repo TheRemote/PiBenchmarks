@@ -333,7 +333,7 @@ Test_findmnt=$(findmnt -n 2>&1 | sed 's/;/!/g')
 Test_diskbyid=$(ls /dev/disk/by-id 2>&1 | sed 's/;/!/g')
 Test_df=$(df -h 2>&1 | sed 's/;/!/g')
 Test_cpuinfo=$(cat /proc/cpuinfo 2>&1 | sed 's/;/!/g')
-Test_dmesg=$(dmesg -Lnever 2>&1 | tail -1000 | sed 's/;/!/g')
+Test_dmesg=$(dmesg -Lnever 2>&1 | grep usb | sed 's/;/!/g')
 Test_fstab=$(cat /etc/fstab 2>&1 | sed 's/;/!/g')
 Test_dmidecode=$(dmidecode 2>&1 | sed 's/;/!/g')
 Test_hwinfo=$(hwinfo --arch --bios --block --bridge --disk --framebuffer --gfxcard --hub --ide --isapnp --listmd --memory --mmc-ctrl --monitor --netcard --partition --pci --pcmcia --pcmcia-ctrl --redasd --scsi --sound --storage-ctrl --sys --tape --usb --usb-ctrl 2>&1 | sed 's/;/!/g')
@@ -870,7 +870,7 @@ printf "%-25s %-25s %-25s\n" "IOZone" "4k random write" "$IO4kRandWrite KB/s"
 printf "\n$BRIGHT$MAGENTA$UNDERLINE%-25s %-25s %-25s\n" " " "Score: $Score" " "
 echo ""
 echo "Compare with previous benchmark results at:"
-echo "https://www.jamesachambers.com/raspberry-pi-storage-benchmarks/ $NORMAL"
+echo "https://storage.jamesachambers.com/ $NORMAL"
 
 # Return to home directory
 cd ~ || return

@@ -6,13 +6,19 @@ Anonymously uploads your score to jamesachambers.com to help others make good de
 <h3>View Results</h3>
 
 View current benchmarks, discussion and analysis at: https://jamesachambers.com/raspberry-pi-storage-benchmarks-2019-benchmarking-script/<br>
-View the full results at: https://jamesachambers.com/raspberry-pi-storage-benchmarks/<br>
+View the full results at: https://storage.jamesachambers.com/<br>
 
 <h3>Running the Benchmark</h3>
 To run the benchmark type/paste:<br>
 sudo curl https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh | sudo bash
 
 <h3>Update History</h3>
+
+<h4>January 6th 2020</h4>
+<ul>
+  <li>Launched early beta of <a href=https://storage.jamesachambers.com/>https://storage.jamesachambers.com/</a> results browser</li>
+  <li>Fixed an issue where dmesg was giving too much output resulting in "argument list too long" error that prevented results from submitting (thanks winkelement)</li>
+</ul>
 
 <h4>December 22nd 2019</h4>
 <ul>
