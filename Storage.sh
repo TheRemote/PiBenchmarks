@@ -82,8 +82,22 @@ IO4kWrite=0
 IO4kRandRead=0
 IO4kRandWrite=0
 
-# Change directory to rootfs
-cd /
+# Did the user give a folder ?
+if [ "$1" = "" ]
+  then
+  # User did not provide a partition/folder, change directory to rootfs
+  user_chosen_partion=0
+  cd /
+else
+  if [ ! -d "$1" ]; then
+    Print_Style "Your chosen partition (folder) does not exist! Provide a good one or run without parameters to check the rootfs" "$RED"
+    exit 1
+  else
+    ChosenPartition="$1"
+    user_chosen_partition=1
+    cd "$ChosenPartition"
+  fi
+fi
 
 # Get host board information
 HostArchitecture=$(uname -m)
@@ -269,36 +283,41 @@ fi
 # Run sync to make sure all changes have been written to disk
 sync
 
-# --Get system boot drive information--
-# Find from mountpoint first
-BootDrive=$(findmnt -n -o SOURCE /)
+if [ "$user_chosen_partition" -eq "0" ]; then
+  # User did not provide a partition/folder, continue with rootfs
+  # --Get system boot drive information--
+  # Find from mountpoint first
+  BootDrive=$(findmnt -n -o SOURCE /)
 
-# Find by matching device IDs to / next
-if [ -z "$BootDrive" ]; then
-  RDEV=$(mountpoint -d /)
+  # Find by matching device IDs to / next
+  if [ -z "$BootDrive" ]; then
+    RDEV=$(mountpoint -d /)
 
-  for file in /dev/*; do
-    DeviceIDP1=$(stat --printf="0x%t" "$file")
-    DeviceIDP2=$(stat --printf="0x%T" "$file")
-    DeviceID=$(printf "%d:%d" "$DeviceIDP1" "$DeviceIDP2")
-    if [ "$DeviceID" = "$RDEV" ]; then
-      BootDrive=$file
-      break
-    fi
-  done
-fi
-
-# Fall back to finding from lsblk
-if [ -z "$BootDrive" ]; then
-  BootDrive=$(lsblk -l | grep -v "0 part /boot" | grep -m 1 "0 part /" | awk 'NR==1{ print $1 }')
-  if [ -n "$BootDrive" ]; then
-    BootDrive="/dev/"$BootDrive
+    for file in /dev/*; do
+      DeviceIDP1=$(stat --printf="0x%t" "$file")
+      DeviceIDP2=$(stat --printf="0x%T" "$file")
+      DeviceID=$(printf "%d:%d" "$DeviceIDP1" "$DeviceIDP2")
+      if [ "$DeviceID" = "$RDEV" ]; then
+        BootDrive=$file
+        break
+      fi
+    done
   fi
-fi
 
-# Fall back to finding from df
-if [ -z "$BootDrive" ]; then
-  BootDrive=$(df -H | grep -m 1 boot | awk 'NR==1{ print $1 }')
+  # Fall back to finding from lsblk
+  if [ -z "$BootDrive" ]; then
+    BootDrive=$(lsblk -l | grep -v "0 part /boot" | grep -m 1 "0 part /" | awk 'NR==1{ print $1 }')
+    if [ -n "$BootDrive" ]; then
+      BootDrive="/dev/"$BootDrive
+    fi
+  fi
+
+  # Fall back to finding from df
+  if [ -z "$BootDrive" ]; then
+    BootDrive=$(df -H | grep -m 1 boot | awk 'NR==1{ print $1 }')
+  fi
+else  # means: $user_chosen_partition = 1
+  BootDrive=$(findmnt -n -o SOURCE "$ChosenPartition")
 fi
 
 # Detect BootDrive suffix
@@ -313,7 +332,12 @@ if [ -z "$BootDriveSuffix" ]; then
   BootDriveSuffix="$BootDrive"
 fi
 
-Print_Style "System rootfs drive (/) has been detected as $BootDrive ($BootDriveSuffix)" "$YELLOW"
+if [ "$user_chosen_patition" -eq "0" ]; then
+  Print_Style "System rootfs drive (/) has been detected as $BootDrive ($BootDriveSuffix)" "$YELLOW"
+else
+  Print_Style "Chosen partition ($ChosenPartition) has been detected as $BootDrive ($BootDriveSuffix)" "$YELLOW"
+fi
+
 
 # Retrieve inxi hardware identification utility (https://github.com/smxi/inxi for more info)
 curl -o inxi https://raw.githubusercontent.com/smxi/inxi/master/inxi
