@@ -83,10 +83,9 @@ IO4kRandRead=0
 IO4kRandWrite=0
 
 # Did the user give a folder ?
-if [ "$1" = "" ]
-  then
+ChosenPartition=""
+if [ "$1" = "" ]; then
   # User did not provide a partition/folder, change directory to rootfs
-  user_chosen_partion=0
   cd /
 else
   if [ ! -d "$1" ]; then
@@ -94,7 +93,6 @@ else
     exit 1
   else
     ChosenPartition="$1"
-    user_chosen_partition=1
     cd "$ChosenPartition"
   fi
 fi
@@ -207,7 +205,8 @@ elif [ -n "$(which pacman)" ]; then
   pciutils \
   usbutils \
   nvme-cli \
-  sdparm
+  sdparm \
+  vim
 
   # Install iozone
   if ! command -v iozone; then
@@ -284,7 +283,7 @@ fi
 # Run sync to make sure all changes have been written to disk
 sync
 
-if [ "$user_chosen_partition" -eq "0" ]; then
+if [ -z "$ChosenPartition" ]; then
   # User did not provide a partition/folder, continue with rootfs
   # --Get system boot drive information--
   # Find from mountpoint first
@@ -317,7 +316,7 @@ if [ "$user_chosen_partition" -eq "0" ]; then
   if [ -z "$BootDrive" ]; then
     BootDrive=$(df -H | grep -m 1 boot | awk 'NR==1{ print $1 }')
   fi
-else  # means: $user_chosen_partition = 1
+else
   BootDrive=$(findmnt -n -o SOURCE "$ChosenPartition")
 fi
 
@@ -333,12 +332,11 @@ if [ -z "$BootDriveSuffix" ]; then
   BootDriveSuffix="$BootDrive"
 fi
 
-if [ "$user_chosen_patition" -eq "0" ]; then
+if [ -z "$ChosenPartition" ]; then
   Print_Style "System rootfs drive (/) has been detected as $BootDrive ($BootDriveSuffix)" "$YELLOW"
 else
   Print_Style "Chosen partition ($ChosenPartition) has been detected as $BootDrive ($BootDriveSuffix)" "$YELLOW"
 fi
-
 
 # Retrieve inxi hardware identification utility (https://github.com/smxi/inxi for more info)
 curl -o inxi https://raw.githubusercontent.com/smxi/inxi/master/inxi

@@ -10,13 +10,24 @@ View the full results at: https://storage.jamesachambers.com/<br>
 
 <h3>Running the Benchmark</h3>
 To run the benchmark type/paste:<br>
-sudo curl https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh | sudo bash
+sudo curl https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh | sudo bash<br>
+<br>
+If you want to choose which drive to test you can also:<br>
+wget https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh<br>
+chmod +x Storage.sh<br>
+sudo ./Storage.sh /path/to/storage<br>
 
 <h3>Update History</h3>
 
+<h4>February 24th 2020</h4>
+<ul>
+  <li>Added xxd dependency (thanks vszakats)</li>
+  <li>Added option to choose which drive/folder to test (thanks hvdwolf)</li>
+</ul>
+
 <h4>January 6th 2020</h4>
 <ul>
-  <li>Launched early beta of <a href=https://storage.jamesachambers.com/>https://storage.jamesachambers.com/</a> results browser</li>
+  <li>Launched early beta of <a href=https://storage.jamesachambers.com>https://storage.jamesachambers.com/</a> results browser</li>
   <li>Fixed an issue where dmesg was giving too much output resulting in "argument list too long" error that prevented results from submitting (thanks winkelement)</li>
 </ul>
 
