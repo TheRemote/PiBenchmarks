@@ -131,7 +131,7 @@ if [[ -n "$(which apt)" ]]; then
   fi
 
   # Retrieve dependencies -- these are all bare minimum system tools to identify the hardware (many will already be built in)
-  apt-get install lshw pciutils usbutils lsscsi bc curl hwinfo hdparm nvme-cli dmidecode smartmontools fio sdparm --no-install-recommends -y
+  apt-get install lshw pciutils usbutils lsscsi bc curl hwinfo hdparm nvme-cli dmidecode smartmontools fio sdparm xxd --no-install-recommends -y
   if [ -z "$(which lshw)" ]; then apt-get install lshw -y; fi
   if [ -z "$(which lspci)" ]; then apt-get install pciutils -y; fi
   if [ -z "$(which lsusb)" ]; then apt-get install usbutils -y; fi
@@ -146,6 +146,7 @@ if [[ -n "$(which apt)" ]]; then
   if [ -z "$(which nvme)" ]; then apt-get install nvme-cli -y; fi
   if [ -z "$(which smartctl)" ]; then apt-get install smartmontools --no-install-recommends -y; fi
   if [ -z "$(which sdparm)" ]; then apt-get install sdparm -y; fi
+  if [ -z "$(which xxd)" ]; then apt-get install xxd -y; fi
 
   DpkgArch=$(dpkg --print-architecture)
   if [ -z "$(which iozone)" ]; then
