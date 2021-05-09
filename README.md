@@ -19,7 +19,7 @@ sudo ./Storage.sh /path/to/storage<br>
 
 <h3>Update History</h3>
 
-<h4>May 9th 2021 2020</h4>
+<h4>May 9th 2021</h4>
 <ul>
   <li>Moved project frontend to pibenchmarks.com domain name</li>
 </ul>
