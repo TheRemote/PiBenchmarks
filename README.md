@@ -5,7 +5,7 @@ Anonymously uploads your score to jamesachambers.com to help others make good de
 
 <h3>View Results</h3>
 
-View current benchmarks, discussion and analysis at: https://jamesachambers.com/raspberry-pi-storage-benchmarks-2019-benchmarking-script/<br>
+View current benchmarks, discussion and analysis at: https://jamesachambers.com/2020s-fastest-raspberry-pi-4-storage-sd-ssd-benchmarks/<br>
 View the full results at: https://pibenchmarks.com/<br>
 
 <h3>Running the Benchmark</h3>
