@@ -893,7 +893,7 @@ printf "%-25s %-25s %-25s\n" "IOZone" "4k random write" "$IO4kRandWrite KB/s"
 printf "\n$BRIGHT$MAGENTA$UNDERLINE%-25s %-25s %-25s\n" " " "Score: $Score" " "
 echo ""
 echo "Compare with previous benchmark results at:"
-echo "https://storage.jamesachambers.com/ $NORMAL"
+echo "https://pibenchmarks.com/ $NORMAL"
 
 # Return to home directory
 cd ~ || return
