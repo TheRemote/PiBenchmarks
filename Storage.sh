@@ -159,6 +159,7 @@ if [[ -n "$(which apt)" ]]; then
   if [ -z "$(which smartctl)" ]; then apt-get install smartmontools --no-install-recommends -y; fi
   if [ -z "$(which sdparm)" ]; then apt-get install sdparm -y; fi
   if [ -z "$(which xxd)" ]; then apt-get install xxd -y; fi
+  apt-get install libxml-dumper-perl -y
 
   DpkgArch=$(dpkg --print-architecture)
   if [ -z "$(which iozone)" ]; then
