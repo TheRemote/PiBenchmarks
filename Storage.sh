@@ -1,6 +1,6 @@
 #!/bin/bash
 # Storage benchmark by James A. Chambers (https://jamesachambers.com/)
-# Benchmarks your storage and anonymously submits result to pibenchmarks.com
+# Benchmarks your storage and anonymously submits result to https://pibenchmarks.com
 # Results and discussion available at https://jamesachambers.com/2020s-fastest-raspberry-pi-4-storage-sd-ssd-benchmarks/
 #
 # To run the benchmark use the following command:
@@ -338,6 +338,7 @@ else
   Print_Style "Chosen partition ($ChosenPartition) has been detected as $BootDrive ($BootDriveSuffix)" "$YELLOW"
 fi
 
+Print_Style "Starting INXI hardware identification..." "$YELLOW"
 # Retrieve inxi hardware identification utility (https://github.com/smxi/inxi for more info)
 curl -o inxi https://raw.githubusercontent.com/smxi/inxi/master/inxi
 chmod +x inxi
@@ -345,6 +346,7 @@ Test_inxi=$(./inxi -F -v8 -c0 -M -m -d -f -i -l -m -o -p -r -t -u -xxx 2>&1 | se
 ./inxi -v4 -d -c0 2>&1
 rm -f inxi
 
+Print_Style "Running additional hardware identification tests..." "$YELLOW"
 Test_udevadm=$(udevadm info -a -n "$BootDrive" 2>&1 | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
 Test_lsblk=$(lsblk -l -o NAME,FSTYPE,LABEL,MOUNTPOINT,SIZE,MODEL 2>&1 | sed 's/;/!/g')
 Test_lshw=$(lshw 2>&1 | sed 's/;/!/g')
@@ -368,6 +370,8 @@ Capacity=$(lsblk -l 2>&1 | grep "$BootDriveSuffix" -m 1 | awk 'NR==1{ print $4 }
 
 # Check for Micro SD / MMC card
 if [[ "$BootDrive" == *"mmcblk"* ]]; then
+
+  Print_Style "Starting MMC identification..." "$YELLOW"
 
   # Determine if MMC or Micro SD
   RootDrive=$(echo "$BootDrive" | cut -dp -f1 | cut -d/ -f3)
@@ -404,6 +408,8 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
 
   if [[ "$MMCType" == *"SD"* ]]; then
     # MicroSD hardware identification
+    Print_Style "Starting SD card identification..." "$YELLOW"
+
     HostSDClock=$(grep "actual clock" /sys/kernel/debug/mmc0/ios 2>/dev/null | awk '{printf("%0.1f", $3/1000000)}')
 
     # Parse SSR status register
@@ -565,8 +571,7 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
       Class="$Class U$SSRUHSClass"
     fi
     Class=$(echo "$Class" | xargs)
-    Print_Style "MicroSD information: Clock Speed: $HostSDClock - Manufacturer: $Manufacturer - Model: $Model - Vendor: $Vendor - Product: $Product - HW Version: $Version - FW Version: $Firmware - Date Manufactured: $DateManufactured" "$YELLOW"
-    Print_Style "Class: $Class" "$YELLOW"
+    Print_Style "MicroSD information: Clock Speed: $HostSDClock - Manufacturer: $Manufacturer - Model: $Model - Vendor: $Vendor - Product: $Product - HW Version: $Version - FW Version: $Firmware - Date Manufactured: $DateManufactured - Class: $Class" "$YELLOW"
   elif [[ "$MMCType" == *"MMC"* ]]; then
     # Attempt to identify MMC device
 
@@ -646,6 +651,8 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
   fi
 else
   # Not a MicroSD card
+  Print_Style "Starting mass storage device identification..." "$YELLOW"
+
   HDParmInfo=$(hdparm -Ii "$BootDrive" 2>/dev/null | sed '/^[[:space:]]*$/d')
   if [ -z "$HDParmInfo" ]; then
     HDParmInfo=$(hdparm -I "$BootDrive" 2>/dev/null | sed '/^[[:space:]]*$/d')
@@ -893,7 +900,7 @@ printf "%-25s %-25s %-25s\n" "IOZone" "4k random write" "$IO4kRandWrite KB/s"
 printf "\n$BRIGHT$MAGENTA$UNDERLINE%-25s %-25s %-25s\n" " " "Score: $Score" " "
 echo ""
 echo "Compare with previous benchmark results at:"
-echo "https://pibenchmarks.com/ $NORMAL"
+echo "https://pibenchmarks.com/$NORMAL"
 
 # Return to home directory
 cd ~ || return
