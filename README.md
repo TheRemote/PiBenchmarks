@@ -19,6 +19,11 @@ sudo ./Storage.sh /path/to/storage<br>
 
 <h3>Update History</h3>
 
+<h4>May 29th 2021</h4>
+<ul>
+  <li>Moved upload URL to the new pibenchmarks.com domain</li>
+</ul>
+
 <h4>May 21st 2021</h4>
 <ul>
   <li>Added dependency for libxml-dumper-perl to fix inxi on some platforms (thanks DMC!)</li>
