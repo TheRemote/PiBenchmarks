@@ -21,6 +21,7 @@ sudo ./Storage.sh /path/to/storage<br>
 
 <h4>May 29th 2021</h4>
 <ul>
+  <li>Added --no-install-recommends to most apt package installers to cut down on time running on a new system and unnecessary packages</li>
   <li>Moved upload URL to the new pibenchmarks.com domain</li>
 </ul>
 

@@ -143,23 +143,22 @@ if [[ -n "$(which apt)" ]]; then
   fi
 
   # Retrieve dependencies -- these are all bare minimum system tools to identify the hardware (many will already be built in)
-  apt-get install lshw pciutils usbutils lsscsi bc curl hwinfo hdparm nvme-cli dmidecode smartmontools fio sdparm xxd --no-install-recommends -y
-  if [ -z "$(which lshw)" ]; then apt-get install lshw -y; fi
-  if [ -z "$(which lspci)" ]; then apt-get install pciutils -y; fi
-  if [ -z "$(which lsusb)" ]; then apt-get install usbutils -y; fi
-  if [ -z "$(which lsscsi)" ]; then apt-get install lsscsi -y; fi
-  if [ -z "$(which bc)" ]; then apt-get install bc -y; fi
-  if [ -z "$(which curl)" ]; then apt-get install curl -y; fi
-  if [ -z "$(which hwinfo)" ]; then apt-get install hwinfo -y; fi
-  if [ -z "$(which hdparm)" ]; then apt-get install hdparm -y; fi
-  if [ -z "$(which dmidecode)" ]; then apt-get install dmidecode -y; fi
+  apt-get install lshw pciutils usbutils lsscsi bc curl hwinfo hdparm nvme-cli dmidecode smartmontools fio sdparm xxd libxml-dumper-perl --no-install-recommends -y
+  if [ -z "$(which lshw)" ]; then apt-get install --no-install-recommends lshw -y; fi
+  if [ -z "$(which lspci)" ]; then apt-get install --no-install-recommends pciutils -y; fi
+  if [ -z "$(which lsusb)" ]; then apt-get install --no-install-recommends usbutils -y; fi
+  if [ -z "$(which lsscsi)" ]; then apt-get install --no-install-recommends lsscsi -y; fi
+  if [ -z "$(which bc)" ]; then apt-get install --no-install-recommends bc -y; fi
+  if [ -z "$(which curl)" ]; then apt-get install --no-install-recommends curl -y; fi
+  if [ -z "$(which hwinfo)" ]; then apt-get install --no-install-recommends hwinfo -y; fi
+  if [ -z "$(which hdparm)" ]; then apt-get install --no-install-recommends hdparm -y; fi
+  if [ -z "$(which dmidecode)" ]; then apt-get install --no-install-recommends dmidecode -y; fi
   if [ -z "$(which fio)" ]; then apt-get install fio -y; fi
   if [ -z "$(which iozone3)" ]; then apt-get install iozone3 -y; fi
-  if [ -z "$(which nvme)" ]; then apt-get install nvme-cli -y; fi
-  if [ -z "$(which smartctl)" ]; then apt-get install smartmontools --no-install-recommends -y; fi
-  if [ -z "$(which sdparm)" ]; then apt-get install sdparm -y; fi
-  if [ -z "$(which xxd)" ]; then apt-get install xxd -y; fi
-  apt-get install libxml-dumper-perl -y
+  if [ -z "$(which nvme)" ]; then apt-get install --no-install-recommends nvme-cli -y; fi
+  if [ -z "$(which smartctl)" ]; then apt-get install --no-install-recommends smartmontools -y; fi
+  if [ -z "$(which sdparm)" ]; then apt-get install -no-install-recommends sdparm -y; fi
+  if [ -z "$(which xxd)" ]; then apt-get install --no-install-recommends xxd -y; fi
 
   DpkgArch=$(dpkg --print-architecture)
   if [ -z "$(which iozone)" ]; then
