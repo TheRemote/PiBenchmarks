@@ -370,9 +370,6 @@ Capacity=$(lsblk -l 2>&1 | grep "$BootDriveSuffix" -m 1 | awk 'NR==1{ print $4 }
 
 # Check for Micro SD / MMC card
 if [[ "$BootDrive" == *"mmcblk"* ]]; then
-
-  Print_Style "Starting MMC identification..." "$YELLOW"
-
   # Determine if MMC or Micro SD
   RootDrive=$(echo "$BootDrive" | cut -dp -f1 | cut -d/ -f3)
   MMCType=$(cat /sys/block/"$RootDrive"/device/type)
