@@ -128,14 +128,6 @@ if [[ -n "$(which apt)" ]]; then
 
   # Check if we are on a Raspberry Pi
   if [[ $HostModel == *"Raspberry Pi"* ]]; then
-    # Check if we are running Ubuntu
-    if [[ $HostOS == *"Ubuntu"* ]]; then
-      if [ -z "$(which vcgencmd)" ]; then
-        # Add Raspberry Pi repository to Ubuntu sources
-        add-apt-repository ppa:ubuntu-raspi2/ppa -y
-      fi
-    fi
-
     # Check for vcgencmd (measures clock speeds)
     if [ -z "$(which vcgencmd)" ]; then
       apt-get install libraspberrypi-bin -y

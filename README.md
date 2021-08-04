@@ -19,6 +19,11 @@ sudo ./Storage.sh /path/to/storage<br>
 
 <h3>Update History</h3>
 
+<h4>August 4th 2021</h4>
+<ul>
+  <li>Removed Ubuntu ppa as it doesn't support focal and is no longer necessary as libraspberrypi-bin is now available in the Ubuntu repositories</li>
+</ul>
+
 <h4>May 29th 2021</h4>
 <ul>
   <li>Added some additional status messages to make it more clear what the script is doing at any given time</li>
