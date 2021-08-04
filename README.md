@@ -21,8 +21,8 @@ sudo ./Storage.sh /path/to/storage<br>
 
 <h4>August 4th 2021</h4>
 <ul>
-  <li>Removed Ubuntu ppa as it doesn't support focal and is no longer necessary as libraspberrypi-bin is now available in the Ubuntu repositories</li>
-  <li>If you ran the storage script on a focal release and your apt is returning an error complaining about this you can remove the PPA with: <pre>sudo add-apt-repository -r ppa:ubuntu-raspi2/ppa</pre>.  This has been fixed on the live version and is no longer installed.</li>
+  <li>Removed Ubuntu PPA as it doesn't support focal and is no longer necessary as libraspberrypi-bin is now available in the Ubuntu repositories</li>
+  <li>If you ran the storage script on a focal release and your apt is returning an error complaining about this you can remove the PPA with: <pre>sudo add-apt-repository -r ppa:ubuntu-raspi2/ppa</pre>  This has been fixed on the live version and is no longer installed.</li>
 </ul>
 
 <h4>May 29th 2021</h4>
