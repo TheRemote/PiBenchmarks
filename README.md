@@ -17,6 +17,15 @@ wget https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh<
 chmod +x Storage.sh<br>
 sudo ./Storage.sh /path/to/storage<br>
 
+<h3>Buy A Coffee / Donate</h3>
+<p>People have expressed some interest in this (you are all saints, thank you, truly)</p>
+<ul>
+ <li>PayPal: 05jchambers@gmail.com</li>
+ <li>Venmo: @JamesAChambers</li>
+ <li>CashApp: $theremote</li>
+ <li>Bitcoin (BTC): 3H6wkPnL1Kvne7dJQS8h7wB4vndB9KxZP7</li>
+</ul>
+
 <h3>Update History</h3>
 
 <h4>August 4th 2021</h4>
