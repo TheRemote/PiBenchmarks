@@ -298,7 +298,7 @@ if [ -z "$ChosenPartition" ]; then
 
   # Fall back to finding from lsblk
   if [ -z "$BootDrive" ]; then
-    BootDrive=$(lsblk -l | grep -v "0 part /boot" | grep -m 1 "0 part /" | awk 'NR==1{ print $1 }')
+    BootDrive=$(lsblk -l | grep -v "0 part /boot" | grep -m 1 "0 part /" | awk 'NR==1{ print $1 }' | sed 's/\[\/\@\]//g')
     if [ -n "$BootDrive" ]; then
       BootDrive="/dev/"$BootDrive
     fi
@@ -306,10 +306,10 @@ if [ -z "$ChosenPartition" ]; then
 
   # Fall back to finding from df
   if [ -z "$BootDrive" ]; then
-    BootDrive=$(df -H | grep -m 1 boot | awk 'NR==1{ print $1 }')
+    BootDrive=$(df -H | grep -m 1 boot | awk 'NR==1{ print $1 }' | sed 's/\[\/\@\]//g')
   fi
 else
-  BootDrive=$(findmnt -n -o SOURCE "$ChosenPartition")
+  BootDrive=$(findmnt -n -o SOURCE "$ChosenPartition" | sed 's/\[\/\@\]//g')
 fi
 
 # Detect BootDrive suffix

@@ -28,6 +28,11 @@ sudo ./Storage.sh /path/to/storage<br>
 
 <h3>Update History</h3>
 
+<h4>March 17th 2022</h4>
+<ul>
+  <li>Fixed an issue with btrfs that would add the characters [/@] at the end of the detected drive (about 19 tests impacted)</li>
+</ul>
+
 <h4>August 4th 2021</h4>
 <ul>
   <li>Removed Ubuntu PPA as it doesn't support focal and is no longer necessary as libraspberrypi-bin is available in the repositories now that the Pi is "officially supported" on Ubuntu</li>
