@@ -28,6 +28,11 @@ sudo ./Storage.sh /path/to/storage<br>
 
 <h3>Update History</h3>
 
+<h4>March 20th 2022</h4>
+<ul>
+  <li>Fixed an issue where DD write wasn't being read correctly from computers using Japanese</li>
+</ul>
+
 <h4>March 17th 2022</h4>
 <ul>
   <li>Fixed an issue with btrfs that would add the characters [/@] at the end of the detected drive (about 19 tests impacted)</li>

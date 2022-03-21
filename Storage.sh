@@ -809,7 +809,7 @@ Print_Style "Running dd tests ..." "$YELLOW"
 sync
 sync
 DDWrite=$(dd if=/dev/zero of=test bs=4k count=80k conv=fsync 2>&1 | sed '/^[[:space:]]*$/d')
-DDWriteResult=$(echo "$DDWrite" | tail -n 1 | awk 'NR==1{ print $(NF-1) }' | sed 's/,/./g')
+DDWriteResult=$(echo "$DDWrite" | tail -n 1 | awk 'NR==1{ print $(NF-1) }' | sed 's/,/./g' | sed 's/s，//g')
 
 echo "$DDWrite"
 Print_Style "DD Write Speed: $DDWriteResult MB/s" "$YELLOW"
