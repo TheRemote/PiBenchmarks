@@ -218,6 +218,18 @@ else
   Print_Style "No package manager found!" "$RED"
 fi
 
+if [ -z "$(which lsblk)" ]; then
+  Print_Style "Unable to locate the utility lsblk.  Please install lsblk for your distro!" "$RED"
+    # Return to home directory
+  exit 3
+fi
+
+if [ -z "$(which fio)" ]; then
+  Print_Style "Unable to locate the utility fio.  Please install fio for your distro!" "$RED"
+    # Return to home directory
+  exit 3
+fi
+
 # Get clock speeds
 if [[ "$HostArchitecture" == *"x86"* || "$HostArchitecture" == *"amd64"* ]]; then
   # X86 or X86_64 system -- use dmidecode

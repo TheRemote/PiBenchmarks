@@ -30,6 +30,7 @@ sudo ./Storage.sh /path/to/storage<br>
 
 <h4>March 20th 2022</h4>
 <ul>
+  <li>Added pre-run requirement check for lsblk and fio to be installed (tries automatically but if you are on an unusual distro you may need to manually install them)</li>
   <li>Fixed an issue where DD write wasn't being read correctly from computers using Japanese</li>
 </ul>
 
