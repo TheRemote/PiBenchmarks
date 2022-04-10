@@ -17,6 +17,15 @@ wget https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh<
 chmod +x Storage.sh<br>
 sudo ./Storage.sh /path/to/storage<br>
 
+<h3>Removing Installed Packages</h3>
+Most of the packages the script installs are core system packages most of which should already be present.  There are a couple benchmarking-only related ones that should be safe to remove if you want an absolute minimalist system.<br>
+<br>
+If you want to remove the packages the script installed afterward you may do:<br>
+<br>
+sudo apt remove iozone3 fio<br>
+<br>
+These are iozone and fio which are both benchmarking utilities and should be safe to use unless you have something else installed that relies on them as a dependency (probably not likely but possible so make sure before removing packages).  
+
 <h3>Buy A Coffee / Donate</h3>
 <p>People have expressed some interest in this (you are all saints, thank you, truly)</p>
 <ul>
@@ -27,6 +36,11 @@ sudo ./Storage.sh /path/to/storage<br>
 </ul>
 
 <h3>Update History</h3>
+
+<h4>April 10th 2022</h4>
+<ul>
+  <li>Added instructions to remove packages the script uses that should be safe</li>
+</ul>
 
 <h4>March 20th 2022</h4>
 <ul>
