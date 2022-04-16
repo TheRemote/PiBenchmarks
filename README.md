@@ -37,6 +37,13 @@ These are iozone and fio which are both benchmarking utilities and should be saf
 
 <h3>Update History</h3>
 
+<h4>April 16th 2022</h4>
+<ul>
+  <li>Added support for other SBCs similar to the Pi such as ODROID, Banana Pi, Pine64, Radxa Rock Pi, Tinker Board, OrangePi, NVIDIA Jetson Nano and more</li>
+  <li>These models were chosen based on the fact that people had already submitted benchmarks with them.  I will add others if people benchmark on those devices as well!</li>
+  <li><a href="https://jamesachambers.com/benchmark-tinker-board-odroid-pine64-orangepi-and-others/">Full list of models available here</a></li>
+</ul>
+
 <h4>April 10th 2022</h4>
 <ul>
   <li>Added instructions to remove packages the script uses that should be safe</li>
