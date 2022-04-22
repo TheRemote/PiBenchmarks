@@ -35,7 +35,16 @@ These are iozone and fio which are both benchmarking utilities and should be saf
  <li>Bitcoin (BTC): 3H6wkPnL1Kvne7dJQS8h7wB4vndB9KxZP7</li>
 </ul>
 
+<h3>Additional Model Support</h3>
+
+See bottom of README for list of supported models.  I can always add additional models if people submit benchmarks with them or request them!
+
 <h3>Update History</h3>
+
+<h4>April 22nd 2022</h4>
+<ul>
+  <li>Added list of additional supported models (see bottom of README)</li>
+</ul>
 
 <h4>April 16th 2022</h4>
 <ul>
@@ -222,4 +231,47 @@ These are iozone and fio which are both benchmarking utilities and should be saf
 <h4>March 16th 2019</h4>
 <ul>
   <li>Initial release</li>
+</ul>
+
+
+<h3>Additional Models Supported</h3>
+<ul>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/Tinker_Board" target="_blank">ASUS Tinker Board</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/Tinker_Board_S" target="_blank">ASUS Tinker Board S</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/ROCK_Pi_4A" target="_blank">Radxa ROCK Pi 4A</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/ROCK_Pi_4B" target="_blank">Radxa ROCK Pi 4B</a></li>
+<li>Radxa ROCK 3A</li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/Pine64%5E" target="_blank">Pine64 Pine64+</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/Rock64" target="_blank">Pine64 Rock64</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/RockPro64" target="_blank">Pine64 RockPro64</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/OrangePi_One_Plus" target="_blank">Xunlong OrangePi One / One Plus</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/OrangePi_Zero" target="_blank">Xunlong OrangePi Zero</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/OrangePi_3" target="_blank">Xunlong OrangePi 3</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/OrangePi_4" target="_blank">Xunlong OrangePi 4</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/OrangePi_Plus_%3C_Plus_2" target="_blank">Xunlong OrangePi Plus / Plus2</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/OrangePi_PC" target="_blank">Xunlong OrangePi PC</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/OrangePi_PC_2" target="_blank">Xunlong OrangePi PC2 </a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/OrangePi_Lite2" target="_blank">Xunlong OrangePi Lite2</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/ODROID-C4" target="_blank">Hardkernel ODROID-C4</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/ODROID-C2" target="_blank">Hardkernel ODROID-C2</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/ODROID-HC4" target="_blank">Hardkernel ODROID-HC4</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/ODROID-N2" target="_blank">Hardkernel ODROID-N2</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/ODROID-N2Plus" target="_blank">Hardkernel ODROID-N2Plus</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/ODROID_HC1" target="_blank">Hardkernel ODROID HC1</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/ODROID_XU4" target="_blank">Hardkernel ODROID XU4</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/ODROID-M1" target="_blank">Hardkernel ODROID M1</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/Jetson_Nano_Developer_Kit" target="_blank">NVIDIA Jetson Nano Developer Kit</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/Jetson_Nano_2GB_Developer_Kit" target="_blank">NVIDIA Jetson Nano 2GB Developer Kit</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/Jetson_Xavier_NX_Developer_Kit" target="_blank">NVIDIA Jetson Xavier Developer Kit</a></li>
+<li>FriendlyElec ZeroPi</li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/NanoPi_NEO3" target="_blank" rel="noreferrer noopener">FriendlyElec NanoPi NEO3</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/NanoPi-NEO-Core2" target="_blank" rel="noreferrer noopener">FriendlyElec NanoPi-NEO-Core2</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/NanoPi_R2S" target="_blank" rel="noreferrer noopener">FriendlyElec NanoPi RS / R2S</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/NanoPi_M4" target="_blank">FriendlyElec NanoPi M4</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/Banana_Pi" target="_blank" rel="noreferrer noopener">LeMaker Banana Pi</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/Cubietruck" target="_blank" rel="noreferrer noopener">Cubietech Cubietruck</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/Atomic_Pi_MF-001" target="_blank" rel="noreferrer noopener">AAEON Atomic Pi MF-001</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/X96_Max" target="_blank" rel="noreferrer noopener">Shenzen Amediatech  X96 Max</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/ROC-RK3328-CC" target="_blank" rel="noreferrer noopener">Firefly ROC-RK3328-CC</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/RK3318_BOX" target="_blank" rel="noreferrer noopener">Rockchip RK3318 BOX</a></li>
 </ul>
