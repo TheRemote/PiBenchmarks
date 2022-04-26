@@ -41,6 +41,11 @@ See bottom of README for list of supported models.  I can always add additional 
 
 <h3>Update History</h3>
 
+<h4>April 26th 2022</h4>
+<ul>
+  <li>Removed "Vendor" field from submitted fields as it is no longer used for parsing</li>
+</ul>
+
 <h4>April 22nd 2022</h4>
 <ul>
   <li>Added list of additional supported models (see bottom of README)</li>
