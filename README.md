@@ -41,6 +41,14 @@ See bottom of README for list of supported models.  I can always add additional 
 
 <h3>Update History</h3>
 
+<h4>April 28th 2022</h4>
+<ul>
+  <li>Added additional System Boards to <a href="https://pibenchmarks.com/boards">PiBenchmarks.com System Boards</a> and README</li>
+  <li>System boards for PC and other types of devices like laptops, desktops, etc. are starting to be added quietly in the background</li>
+  <li>PC results won't show on the "Latest" tab yet but you can find models that have already been done by searching for something like "Dell" or "HP" and you'll see System Boards that are being added from those manufacturers</li>
+</ul>
+
+
 <h4>April 26th 2022</h4>
 <ul>
   <li>Removed "Vendor" field from submitted fields as it is no longer used for parsing</li>
@@ -245,7 +253,8 @@ See bottom of README for list of supported models.  I can always add additional 
 <li><a rel="noopener" href="https://pibenchmarks.com/board/Tinker_Board_S" target="_blank">ASUS Tinker Board S</a></li>
 <li><a rel="noopener" href="https://pibenchmarks.com/board/ROCK_Pi_4A" target="_blank">Radxa ROCK Pi 4A</a></li>
 <li><a rel="noopener" href="https://pibenchmarks.com/board/ROCK_Pi_4B" target="_blank">Radxa ROCK Pi 4B</a></li>
-<li>Radxa ROCK 3A</li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/ROCK_Pi_X" target="_blank">Radxa ROCK Pi X</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/ROCK_3A" Radxa ROCK 3A</li>
 <li><a rel="noopener" href="https://pibenchmarks.com/board/Pine64%5E" target="_blank">Pine64 Pine64+</a></li>
 <li><a rel="noopener" href="https://pibenchmarks.com/board/Rock64" target="_blank">Pine64 Rock64</a></li>
 <li><a rel="noopener" href="https://pibenchmarks.com/board/RockPro64" target="_blank">Pine64 RockPro64</a></li>
@@ -269,14 +278,25 @@ See bottom of README for list of supported models.  I can always add additional 
 <li><a rel="noopener" href="https://pibenchmarks.com/board/Jetson_Nano_2GB_Developer_Kit" target="_blank">NVIDIA Jetson Nano 2GB Developer Kit</a></li>
 <li><a rel="noopener" href="https://pibenchmarks.com/board/Jetson_Xavier_NX_Developer_Kit" target="_blank">NVIDIA Jetson Xavier Developer Kit</a></li>
 <li>FriendlyElec ZeroPi</li>
-<li><a rel="noopener" href="https://pibenchmarks.com/board/NanoPi_NEO3" target="_blank" rel="noreferrer noopener">FriendlyElec NanoPi NEO3</a></li>
-<li><a rel="noopener" href="https://pibenchmarks.com/board/NanoPi-NEO-Core2" target="_blank" rel="noreferrer noopener">FriendlyElec NanoPi-NEO-Core2</a></li>
-<li><a rel="noopener" href="https://pibenchmarks.com/board/NanoPi_R2S" target="_blank" rel="noreferrer noopener">FriendlyElec NanoPi RS / R2S</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/NanoPi_NEO3" target="_blank">FriendlyElec NanoPi NEO3</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/NanoPi-NEO-Core2" target="_blank">FriendlyElec NanoPi-NEO-Core2</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/NanoPi_R2S" target="_blank">FriendlyElec NanoPi RS / R2S</a></li>
 <li><a rel="noopener" href="https://pibenchmarks.com/board/NanoPi_M4" target="_blank">FriendlyElec NanoPi M4</a></li>
-<li><a rel="noopener" href="https://pibenchmarks.com/board/Banana_Pi" target="_blank" rel="noreferrer noopener">LeMaker Banana Pi</a></li>
-<li><a rel="noopener" href="https://pibenchmarks.com/board/Cubietruck" target="_blank" rel="noreferrer noopener">Cubietech Cubietruck</a></li>
-<li><a rel="noopener" href="https://pibenchmarks.com/board/Atomic_Pi_MF-001" target="_blank" rel="noreferrer noopener">AAEON Atomic Pi MF-001</a></li>
-<li><a rel="noopener" href="https://pibenchmarks.com/board/X96_Max" target="_blank" rel="noreferrer noopener">Shenzen Amediatech  X96 Max</a></li>
-<li><a rel="noopener" href="https://pibenchmarks.com/board/ROC-RK3328-CC" target="_blank" rel="noreferrer noopener">Firefly ROC-RK3328-CC</a></li>
-<li><a rel="noopener" href="https://pibenchmarks.com/board/RK3318_BOX" target="_blank" rel="noreferrer noopener">Rockchip RK3318 BOX</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/Banana_Pi" target="_blank">LeMaker Banana Pi</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/Cubietruck" target="_blank">Cubietech Cubietruck</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/Atomic_Pi_MF-001" target="_blank">AAEON Atomic Pi MF-001</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/X96_Max" target="_blank">Shenzen Amediatech  X96 Max</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/ROC-RK3328-CC" target="_blank">Firefly ROC-RK3328-CC</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/RK3318_BOX" target="_blank">Rockchip RK3318 BOX</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/VIM2" target="_blank">Khadas VIM2</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/STCK1A32WFC" target="_blank">Intel Compute Stick STCK1A32WFC</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/Cubox-i_Dual%3CQuad" target="_blank">SolidRun Cubox-i Dual/Quad</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/Vega_S96" target="_blank">Tronsmart Vega S96</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/ZBOX-BI320" target="_blank">ZOTAC ZBOX-BI320</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/ZBOXNANO-AD12" target="_blank">ZOTAC ZBOXNANO-AD12</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/ZBOX-ID88%3CID89%3CID90" target="_blank">ZOTAC ZBOX-ID88/ID89/ID90</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/KIII_Pro" target="_blank">MeCool KIII Pro</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/BT3_Pro" target="_blank">Beelink BT3 Pro</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/N1" target="_blank">Phicomm N1</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/fitlet2" target="_blank">Compulab fitlet2</a></li>
 </ul>
