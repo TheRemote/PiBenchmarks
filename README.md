@@ -43,6 +43,7 @@ See bottom of README for list of supported models.  I can always add additional 
 <h4>April 29th 2022</h4>
 <ul>
   <li>Added a couple more Gigabyte SBCs</li>
+  <li>Added 4 Shuttle models that had benchmarks submitted for them -- marketed as the "smallest PC in the world"</li>
 </ul>
 
 <h4>April 28th 2022</h4>
@@ -304,4 +305,8 @@ See bottom of README for list of supported models.  I can always add additional 
 <li><a rel="noopener" href="https://pibenchmarks.com/board/fitlet2" target="_blank">Compulab fitlet2</a></li>
 <li><a rel="noopener" href="https://pibenchmarks.com/board/GB-BACE-3150-System" target="_blank">Gigabyte GB-BACE-3150-System</a></li>
 <li><a rel="noopener" href="https://pibenchmarks.com/board/GB-BXBT-1900" target="_blank">Gigabyte GB-BXBT-1900</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/DS57U" target="_blank">Shuttle DS57U</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/DS61" target="_blank">Shuttle DS61</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/DS437" target="_blank">Shuttle DS437</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/NC01U" target="_blank">Shuttle NC01U</a></li>
 </ul>
