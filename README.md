@@ -10,7 +10,7 @@ View the full results at: https://pibenchmarks.com/<br>
 
 <h3>Running the Benchmark</h3>
 To run the benchmark type/paste:<br>
-sudo curl https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh | sudo bash<br>
+<pre>sudo curl https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh | sudo bash</pre><br>
 <br>
 If you want to choose which drive to test you can also:<br>
 wget https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh<br>
@@ -41,13 +41,17 @@ See bottom of README for list of supported models.  I can always add additional 
 
 <h3>Update History</h3>
 
+<h4>April 29th 2022</h4>
+<ul>
+  <li>Added a couple more Gigabyte SBCs</li>
+</ul>
+
 <h4>April 28th 2022</h4>
 <ul>
   <li>Added additional System Boards to <a href="https://pibenchmarks.com/boards">PiBenchmarks.com System Boards</a> and README</li>
   <li>System boards for PC and other types of devices like laptops, desktops, etc. are starting to be added quietly in the background</li>
   <li>PC results won't show on the "Latest" tab yet but you can find models that have already been done by searching for something like "Dell" or "HP" and you'll see System Boards that are being added from those manufacturers</li>
 </ul>
-
 
 <h4>April 26th 2022</h4>
 <ul>
@@ -299,4 +303,6 @@ See bottom of README for list of supported models.  I can always add additional 
 <li><a rel="noopener" href="https://pibenchmarks.com/board/BT3_Pro" target="_blank">Beelink BT3 Pro</a></li>
 <li><a rel="noopener" href="https://pibenchmarks.com/board/N1" target="_blank">Phicomm N1</a></li>
 <li><a rel="noopener" href="https://pibenchmarks.com/board/fitlet2" target="_blank">Compulab fitlet2</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/GB-BACE-3150-System" target="_blank">Gigabyte GB-BACE-3150-System</a></li>
+<li><a rel="noopener" href="https://pibenchmarks.com/board/GB-BXBT-1900" target="_blank">Gigabyte GB-BXBT-1900</a></li>
 </ul>
