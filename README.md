@@ -42,6 +42,7 @@ See bottom of README for list of supported models.  I can always add additional 
 
 <h4>May 11th 2022</h4>
 <ul>
+  <li>Added 20 second timeout to udevadm test to prevent it from getting stuck forever in rare cases on some boards (thanks munecito <a href="https://github.com/TheRemote/PiBenchmarks/issues/22">issue #22</a>)/li>
   <li>Removed vendor field parsing</li>
 </ul>
 
