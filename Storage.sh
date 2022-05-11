@@ -391,7 +391,7 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
     DateManufactured=$(cat /sys/block/"$RootDrive"/device/date)
     Model=$(cat /sys/block/"$RootDrive"/device/name)
     Version=$(cat /sys/block/"$RootDrive"/device/hwrev)
-    Vendor=$(cat /sys/block/"$RootDrive"/device/oemid)
+    #Vendor=$(cat /sys/block/"$RootDrive"/device/oemid)
     SSR=$(cat /sys/block/"$RootDrive"/device/ssr)
     SCR=$(cat /sys/block/"$RootDrive"/device/scr)
     CID=$(cat /sys/block/"$RootDrive"/device/cid)
@@ -403,7 +403,7 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
     DateManufactured=$(echo "$Test_udevadm" | grep -m 1 "date" | cut -d= -f3 | cut -d\" -f2 | xargs)
     Model=$(echo "$Test_udevadm" | grep -m 1 "{name}" | cut -d= -f3 | cut -d\" -f2 | xargs)
     Version=$(echo "$Test_udevadm" | grep -m 1 "{hwrev}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-    Vendor=$(echo "$Test_udevadm" | grep -m 1 "oemid" | cut -d= -f3 | cut -d\" -f2 | xargs | xxd -r)
+    #Vendor=$(echo "$Test_udevadm" | grep -m 1 "oemid" | cut -d= -f3 | cut -d\" -f2 | xargs | xxd -r)
     SSR=$(echo "$Test_udevadm" | grep -m 1 "{ssr}" | cut -d= -f3 | cut -d\" -f2 | xargs)
     SCR=$(echo "$Test_udevadm" | grep -m 1 "{scr}" | cut -d= -f3 | cut -d\" -f2 | xargs)
     CID=$(echo "$Test_udevadm" | grep -m 1 "{cid}" | cut -d= -f3 | cut -d\" -f2 | xargs)
@@ -671,7 +671,7 @@ else
 
   # Attempt to identify drive model
   Model=$(echo "$Test_udevadm" | grep -m 1 "{model}" | cut -d= -f3 | cut -d\" -f2 | xargs)
-  Vendor=$(echo "$Test_udevadm" | grep -m 1 "{vendor}" | cut -d= -f3 | cut -d\" -f2 | xargs)
+  #Vendor=$(echo "$Test_udevadm" | grep -m 1 "{vendor}" | cut -d= -f3 | cut -d\" -f2 | xargs)
   Manufacturer=$(echo "$Test_udevadm" | grep -m 1 "{manufacturer}" | cut -d= -f3 | cut -d\" -f2 | xargs)
 
   case "$Model" in
