@@ -40,6 +40,11 @@ See bottom of README for list of supported models.  I can always add additional 
 
 <h3>Update History</h3>
 
+<h4>May 10th 2022</h4>
+<ul>
+  <li>Added seom additional messages to help with debugging</li>
+</ul>
+
 <h4>April 29th 2022</h4>
 <ul>
   <li>Added a couple more Gigabyte SBCs</li>

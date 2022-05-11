@@ -371,9 +371,13 @@ Test_nvme+=$(nvme show-regs "$BootDrive" -H 2>&1 | sed 's/;/!/g')
 Test_smartctl=$(smartctl -x "$BootDrive" 2>&1 | sed 's/;/!/g')
 Test_smartctl=$(sudo sdparm --long --verbose "$BootDrive" 2>&1 | sed 's/;/!/g')
 Capacity=$(lsblk -l 2>&1 | grep "$BootDriveSuffix" -m 1 | awk 'NR==1{ print $4 }' | sed 's/,/./g')
+Print_Style "Additional hardware identification tests completed." "$YELLOW"
 
 # Check for Micro SD / MMC card
 if [[ "$BootDrive" == *"mmcblk"* ]]; then
+    # MicroSD hardware identification
+  Print_Style "Starting MMC/SD identification..." "$YELLOW"
+
   # Determine if MMC or Micro SD
   RootDrive=$(echo "$BootDrive" | cut -dp -f1 | cut -d/ -f3)
   MMCType=$(cat /sys/block/"$RootDrive"/device/type)
@@ -575,6 +579,8 @@ if [[ "$BootDrive" == *"mmcblk"* ]]; then
     Print_Style "MicroSD information: Clock Speed: $HostSDClock - Manufacturer: $Manufacturer - Model: $Model - Vendor: $Vendor - Product: $Product - HW Version: $Version - FW Version: $Firmware - Date Manufactured: $DateManufactured - Class: $Class" "$YELLOW"
   elif [[ "$MMCType" == *"MMC"* ]]; then
     # Attempt to identify MMC device
+
+    Print_Style "MMC Detected.  Identifying..." "$YELLOW"
 
     HostSDClock=""
 
@@ -871,7 +877,7 @@ read -r -p 'Alias (leave blank for Anonymous): ' UserAlias </dev/tty
 if [[ ! "$UserAlias" ]]; then UserAlias="Anonymous"; fi
 
 # Submit results
-curl --form "form_tools_form_id=1" --form "DDTest=$DDWrite" --form "DDWriteSpeed=$DDWriteResult" --form "HDParmDisk=$HDParmDisk" --form "HDParmCached=$HDParmCached" --form "HDParm=$HDParm" --form "fio4kRandRead=$fio4kRandRead" --form "fio4kRandWrite=$fio4kRandWrite" --form "fio4kRandWriteIOPS=$fio4kRandWriteIOPS" --form "fio4kRandReadIOPS=$fio4kRandReadIOPS" --form "fio4kRandWriteSpeed=$fio4kRandWriteSpeed" --form "fio4kRandReadSpeed=$fio4kRandReadSpeed" --form "IOZone=$IOZone" --form "IO4kRandRead=$IO4kRandRead" --form "IO4kRandWrite=$IO4kRandWrite" --form "IO4kRead=$IO4kRead" --form "IO4kWrite=$IO4kWrite" --form "Drive=$BootDrive" --form "Test_hdparm=$Test_hdparm" --form "Test_lsblk=$Test_lsblk" --form "Test_findmnt=$Test_findmnt" --form "Test_lsusb=$Test_lsusb" --form "Test_lshw=$Test_lshw" --form "Test_lspci=$Test_lspci" --form "Test_lsscsi=$Test_lsscsi" --form "Test_lscpu=$Test_lscpu" --form "Test_diskbyid=$Test_diskbyid" --form "Test_df=$Test_df" --form "Test_cpuinfo=$Test_cpuinfo" --form "Test_udevadm=$Test_udevadm" --form "Test_dmesg=$Test_dmesg" --form "Test_fstab=$Test_fstab" --form "Test_inxi=$Test_inxi" --form "Test_hwinfo=$Test_hwinfo" --form "Test_dmidecode=$Test_dmidecode" --form "Test_nvme=$Test_nvme" --form "Test_smartctl=$Test_smartctl" --form "Model=$Model" --form "Capacity=$Capacity" --form "Manufacturer=$Manufacturer" --form "Product=$Product" --form "DateManufactured=$DateManufactured" --form "Note=$Brand" --form "Class=$Class" --form "OCR=$OCR" --form "SSR=$SSR" --form "SCR=$SCR" --form "CID=$CID" --form "CSD=$CSD" --form "UserAlias=$UserAlias" --form "HostModel=$HostModel" --form "HostSDClock=$HostSDClock" --form "HostConfig=$HostConfig" --form "HostCPUClock=$HostCPUClock" --form "HostCoreClock=$HostCoreClock" --form "HostRAMClock=$HostRAMClock" --form "HostArchitecture=$HostArchitecture" --form "HostOS=$HostOS" --form "HostOSInfo=$HostOSInfo" --form "HostManufacturer=$HostManufacturer" --form "Adapter=$Adapter" https://pibenchmarks.com/formtools/process.php
+curl -k -L --form "form_tools_form_id=1" --form "DDTest=$DDWrite" --form "DDWriteSpeed=$DDWriteResult" --form "HDParmDisk=$HDParmDisk" --form "HDParmCached=$HDParmCached" --form "HDParm=$HDParm" --form "fio4kRandRead=$fio4kRandRead" --form "fio4kRandWrite=$fio4kRandWrite" --form "fio4kRandWriteIOPS=$fio4kRandWriteIOPS" --form "fio4kRandReadIOPS=$fio4kRandReadIOPS" --form "fio4kRandWriteSpeed=$fio4kRandWriteSpeed" --form "fio4kRandReadSpeed=$fio4kRandReadSpeed" --form "IOZone=$IOZone" --form "IO4kRandRead=$IO4kRandRead" --form "IO4kRandWrite=$IO4kRandWrite" --form "IO4kRead=$IO4kRead" --form "IO4kWrite=$IO4kWrite" --form "Drive=$BootDrive" --form "Test_hdparm=$Test_hdparm" --form "Test_lsblk=$Test_lsblk" --form "Test_findmnt=$Test_findmnt" --form "Test_lsusb=$Test_lsusb" --form "Test_lshw=$Test_lshw" --form "Test_lspci=$Test_lspci" --form "Test_lsscsi=$Test_lsscsi" --form "Test_lscpu=$Test_lscpu" --form "Test_diskbyid=$Test_diskbyid" --form "Test_df=$Test_df" --form "Test_cpuinfo=$Test_cpuinfo" --form "Test_udevadm=$Test_udevadm" --form "Test_dmesg=$Test_dmesg" --form "Test_fstab=$Test_fstab" --form "Test_inxi=$Test_inxi" --form "Test_hwinfo=$Test_hwinfo" --form "Test_dmidecode=$Test_dmidecode" --form "Test_nvme=$Test_nvme" --form "Test_smartctl=$Test_smartctl" --form "Model=$Model" --form "Capacity=$Capacity" --form "Manufacturer=$Manufacturer" --form "Product=$Product" --form "DateManufactured=$DateManufactured" --form "Note=$Brand" --form "Class=$Class" --form "OCR=$OCR" --form "SSR=$SSR" --form "SCR=$SCR" --form "CID=$CID" --form "CSD=$CSD" --form "UserAlias=$UserAlias" --form "HostModel=$HostModel" --form "HostSDClock=$HostSDClock" --form "HostConfig=$HostConfig" --form "HostCPUClock=$HostCPUClock" --form "HostCoreClock=$HostCoreClock" --form "HostRAMClock=$HostRAMClock" --form "HostArchitecture=$HostArchitecture" --form "HostOS=$HostOS" --form "HostOSInfo=$HostOSInfo" --form "HostManufacturer=$HostManufacturer" --form "Adapter=$Adapter" https://pibenchmarks.com/formtools/process.php
 
 # Calculate score
 Score=$(echo "scale=2; $DDWriteResult * 1024" | bc)
