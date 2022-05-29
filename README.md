@@ -44,6 +44,7 @@ See bottom of README for list of supported models.  I can always add additional 
 <ul>
   <li>Remove RAM column if it's not being used (it's not used on the Pi 4 and higher as the speed is fixed)</li>
   <li>Clean up garbled mess output from curl when submitted to website</li>
+  <li>Remove clutter and useless output from IOZone test to show more data and less fluff</li>
 </ul>
 
 <h3>May 11th 2022</h3>

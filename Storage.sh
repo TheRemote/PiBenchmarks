@@ -868,8 +868,8 @@ IO4kRandRead=$(echo "$IOZone" | tail -n 3 | awk 'NR==1{ print $7 }')
 IO4kRandWrite=$(echo "$IOZone" | tail -n 3 | awk 'NR==1{ print $8 }')
 IO4kRead=$(echo "$IOZone" | tail -n 3 | awk 'NR==1{ print $5 }')
 IO4kWrite=$(echo "$IOZone" | tail -n 3 | awk 'NR==1{ print $3 }')
+IOZone=$(echo "$IOZone" | sed '/^[[:space:]]*$/d' | grep -v 'Contrib\|Rhine\|Landherr\|Dunlap\|Blomberg\|Strecker\|Xue,\|Vikentsi\|Alexey')
 echo "$IOZone"
-IOZone=$(echo "$IOZone" | sed '/^[[:space:]]*$/d')
 Print_Style "RandRead: $IO4kRandRead - RandWrite: $IO4kRandWrite - Read: $IO4kRead - Write: $IO4kWrite" "$YELLOW"
 
 # Get brand information
@@ -886,8 +886,7 @@ Submit=$(curl -s -k -L --form "form_tools_form_id=1" --form "DDTest=$DDWrite" --
 SubmitResult=""
 SubmitResult=$(echo "$Submit" | grep submission)
 if [ -n "$SubmitResult" ]; then
-  echo "Result submitted successfully."
-  echo "Your result should appear live on https://pibenchmarks.com within a couple of minutes (unless it's a new drive at which point it will appear retroactively when the drive is added)"
+  echo "Result submitted successfully and will appear live on https://pibenchmarks.com within a couple of minutes."
 fi
 
 # Calculate score
