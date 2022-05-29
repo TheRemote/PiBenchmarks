@@ -40,6 +40,12 @@ See bottom of README for list of supported models.  I can always add additional 
 
 <h2>Update History</h2>
 
+<h3>May 28th 2022</h3>
+<ul>
+  <li>Remove RAM column if it's not being used (it's not used on the Pi 4 and higher as the speed is fixed)</li>
+  <li>Clean up garbled mess output from curl when submitted to website</li>
+</ul>
+
 <h3>May 11th 2022</h3>
 <ul>
   <li>Added 20 second timeout to udevadm test to prevent it from getting stuck forever in rare cases on some boards (thanks munecito <a href="https://github.com/TheRemote/PiBenchmarks/issues/22">issue #22</a>)/li>
