@@ -37,6 +37,7 @@ Install_Apt_Package() {
   if [ "$AptUpdated" -ne "1" ]; then
     export AptUpdated="1"
     apt-get update
+    apt-get install lshw pciutils usbutils lsscsi bc curl hwinfo hdparm nvme-cli dmidecode smartmontools fio sdparm xxd libxml-dumper-perl --no-install-recommends -y
   fi
   apt-get install --no-install-recommends "$1" -y
 }
