@@ -37,7 +37,7 @@ Install_Apt_Package() {
     AptUpdated=1
     apt-get update
   fi
-  apt-get install --no-install-recommends $1 -y; fi
+  apt-get install --no-install-recommends $1 -y
 }
 
 
@@ -136,13 +136,11 @@ Print_Style "Board information: Manufacturer: $HostManufacturer - Model: $HostMo
 Print_Style "Fetching required components ..." "$YELLOW"
 
 # Test for apt first (all Debian based distros)
-if [[ -n "$(which apt)" ]]; then
+if [ -n "$(which apt)" ]; then
   # Check if we are on a Raspberry Pi
   if [[ $HostModel == *"Raspberry Pi"* ]]; then
     # Check for vcgencmd (measures clock speeds)
-    if [ -z "$(which vcgencmd)" ]; then
-      Install_Apt_Package "libraspberrypi-bin"
-    fi
+    if [ -z "$(which vcgencmd)" ]; then Install_Apt_Package "libraspberrypi-bin"; fi
   fi
 
   # Retrieve dependencies -- these are all bare minimum system tools to identify the hardware (many will already be built in)
