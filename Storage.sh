@@ -24,7 +24,7 @@ REVERSE=$(tput smso)
 UNDERLINE=$(tput smul)
 
 # Whether apt update has ran
-AptUpdated=0
+AptUpdated="0"
 
 # Prints a line with color using terminal codes
 Print_Style() {
@@ -33,11 +33,11 @@ Print_Style() {
 
 # Install apt package
 Install_Apt_Package() {
-  if [ "$AptUpdated" -ne 1 ]; then
-    AptUpdated=1
+  echo "Install $1"
+  if [ "$AptUpdated" -ne "1" ]; then
+    export AptUpdated="1"
     apt-get update
   fi
-  echo "Install $1"
   apt-get install --no-install-recommends "$1" -y
 }
 
@@ -165,23 +165,23 @@ if [ -n "$(which apt)" ]; then
   if [ -z "$(which iozone)" ]; then
     # Attempt to install iozone from package
     if [[ "$HostArchitecture" == *"armv7"* || "$HostArchitecture" == *"armhf"* ]]; then
-      curl -o iozone3.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_armhf.deb
+      curl -s -o iozone3.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_armhf.deb
       dpkg --install iozone3.deb
       rm iozone3.deb
     elif [[ "$DpkgArch" == *"arm64"* || "$HostArchitecture" == *"aarch64"* || "$HostArchitecture" == *"arm64"* ]]; then
-      curl -o iozone3.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_arm64.deb
+      curl -s -o iozone3.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_arm64.deb
       dpkg --install iozone3.deb
       rm iozone3.deb
     elif [[ "$DpkgArch" == *"armel"* ]]; then
-      curl -o iozone3.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_armel.deb
+      curl -s -o iozone3.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_armel.deb
       dpkg --install iozone3.deb
       rm iozone3.deb
     elif [[ "$HostArchitecture" == *"x86_64"* || "$HostArchitecture" == *"amd64"* ]]; then
-      curl -o iozone3.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_amd64.deb
+      curl -s -o iozone3.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_amd64.deb
       dpkg --install iozone3.deb
       rm iozone3.deb
     elif [[ "$HostArchitecture" == *"i386"* ]]; then
-      curl -o iozone3.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_i386.deb
+      curl -s -o iozone3.deb http://ftp.us.debian.org/debian/pool/non-free/i/iozone3/iozone3_429-3+b1_i386.deb
       dpkg --install iozone3.deb
       rm iozone3.deb
     fi
@@ -291,7 +291,7 @@ if [ -z "$(which iozone)" ]; then
   if [ ! -f iozone/src/current/iozone ]; then
     Print_Style "Building iozone ..." "$YELLOW"
     DownloadURL=$(curl -N iozone.org | grep -m 1 -o 'src/current/iozone3_[^"]*')
-    curl -o iozone.tar "http://www.iozone.org/$DownloadURL"
+    curl -s -o iozone.tar "http://www.iozone.org/$DownloadURL"
     tar -xf iozone.tar
     rm iozone.tar
     mv iozone3_* iozone
@@ -361,7 +361,7 @@ fi
 
 Print_Style "Starting INXI hardware identification..." "$YELLOW"
 # Retrieve inxi hardware identification utility (https://github.com/smxi/inxi for more info)
-curl -o inxi https://raw.githubusercontent.com/smxi/inxi/master/inxi
+curl -s -o inxi https://raw.githubusercontent.com/smxi/inxi/master/inxi
 chmod +x inxi
 Test_inxi=$(./inxi -F -v8 -c0 -M -m -d -f -i -l -m -o -p -r -t -u -xxx 2>&1 | sed 's/;/!/g')
 ./inxi -v4 -d -c0 2>&1
