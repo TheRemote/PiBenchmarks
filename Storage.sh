@@ -23,10 +23,23 @@ BLINK=$(tput blink)
 REVERSE=$(tput smso)
 UNDERLINE=$(tput smul)
 
+# Whether apt update has ran
+AptUpdated=0
+
 # Prints a line with color using terminal codes
 Print_Style() {
   printf "%s\n" "${2}$1${NORMAL}"
 }
+
+# Install apt package
+Install_Apt_Package() {
+  if [ "$AptUpdated" -ne 1 ]; then
+    AptUpdated=1
+    apt-get update
+  fi
+  apt-get install --no-install-recommends $1 -y; fi
+}
+
 
 # Get binary from string
 Get_Binary() {
@@ -124,33 +137,31 @@ Print_Style "Fetching required components ..." "$YELLOW"
 
 # Test for apt first (all Debian based distros)
 if [[ -n "$(which apt)" ]]; then
-  apt-get update
-
   # Check if we are on a Raspberry Pi
   if [[ $HostModel == *"Raspberry Pi"* ]]; then
     # Check for vcgencmd (measures clock speeds)
     if [ -z "$(which vcgencmd)" ]; then
-      apt-get install libraspberrypi-bin -y
+      Install_Apt_Package "libraspberrypi-bin"
     fi
   fi
 
   # Retrieve dependencies -- these are all bare minimum system tools to identify the hardware (many will already be built in)
-  apt-get install lshw pciutils usbutils lsscsi bc curl hwinfo hdparm nvme-cli dmidecode smartmontools fio sdparm xxd libxml-dumper-perl --no-install-recommends -y
-  if [ -z "$(which lshw)" ]; then apt-get install --no-install-recommends lshw -y; fi
-  if [ -z "$(which lspci)" ]; then apt-get install --no-install-recommends pciutils -y; fi
-  if [ -z "$(which lsusb)" ]; then apt-get install --no-install-recommends usbutils -y; fi
-  if [ -z "$(which lsscsi)" ]; then apt-get install --no-install-recommends lsscsi -y; fi
-  if [ -z "$(which bc)" ]; then apt-get install --no-install-recommends bc -y; fi
-  if [ -z "$(which curl)" ]; then apt-get install --no-install-recommends curl -y; fi
-  if [ -z "$(which hwinfo)" ]; then apt-get install --no-install-recommends hwinfo -y; fi
-  if [ -z "$(which hdparm)" ]; then apt-get install --no-install-recommends hdparm -y; fi
-  if [ -z "$(which dmidecode)" ]; then apt-get install --no-install-recommends dmidecode -y; fi
-  if [ -z "$(which fio)" ]; then apt-get install fio -y; fi
-  if [ -z "$(which iozone3)" ]; then apt-get install iozone3 -y; fi
-  if [ -z "$(which nvme)" ]; then apt-get install --no-install-recommends nvme-cli -y; fi
-  if [ -z "$(which smartctl)" ]; then apt-get install --no-install-recommends smartmontools -y; fi
-  if [ -z "$(which sdparm)" ]; then apt-get install -no-install-recommends sdparm -y; fi
-  if [ -z "$(which xxd)" ]; then apt-get install --no-install-recommends xxd -y; fi
+  if [ -n $(apt-cache show libssl1.1 | grep Version | awk 'NR==1{ print $2 }') ]; then Install_Apt_Package "libxml-dumper-perl"
+  if [ -z "$(which lshw)" ]; then Install_Apt_Package "lshw"; fi
+  if [ -z "$(which lspci)" ]; then Install_Apt_Package "pciutils"; fi
+  if [ -z "$(which lsusb)" ]; then Install_Apt_Package "usbutils"; fi
+  if [ -z "$(which lsscsi)" ]; then Install_Apt_Package "lsscsi"; fi
+  if [ -z "$(which bc)" ]; then Install_Apt_Package "bc"; fi
+  if [ -z "$(which curl)" ]; then Install_Apt_Package "curl"; fi
+  if [ -z "$(which hwinfo)" ]; then Install_Apt_Package "hwinfo"; fi
+  if [ -z "$(which hdparm)" ]; then Install_Apt_Package "hdparm"; fi
+  if [ -z "$(which dmidecode)" ]; then Install_Apt_Package "dmidecode"; fi
+  if [ -z "$(which fio)" ]; then Install_Apt_Package "fio"; fi
+  if [ -z "$(which iozone3)" ]; then Install_Apt_Package "iozone3"; fi
+  if [ -z "$(which nvme)" ]; then Install_Apt_Package "nvme-cli"; fi
+  if [ -z "$(which smartctl)" ]; then Install_Apt_Package "smartmontools"; fi
+  if [ -z "$(which sdparm)" ]; then Install_Apt_Package "sdparm"; fi
+  if [ -z "$(which xxd)" ]; then Install_Apt_Package "xxd"; fi
 
   DpkgArch=$(dpkg --print-architecture)
   if [ -z "$(which iozone)" ]; then
@@ -180,7 +191,7 @@ if [[ -n "$(which apt)" ]]; then
 
   # Test if we were able to install iozone3 from a package and don't install build-essential if we were
   if [ -z "$(which iozone)" ]; then
-    apt-get install build-essential -y
+    Install_Apt_Package "build-essential"
   fi
 # Next test for Pac-Man (Arch Linux)
 elif [ -n "$(which pacman)" ]; then

@@ -40,6 +40,11 @@ See bottom of README for list of supported models.  I can always add additional 
 
 <h2>Update History</h2>
 
+<h3>June 1st 2022</h3>
+<ul>
+  <li>Improve apt dependency installation -- won't run apt-update if all dependencies are present to save time</li>
+</ul>
+
 <h3>May 28th 2022</h3>
 <ul>
   <li>Remove RAM column if it's not being used (it's not used on the Pi 4 and higher as the speed is fixed)</li>
