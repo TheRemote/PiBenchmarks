@@ -37,6 +37,7 @@ Install_Apt_Package() {
     AptUpdated=1
     apt-get update
   fi
+  echo "Install $1"
   apt-get install --no-install-recommends "$1" -y
 }
 
@@ -154,7 +155,7 @@ if [ -n "$(which apt)" ]; then
   if [ -z "$(which hdparm)" ]; then Install_Apt_Package "hdparm"; fi
   if [ -z "$(which dmidecode)" ]; then Install_Apt_Package "dmidecode"; fi
   if [ -z "$(which fio)" ]; then Install_Apt_Package "fio"; fi
-  if [ -z "$(which iozone3)" ]; then Install_Apt_Package "iozone3"; fi
+  if [ -z "$(which iozone)" ]; then Install_Apt_Package "iozone3"; fi
   if [ -z "$(which nvme)" ]; then Install_Apt_Package "nvme-cli"; fi
   if [ -z "$(which smartctl)" ]; then Install_Apt_Package "smartmontools"; fi
   if [ -z "$(which sdparm)" ]; then Install_Apt_Package "sdparm"; fi
@@ -191,7 +192,9 @@ if [ -n "$(which apt)" ]; then
     Install_Apt_Package "build-essential"
   fi
 
-  if [ -z $(dpkg -s libxml-dumper-perl 2>&1 | grep Status | grep installed) ]; then Install_Apt_Package "libxml-dumper-perl"; fi
+  DpkgTest=$(dpkg -s libxml-dumper-perl 2>&1 | grep Status | grep installed)
+  if [ -z "$DpkgTest" ]; then Install_Apt_Package "libxml-dumper-perl"; fi
+
 # Next test for Pac-Man (Arch Linux)
 elif [ -n "$(which pacman)" ]; then
   pacman -Syy
