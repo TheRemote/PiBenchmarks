@@ -80,6 +80,7 @@ if [[ "$(whoami)" != "root" ]]; then
 fi
 
 # Trim drives for more accurate benchmarking
+Print_Style "Trimming and syncing drives ..." "$YELLOW"
 fstrim -av
 sync
 sync
@@ -143,7 +144,6 @@ if [ -n "$(which apt)" ]; then
   fi
 
   # Retrieve dependencies -- these are all bare minimum system tools to identify the hardware (many will already be built in)
-  if [ -n $(apt-cache show libssl1.1 | grep Version | awk 'NR==1{ print $2 }') ]; then Install_Apt_Package "libxml-dumper-perl"; fi
   if [ -z "$(which lshw)" ]; then Install_Apt_Package "lshw"; fi
   if [ -z "$(which lspci)" ]; then Install_Apt_Package "pciutils"; fi
   if [ -z "$(which lsusb)" ]; then Install_Apt_Package "usbutils"; fi
@@ -190,6 +190,8 @@ if [ -n "$(which apt)" ]; then
   if [ -z "$(which iozone)" ]; then
     Install_Apt_Package "build-essential"
   fi
+
+  if [ -n $(apt-cache show libxml-dumper-perl | grep Version | awk 'NR==1{ print $2 }') ]; then Install_Apt_Package "libxml-dumper-perl"; fi
 # Next test for Pac-Man (Arch Linux)
 elif [ -n "$(which pacman)" ]; then
   pacman -Syy
