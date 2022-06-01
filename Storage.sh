@@ -37,9 +37,8 @@ Install_Apt_Package() {
     AptUpdated=1
     apt-get update
   fi
-  apt-get install --no-install-recommends $1 -y
+  apt-get install --no-install-recommends "$1" -y
 }
-
 
 # Get binary from string
 Get_Binary() {
@@ -144,7 +143,7 @@ if [ -n "$(which apt)" ]; then
   fi
 
   # Retrieve dependencies -- these are all bare minimum system tools to identify the hardware (many will already be built in)
-  if [ -n $(apt-cache show libssl1.1 | grep Version | awk 'NR==1{ print $2 }') ]; then Install_Apt_Package "libxml-dumper-perl"
+  if [ -n $(apt-cache show libssl1.1 | grep Version | awk 'NR==1{ print $2 }') ]; then Install_Apt_Package "libxml-dumper-perl"; fi
   if [ -z "$(which lshw)" ]; then Install_Apt_Package "lshw"; fi
   if [ -z "$(which lspci)" ]; then Install_Apt_Package "pciutils"; fi
   if [ -z "$(which lsusb)" ]; then Install_Apt_Package "usbutils"; fi
@@ -195,19 +194,19 @@ if [ -n "$(which apt)" ]; then
 elif [ -n "$(which pacman)" ]; then
   pacman -Syy
   pacman --needed --noconfirm -S \
-  base-devel \
-  bc \
-  curl \
-  dmidecode \
-  fio \
-  hdparm \
-  lshw \
-  lsscsi \
-  pciutils \
-  usbutils \
-  nvme-cli \
-  sdparm \
-  vim
+    base-devel \
+    bc \
+    curl \
+    dmidecode \
+    fio \
+    hdparm \
+    lshw \
+    lsscsi \
+    pciutils \
+    usbutils \
+    nvme-cli \
+    sdparm \
+    vim
 
   # Install iozone
   if ! command -v iozone; then
@@ -229,13 +228,13 @@ fi
 
 if [ -z "$(which lsblk)" ]; then
   Print_Style "Unable to locate the utility lsblk.  Please install lsblk for your distro!" "$RED"
-    # Return to home directory
+  # Return to home directory
   exit 3
 fi
 
 if [ -z "$(which fio)" ]; then
   Print_Style "Unable to locate the utility fio.  Please install fio for your distro!" "$RED"
-    # Return to home directory
+  # Return to home directory
   exit 3
 fi
 
@@ -281,7 +280,6 @@ if [ -z "$HostRAMClock" ]; then
 else
   Print_Style "Clock speeds: CPU: $HostCPUClock - Core: $HostCoreClock - RAM: $HostRAMClock" "$YELLOW"
 fi
-
 
 # Retrieve and build iozone
 if [ -z "$(which iozone)" ]; then
@@ -389,7 +387,7 @@ Print_Style "Additional hardware identification tests completed." "$YELLOW"
 
 # Check for Micro SD / MMC card
 if [[ "$BootDrive" == *"mmcblk"* ]]; then
-    # MicroSD hardware identification
+  # MicroSD hardware identification
   Print_Style "Starting MMC/SD identification..." "$YELLOW"
 
   # Determine if MMC or Micro SD
