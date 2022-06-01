@@ -191,7 +191,7 @@ if [ -n "$(which apt)" ]; then
     Install_Apt_Package "build-essential"
   fi
 
-  if [ -n $(apt-cache show libxml-dumper-perl | grep Version | awk 'NR==1{ print $2 }') ]; then Install_Apt_Package "libxml-dumper-perl"; fi
+  if [ -z $(dpkg -s libxml-dumper-perl | grep Status | grep installed) ]; then Install_Apt_Package "libxml-dumper-perl"; fi
 # Next test for Pac-Man (Arch Linux)
 elif [ -n "$(which pacman)" ]; then
   pacman -Syy
