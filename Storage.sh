@@ -364,30 +364,28 @@ Print_Style "Starting INXI hardware identification..." "$YELLOW"
 # Retrieve inxi hardware identification utility (https://github.com/smxi/inxi for more info)
 curl -s -o inxi https://raw.githubusercontent.com/smxi/inxi/master/inxi
 chmod +x inxi
-Test_inxi=$(./inxi -F -v8 -c0 -M -m -d -f -i -l -m -o -p -r -t -u -xxx 2>&1 | sed 's/;/!/g')
+Test_inxi=$(./inxi -F -v8 -c0 -M -m -d -f -i -l -m -o -p -r -t -u -xxx 2>&1 | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
 ./inxi -v4 -d -c0 2>&1
 rm -f inxi
 
 Print_Style "Running additional hardware identification tests..." "$YELLOW"
 Test_udevadm=$(udevadm info -w20 -a -n "$BootDrive" 2>&1 | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
-Test_lsblk=$(lsblk -l -o NAME,FSTYPE,LABEL,MOUNTPOINT,SIZE,MODEL 2>&1 | sed 's/;/!/g')
-Test_lshw=$(lshw 2>&1 | sed 's/;/!/g')
-Test_lsusb=$(lsusb 2>&1 | sed 's/;/!/g')
-Test_lsscsi=$(lsscsi -Lv 2>&1 | sed 's/;/!/g')
-Test_lscpu=$(lscpu 2>&1 | sed 's/;/!/g')
-Test_lspci=$(lspci -v 2>&1 | sed 's/;/!/g')
-Test_findmnt=$(findmnt -n 2>&1 | sed 's/;/!/g')
-Test_diskbyid=$(ls /dev/disk/by-id 2>&1 | sed 's/;/!/g')
+Test_lsblk=$(lsblk -l -o NAME,FSTYPE,LABEL,MOUNTPOINT,SIZE,MODEL 2>&1 | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
+Test_lshw=$(lshw 2>&1 | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
+Test_lsusb=$(lsusb 2>&1 | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
+Test_lsscsi=$(lsscsi -Lv 2>&1 | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
+Test_lscpu=$(lscpu 2>&1 | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
+Test_lspci=$(lspci -v 2>&1 | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
+Test_findmnt=$(findmnt -n 2>&1 | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
 Test_df=$(df -h 2>&1 | sed 's/;/!/g')
-Test_cpuinfo=$(cat /proc/cpuinfo 2>&1 | sed 's/;/!/g')
-Test_dmesg=$(dmesg -Lnever 2>&1 | grep usb | sed 's/;/!/g')
+Test_cpuinfo=$(cat /proc/cpuinfo 2>&1 | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
+Test_dmesg=$(dmesg -Lnever 2>&1 | grep usb | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
 Test_fstab=$(cat /etc/fstab 2>&1 | sed 's/;/!/g')
-Test_dmidecode=$(dmidecode 2>&1 | sed 's/;/!/g')
-Test_hwinfo=$(hwinfo --arch --bios --block --bridge --disk --framebuffer --gfxcard --hub --ide --isapnp --listmd --memory --mmc-ctrl --monitor --netcard --partition --pci --pcmcia --pcmcia-ctrl --redasd --scsi --sound --storage-ctrl --sys --tape --usb --usb-ctrl 2>&1 | sed 's/;/!/g')
+Test_dmidecode=$(dmidecode 2>&1 | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
+Test_hwinfo=$(hwinfo --arch --bios --block --bridge --disk --framebuffer --gfxcard --hub --ide --isapnp --listmd --memory --mmc-ctrl --monitor --netcard --partition --pci --pcmcia --pcmcia-ctrl --redasd --scsi --sound --storage-ctrl --sys --tape --usb --usb-ctrl 2>&1 | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
 Test_nvme=$(nvme list -o json 2>&1)
 Test_nvme+=$(nvme show-regs "$BootDrive" -H 2>&1 | sed 's/;/!/g')
-Test_smartctl=$(smartctl -x "$BootDrive" 2>&1 | sed 's/;/!/g')
-Test_smartctl=$(sudo sdparm --long --verbose "$BootDrive" 2>&1 | sed 's/;/!/g')
+Test_smartctl=$(smartctl -x "$BootDrive" 2>&1 | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
 Capacity=$(lsblk -l 2>&1 | grep "$BootDriveSuffix" -m 1 | awk 'NR==1{ print $4 }' | sed 's/,/./g')
 Print_Style "Additional hardware identification tests completed." "$YELLOW"
 
@@ -895,7 +893,7 @@ read -r -p 'Alias (leave blank for Anonymous): ' UserAlias </dev/tty
 if [[ ! "$UserAlias" ]]; then UserAlias="Anonymous"; fi
 
 # Submit results
-Submit=$(curl -s -k -L --form "form_tools_form_id=1" --form "DDTest=$DDWrite" --form "DDWriteSpeed=$DDWriteResult" --form "HDParmDisk=$HDParmDisk" --form "HDParmCached=$HDParmCached" --form "HDParm=$HDParm" --form "fio4kRandRead=$fio4kRandRead" --form "fio4kRandWrite=$fio4kRandWrite" --form "fio4kRandWriteIOPS=$fio4kRandWriteIOPS" --form "fio4kRandReadIOPS=$fio4kRandReadIOPS" --form "fio4kRandWriteSpeed=$fio4kRandWriteSpeed" --form "fio4kRandReadSpeed=$fio4kRandReadSpeed" --form "IOZone=$IOZone" --form "IO4kRandRead=$IO4kRandRead" --form "IO4kRandWrite=$IO4kRandWrite" --form "IO4kRead=$IO4kRead" --form "IO4kWrite=$IO4kWrite" --form "Drive=$BootDrive" --form "Test_hdparm=$Test_hdparm" --form "Test_lsblk=$Test_lsblk" --form "Test_findmnt=$Test_findmnt" --form "Test_lsusb=$Test_lsusb" --form "Test_lshw=$Test_lshw" --form "Test_lspci=$Test_lspci" --form "Test_lsscsi=$Test_lsscsi" --form "Test_lscpu=$Test_lscpu" --form "Test_diskbyid=$Test_diskbyid" --form "Test_df=$Test_df" --form "Test_cpuinfo=$Test_cpuinfo" --form "Test_udevadm=$Test_udevadm" --form "Test_dmesg=$Test_dmesg" --form "Test_fstab=$Test_fstab" --form "Test_inxi=$Test_inxi" --form "Test_hwinfo=$Test_hwinfo" --form "Test_dmidecode=$Test_dmidecode" --form "Test_nvme=$Test_nvme" --form "Test_smartctl=$Test_smartctl" --form "Model=$Model" --form "Capacity=$Capacity" --form "Manufacturer=$Manufacturer" --form "Product=$Product" --form "DateManufactured=$DateManufactured" --form "Note=$Brand" --form "Class=$Class" --form "OCR=$OCR" --form "SSR=$SSR" --form "SCR=$SCR" --form "CID=$CID" --form "CSD=$CSD" --form "UserAlias=$UserAlias" --form "HostModel=$HostModel" --form "HostSDClock=$HostSDClock" --form "HostConfig=$HostConfig" --form "HostCPUClock=$HostCPUClock" --form "HostCoreClock=$HostCoreClock" --form "HostRAMClock=$HostRAMClock" --form "HostArchitecture=$HostArchitecture" --form "HostOS=$HostOS" --form "HostOSInfo=$HostOSInfo" --form "HostManufacturer=$HostManufacturer" --form "Adapter=$Adapter" https://pibenchmarks.com/formtools/process.php)
+Submit=$(curl -s -k -L --form "form_tools_form_id=1" --form "DDTest=$DDWrite" --form "DDWriteSpeed=$DDWriteResult" --form "HDParmDisk=$HDParmDisk" --form "HDParmCached=$HDParmCached" --form "HDParm=$HDParm" --form "fio4kRandRead=$fio4kRandRead" --form "fio4kRandWrite=$fio4kRandWrite" --form "fio4kRandWriteIOPS=$fio4kRandWriteIOPS" --form "fio4kRandReadIOPS=$fio4kRandReadIOPS" --form "fio4kRandWriteSpeed=$fio4kRandWriteSpeed" --form "fio4kRandReadSpeed=$fio4kRandReadSpeed" --form "IOZone=$IOZone" --form "IO4kRandRead=$IO4kRandRead" --form "IO4kRandWrite=$IO4kRandWrite" --form "IO4kRead=$IO4kRead" --form "IO4kWrite=$IO4kWrite" --form "Drive=$BootDrive" --form "Test_hdparm=$Test_hdparm" --form "Test_lsblk=$Test_lsblk" --form "Test_findmnt=$Test_findmnt" --form "Test_lsusb=$Test_lsusb" --form "Test_lshw=$Test_lshw" --form "Test_lspci=$Test_lspci" --form "Test_lsscsi=$Test_lsscsi" --form "Test_lscpu=$Test_lscpu" --form "Test_df=$Test_df" --form "Test_cpuinfo=$Test_cpuinfo" --form "Test_udevadm=$Test_udevadm" --form "Test_dmesg=$Test_dmesg" --form "Test_fstab=$Test_fstab" --form "Test_inxi=$Test_inxi" --form "Test_hwinfo=$Test_hwinfo" --form "Test_dmidecode=$Test_dmidecode" --form "Test_nvme=$Test_nvme" --form "Test_smartctl=$Test_smartctl" --form "Model=$Model" --form "Capacity=$Capacity" --form "Manufacturer=$Manufacturer" --form "Product=$Product" --form "DateManufactured=$DateManufactured" --form "Note=$Brand" --form "Class=$Class" --form "OCR=$OCR" --form "SSR=$SSR" --form "SCR=$SCR" --form "CID=$CID" --form "CSD=$CSD" --form "UserAlias=$UserAlias" --form "HostModel=$HostModel" --form "HostSDClock=$HostSDClock" --form "HostConfig=$HostConfig" --form "HostCPUClock=$HostCPUClock" --form "HostCoreClock=$HostCoreClock" --form "HostRAMClock=$HostRAMClock" --form "HostArchitecture=$HostArchitecture" --form "HostOS=$HostOS" --form "HostOSInfo=$HostOSInfo" --form "HostManufacturer=$HostManufacturer" --form "Adapter=$Adapter" https://pibenchmarks.com/formtools/process.php)
 SubmitResult=""
 SubmitResult=$(echo "$Submit" | grep submission)
 if [ -n "$SubmitResult" ]; then

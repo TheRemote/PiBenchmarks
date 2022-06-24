@@ -40,6 +40,12 @@ See bottom of README for list of supported models.  I can always add additional 
 
 <h2>Update History</h2>
 
+<h3>June 24th 2022</h3>
+<ul>
+  <li>PC results now show in "Latest" and a "Top PC Scores" section has been added!</li>
+  <li>Reduce argument sizes to prevent curl upload error</li>
+</ul>
+
 <h3>June 1st 2022</h3>
 <ul>
   <li>Improve apt dependency installation -- won't run apt-update if all dependencies are present to save time</li>
