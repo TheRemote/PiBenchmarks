@@ -44,6 +44,7 @@ See bottom of README for list of supported models.  I can always add additional 
 <ul>
   <li>PC results now show in "Latest" and a "Top PC Scores" section has been added!</li>
   <li>Reduce argument sizes to prevent curl upload error</li>
+  <li>Fixed curl "argument list too long" error</li>
 </ul>
 
 <h3>June 1st 2022</h3>
