@@ -1,7 +1,11 @@
-# Raspberry Pi Storage Benchmarking Script
+# Linux Storage Benchmarking Script (SBCs, PCs and all Linux devices)
+<h2>Now supports PCs and other SBCs!</h2>
+
+Announcement is available here:  <a href="https://jamesachambers.com/benchmark-storage-performance-on-linux/">https://jamesachambers.com/benchmark-storage-performance-on-linux/</a>
+
 <h2>Overview</h2>
-Raspberry Pi benchmarking scripts featuring a storage benchmark with a score<br>
-Anonymously uploads your score to jamesachambers.com to help others make good decisions on Pi storage<br>
+Storage benchmarking script featuring a storage benchmark with a heavy emphasis on random read/write performance (essential for OS / application).  This is far more accurate of a representation than raw performance when simulating writing a large file<br>
+Anonymously uploads your score to pibenchmarks.com for the purposes of making real, meaningful performance comparison between the different storage drives themselves as well as the platforms they are being used on<br>
 
 <h2>View Results</h2>
 
@@ -33,10 +37,6 @@ These are iozone and fio which are both benchmarking utilities and should be saf
  <li>CashApp: $theremote</li>
  <li>Bitcoin (BTC): 3H6wkPnL1Kvne7dJQS8h7wB4vndB9KxZP7</li>
 </ul>
-
-<h2>Now supports PCs and other SBCs!</h2>
-
-Announcement is available here:  <a href="https://jamesachambers.com/benchmark-storage-performance-on-linux/">https://jamesachambers.com/benchmark-storage-performance-on-linux/</a>
 
 <h2>Update History</h2>
 
