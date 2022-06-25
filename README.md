@@ -15,10 +15,11 @@ View the full results at: https://pibenchmarks.com/<br>
 <h2>Running the Benchmark</h2>
 To run the benchmark type/paste:<br>
 <pre>sudo curl https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh | sudo bash</pre><br>
-If you want to choose which drive to test you can also:<br>
+If you want to choose which drive to test you can also use:<br>
+<pre>
 wget https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh<br>
 chmod +x Storage.sh<br>
-sudo ./Storage.sh /path/to/storage<br>
+sudo ./Storage.sh /path/to/storage</pre><br>
 
 <h2>Removing Installed Packages</h2>
 Most of the packages the script installs are core system packages most of which should already be present.  There are a couple benchmarking-only related ones that should be safe to remove if you want an absolute minimalist system.<br>
