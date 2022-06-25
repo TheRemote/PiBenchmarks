@@ -6,7 +6,9 @@ Announcement is available here:  <a href="https://jamesachambers.com/benchmark-s
 <h2>Overview</h2>
 Storage benchmarking script featuring a storage benchmark with a heavy emphasis on random read/write performance (essential for OS / application).  This is far more accurate of a representation of actual performance than simply simulating writing a large file.<br>
 <br>
-Anonymously uploads your score to pibenchmarks.com for the purposes of making real, meaningful performance comparison between the different storage drives themselves as well as the platforms they are being used on.  You can optionally supply a username which is used as a sort of tracking tag where you can easily see all benchmarks you've ever taken across all devices!<br>
+Anonymously uploads your score to pibenchmarks.com for the purposes of making real, meaningful performance comparisons between the different storage devices themselves as well as the platforms they are being used on (PC vs Raspberry Pi vs cloud storage vs others).<br>
+<br>
+You can optionally supply a username which is used as a sort of tracking tag where you can easily see all benchmarks you've ever taken across all devices!<br>
 
 <h2>View Results</h2>
 
