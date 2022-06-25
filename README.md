@@ -34,9 +34,9 @@ These are iozone and fio which are both benchmarking utilities and should be saf
  <li>Bitcoin (BTC): 3H6wkPnL1Kvne7dJQS8h7wB4vndB9KxZP7</li>
 </ul>
 
-<h2>Additional Model Support</h2>
+<h2>Now supports PCs and other SBCs!</h2>
 
-See bottom of README for list of supported models.  I can always add additional models if people submit benchmarks with them or request them!
+Announcement is available here:  <a href="https://jamesachambers.com/benchmark-storage-performance-on-linux/">https://jamesachambers.com/benchmark-storage-performance-on-linux/</a>
 
 <h2>Update History</h2>
 
