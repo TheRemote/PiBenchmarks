@@ -44,6 +44,12 @@ These are iozone and fio which are both benchmarking utilities and should be saf
 
 <h2>Update History</h2>
 
+<h3>June 27th 2022</h3>
+<ul>
+  <li>Fixed udevadm giving a message that option 'w' was missing on some versions -- now runs a fallback test without that option</li>
+</ul>
+
+
 <h3>June 24th 2022</h3>
 <ul>
   <li>PC results now show in "Latest" and a "Top PC Scores" section has been added!</li>

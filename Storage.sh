@@ -369,7 +369,11 @@ Test_inxi=$(./inxi -F -v8 -c0 -M -m -d -f -i -l -m -o -p -r -t -u -xxx 2>&1 | se
 rm -f inxi
 
 Print_Style "Running additional hardware identification tests..." "$YELLOW"
-Test_udevadm=$(udevadm info -w20 -a -n "$BootDrive" 2>&1 | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
+Test_udevadm=$(udevadm info -w20 -a -n "$BootDrive" 2>&1 | sed 's/;/!/g' | sed '/^[[:space:]]*$/d' | grep -v 'info: invalid option')
+if [ -z "$Test_udevadm" ]; then
+  echo "udevadm does not have wait option -- retrying..."
+  Test_udevadm=$(udevadm info -a -n "$BootDrive" 2>&1 | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
+fi
 Test_lsblk=$(lsblk -l -o NAME,FSTYPE,LABEL,MOUNTPOINT,SIZE,MODEL 2>&1 | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
 Test_lshw=$(lshw 2>&1 | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
 Test_lsusb=$(lsusb 2>&1 | sed 's/;/!/g' | sed '/^[[:space:]]*$/d')
