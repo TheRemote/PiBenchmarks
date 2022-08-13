@@ -309,7 +309,7 @@ if [ -z "$ChosenPartition" ]; then
   # User did not provide a partition/folder, continue with rootfs
   # --Get system boot drive information--
   # Find from mountpoint first
-  BootDrive=$(findmnt -n -o SOURCE /)
+  BootDrive=$(findmnt -n -o SOURCE --target /)
 
   # Find by matching device IDs to / next
   if [ -z "$BootDrive" ]; then
@@ -339,7 +339,7 @@ if [ -z "$ChosenPartition" ]; then
     BootDrive=$(df -H | grep -m 1 boot | awk 'NR==1{ print $1 }' | sed 's/\[\/\@\]//g')
   fi
 else
-  BootDrive=$(findmnt -n -o SOURCE "$ChosenPartition" | sed 's/\[\/\@\]//g')
+  BootDrive=$(findmnt -n -o SOURCE --target "$ChosenPartition" | sed 's/\[\/\@\]//g')
 fi
 
 # Detect BootDrive suffix

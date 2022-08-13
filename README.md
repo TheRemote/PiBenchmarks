@@ -44,11 +44,15 @@ These are iozone and fio which are both benchmarking utilities and should be saf
 
 <h2>Update History</h2>
 
+<h3>August 13th 2022</h3>
+<ul>
+  <li>Fixed findmnt failing when target is not a mountpoint (thanks mhaas, <a href="https://github.com/TheRemote/PiBenchmarks/issues/23" target="_blank">issue #23<a></li>
+</ul>
+
 <h3>June 27th 2022</h3>
 <ul>
   <li>Fixed udevadm giving a message that option 'w' was missing on some versions -- now runs a fallback test without that option</li>
 </ul>
-
 
 <h3>June 24th 2022</h3>
 <ul>
