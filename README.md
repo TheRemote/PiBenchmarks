@@ -44,6 +44,13 @@ These are iozone and fio which are both benchmarking utilities and should be saf
 
 <h2>Update History</h2>
 
+<h3>August 14th 2022</h3>
+<ul>
+  <li>Fix parsing inside Docker (thanks mhaas, <a href="https://github.com/TheRemote/PiBenchmarks/issues/24" target="_blank">issue #24<a></li>
+    <li>Add udev to dependencies (thanks mhaas, <a href="https://github.com/TheRemote/PiBenchmarks/issues/25" target="_blank">issue #25<a></li>
+</ul>
+
+
 <h3>August 13th 2022</h3>
 <ul>
   <li>Fixed findmnt failing when target is not a mountpoint (thanks mhaas, <a href="https://github.com/TheRemote/PiBenchmarks/issues/23" target="_blank">issue #23<a></li>

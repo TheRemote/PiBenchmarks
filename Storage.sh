@@ -147,6 +147,7 @@ if [ -n "$(which apt)" ]; then
 
   # Retrieve dependencies -- these are all bare minimum system tools to identify the hardware (many will already be built in)
   if [ -z "$(which lshw)" ]; then Install_Apt_Package "lshw"; fi
+  if [ -z "$(which udevadm)" ]; then Install_Apt_Package "udev"; fi
   if [ -z "$(which lspci)" ]; then Install_Apt_Package "pciutils"; fi
   if [ -z "$(which lsusb)" ]; then Install_Apt_Package "usbutils"; fi
   if [ -z "$(which lsscsi)" ]; then Install_Apt_Package "lsscsi"; fi
@@ -328,7 +329,7 @@ if [ -z "$ChosenPartition" ]; then
 
   # Fall back to finding from lsblk
   if [ -z "$BootDrive" ]; then
-    BootDrive=$(lsblk -l | grep -v "0 part /boot" | grep -m 1 "0 part /" | awk 'NR==1{ print $1 }' | sed 's/\[\/\@\]//g')
+    BootDrive=$(lsblk -l | grep -v "0 part /boot" | grep -m 1 "0 part /" | awk 'NR==1{ print $1 }' | sed -e 's/\[\/.*\]//g')
     if [ -n "$BootDrive" ]; then
       BootDrive="/dev/"$BootDrive
     fi
@@ -336,10 +337,10 @@ if [ -z "$ChosenPartition" ]; then
 
   # Fall back to finding from df
   if [ -z "$BootDrive" ]; then
-    BootDrive=$(df -H | grep -m 1 boot | awk 'NR==1{ print $1 }' | sed 's/\[\/\@\]//g')
+    BootDrive=$(df -H | grep -m 1 boot | awk 'NR==1{ print $1 }' | sed -e 's/\[\/.*\]//g')
   fi
 else
-  BootDrive=$(findmnt -n -o SOURCE --target "$ChosenPartition" | sed 's/\[\/\@\]//g')
+  BootDrive=$(findmnt -n -o SOURCE --target "$ChosenPartition" | sed -e 's/\[\/.*\]//g')
 fi
 
 # Detect BootDrive suffix
