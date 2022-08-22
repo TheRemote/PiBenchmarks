@@ -62,7 +62,7 @@ Get_Bits() {
 
 # Get decimal from binary
 Get_Decimal() {
-  echo "$((2#$1))"
+  echo "$((2#$1))" 2>/dev/null
 }
 
 # Get hex from binary
@@ -123,17 +123,22 @@ if [[ "$HostArchitecture" == *"x86"* || "$HostArchitecture" == *"amd64"* ]]; the
   HostManufacturer=$(dmidecode -t1 | grep 'Manufacturer' -m 1 | cut -d: -f2 | xargs)
 else
   # ARM system
-  HostModel=$(tr -d '\0' </proc/device-tree/model)
-  if [[ "$HostModel" == *"Raspberry Pi"* ]]; then
-    HostManufacturer="Raspberry Pi Foundation"
-  elif [[ "$HostModel" == *"Tinker Board"* ]]; then
-    HostManufacturer="ASUSTeK"
-  else
-    HostManufacturer=""
+  if [ -e /proc/device-tree/model ]; then
+    HostModel=$(tr -d '\0' </proc/device-tree/model)
+    if [[ "$HostModel" == *"Raspberry Pi"* ]]; then
+      HostManufacturer="Raspberry Pi Foundation"
+    elif [[ "$HostModel" == *"Tinker Board"* ]]; then
+      HostManufacturer="ASUSTeK"
+    else
+      HostManufacturer=""
+    fi
   fi
 fi
-Print_Style "Board information: Manufacturer: $HostManufacturer - Model: $HostModel - Architecture: $HostArchitecture - OS: $HostOS" "$YELLOW"
-
+if [ -n "$HostModel" ]; then
+  Print_Style "Board information: Manufacturer: $HostManufacturer - Model: $HostModel - Architecture: $HostArchitecture - OS: $HostOS" "$YELLOW"
+else
+  Print_Style "Board information: Architecture: $HostArchitecture - OS: $HostOS" "$YELLOW"
+fi
 # Install required components
 Print_Style "Fetching required components ..." "$YELLOW"
 
