@@ -44,6 +44,11 @@ These are iozone and fio which are both benchmarking utilities and should be saf
 
 <h2>Update History</h2>
 
+<h3>January 1st 2023</h3>
+<ul>
+  <li>Increase DD write test to 130k blocks for increased NVMe accuracy</li>
+</ul>
+
 <h3>August 21st 2022</h3>
 <ul>
   <li>Fix minor path errors on Orange Pi</li>
