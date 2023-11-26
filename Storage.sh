@@ -6,6 +6,9 @@
 # To run the benchmark use the following command:
 # sudo curl https://raw.githubusercontent.com/TheRemote/PiBenchmarks/master/Storage.sh | sudo bash
 
+# Fix language settings for utf8
+export LC_ALL=C
+
 # Terminal colors
 BLACK=$(tput setaf 0)
 RED=$(tput setaf 1)

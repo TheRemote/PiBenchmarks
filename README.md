@@ -44,6 +44,11 @@ These are iozone and fio which are both benchmarking utilities and should be saf
 
 <h2>Update History</h2>
 
+<h3>November 26th 2023</h3>
+<ul>
+  <li>Added export LC_ALL=C to top of script to prevent language related issues on some systems</li>
+</ul>
+
 <h3>January 1st 2023</h3>
 <ul>
   <li>Increase DD write test to 130k blocks for increased NVMe accuracy</li>
