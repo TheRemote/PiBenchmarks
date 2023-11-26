@@ -48,6 +48,7 @@ These are iozone and fio which are both benchmarking utilities and should be saf
 <ul>
   <li>Added export LC_ALL=C to top of script to prevent language related issues on some systems</li>
   <li>Fix null bytes breaking test_nvme</li>
+  <li>Fixed display issue with DD and HDParm tests showing the wrong units on very slow or very fast machines</li>
 </ul>
 
 <h3>January 1st 2023</h3>

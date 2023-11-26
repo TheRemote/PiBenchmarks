@@ -850,8 +850,10 @@ if [ -z "$HDParm" ]; then
 fi
 Print_Style "$HDParm" "$NORMAL"
 HDParmDisk=$(echo "$HDParm" | grep "disk reads:" | awk 'NR==1{ print $11 }' | sed 's/;/!/g')
+HDParmDiskUnit=$(echo "$HDParm" | grep "disk reads:" | awk 'NR==1{ print $12 }' | sed 's/;/!/g')
 HDParmCached=$(echo "$HDParm" | grep "cached reads:" | awk 'NR==1{ print $11 }' | sed 's/;/!/g')
-Print_Style "HDParm: $HDParmDisk MB/s - HDParmCached: $HDParmCached MB/s" "$YELLOW"
+HDParmCachedUnit=$(echo "$HDParm" | grep "disk reads:" | awk 'NR==1{ print $12 }' | sed 's/;/!/g')
+Print_Style "HDParm: $HDParmDisk $HDParmDiskUnit - HDParmCached: $HDParmCached $HDParmCachedUnit" "$YELLOW"
 
 # Run DD tests
 Print_Style "Running dd tests ..." "$YELLOW"
@@ -859,9 +861,10 @@ sync
 sync
 DDWrite=$(dd if=/dev/zero of=test bs=4k count=130k conv=fsync 2>&1 | sed '/^[[:space:]]*$/d')
 DDWriteResult=$(echo "$DDWrite" | tail -n 1 | awk 'NR==1{ print $(NF-1) }' | sed 's/,/./g' | sed 's/s，//g')
+DDWriteUnit=$(echo "$DDWrite" | tail -n 1 | awk 'NR==1{ print $(NF) }' | sed 's/,/./g' | sed 's/s，//g')
 
 echo "$DDWrite"
-Print_Style "DD Write Speed: $DDWriteResult MB/s" "$YELLOW"
+Print_Style "DD Write Speed: $DDWriteResult $DDWriteUnit" "$YELLOW"
 rm -f test
 
 # Run fio tests
@@ -940,9 +943,9 @@ Score=$(echo "scale=0; $Score / 100" | bc)
 
 # Display results
 printf "\n$BRIGHT$UNDERLINE%-25s %-25s %-25s\n" "     Category" "     Test" '     Result     '"$NORMAL$CYAN"
-printf "%-25s %-25s %-25s\n" "HDParm" "Disk Read" "$HDParmDisk MB/s"
-printf "%-25s %-25s %-25s\n" "HDParm" "Cached Disk Read" "$HDParmCached MB/s"
-printf "%-25s %-25s %-25s\n" "DD" "Disk Write" "$DDWriteResult MB/s"
+printf "%-25s %-25s %-25s\n" "HDParm" "Disk Read" "$HDParmDisk $HDParmDiskUnit"
+printf "%-25s %-25s %-25s\n" "HDParm" "Cached Disk Read" "$HDParmCached $HDParmCachedUnit"
+printf "%-25s %-25s %-25s\n" "DD" "Disk Write" "$DDWriteResult $DDWriteUnit"
 printf "%-25s %-25s %-25s\n" "FIO" "4k random read" "$fio4kRandReadIOPS IOPS ($fio4kRandReadSpeed KB/s)"
 printf "%-25s %-25s %-25s\n" "FIO" "4k random write" "$fio4kRandWriteIOPS IOPS ($fio4kRandWriteSpeed KB/s)"
 printf "%-25s %-25s %-25s\n" "IOZone" "4k read" "$IO4kRead KB/s"
