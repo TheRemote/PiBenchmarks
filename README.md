@@ -47,6 +47,7 @@ These are iozone and fio which are both benchmarking utilities and should be saf
 <h3>November 26th 2023</h3>
 <ul>
   <li>Added export LC_ALL=C to top of script to prevent language related issues on some systems</li>
+  <li>Fix null bytes breaking test_nvme</li>
 </ul>
 
 <h3>January 1st 2023</h3>
